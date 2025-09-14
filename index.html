@@ -4,23 +4,100 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2sale 4</title>
+  <meta name="description" content="#1 personalisiertes Glas Tag zum Preis von 3 EUR">
   <style>
     :root { color-scheme: light dark; }
-    body { margin:0; min-height:100vh; display:grid; place-items:center;
-           font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-           text-align:center; padding:2rem; }
-    h1 { margin:0; font-size:clamp(2.5rem,10vw,6rem); }
-    p  { margin:2em 0 0; font-size:clamp(1.2rem,4vw,2rem); }
-    .spacer { height:2em; } /* zwei Zeilen Abstand */
-    img { max-width:100%; height:auto; display:block; margin:1.5rem auto 0; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    main { width: min(900px, 100%); }
+    h1 { margin: 0; font-size: clamp(2.5rem, 10vw, 6rem); }
+    .spacer { height: 2em; } /* exakt ~2 Zeilen Abstand */
+    p  { margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); }
+    .img-wrap { margin-top: 1.5rem; }
+    .product-img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      /* nicht anklickbar/ziehbar */
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .img-fallback {
+      display: grid;
+      place-items: center;
+      margin: 0 auto;
+      width: min(800px, 100%);
+      aspect-ratio: 4 / 3;
+      border: 2px dashed #999;
+      border-radius: 12px;
+      font-size: 1rem;
+      opacity: .8;
+    }
   </style>
 </head>
 <body>
   <main>
     <h1>2sale 4</h1>
-    <div class="spacer"></div>
+    <div class="spacer" aria-hidden="true"></div>
     <p>#1 personalisiertes Glas Tag zum Preis von 3&nbsp;EUR</p>
-    <img src="images/DEINBILD.jpg" alt="Personalisiertes Glas Tag">
+
+    <div class="img-wrap">
+      <!--
+        WICHTIG:
+        1) Lege dein Bild als 'foto.jpg' in den GLEICHEN Ordner wie diese index.html.
+           -> Dann reicht src="foto.jpg".
+        2) Wenn du einen GitHub-RAW-Link nutzen willst, trage ihn unten als data-fallback ein.
+           Beispiel-RAW-URL:
+           https://raw.githubusercontent.com/OBSBBG/OBSBBG.github.io/main/foto.jpg
+      -->
+      <img
+        id="produktbild"
+        class="product-img"
+        src="foto.jpg"
+        alt="Personalisiertes Glas Tag – Produktfoto"
+        loading="lazy"
+        decoding="async"
+        data-fallback=""
+        draggable="false"
+      >
+      <div id="img-fallback" class="img-fallback" hidden>
+        <div>
+          <strong>Bild konnte nicht geladen werden.</strong><br>
+          Prüfe Dateiname/Pfad oder setze einen RAW-Link als Fallback.
+        </div>
+      </div>
+    </div>
   </main>
+
+  <script>
+    // Wenn das Bild nicht lädt: erst optionalen RAW-Fallback versuchen,
+    // sonst saubere Fehlfläche anzeigen (kein hässlicher Browser-Dummy).
+    (function () {
+      const img = document.getElementById('produktbild');
+      const fallbackBox = document.getElementById('img-fallback');
+      if (!img) return;
+
+      img.addEventListener('error', function () {
+        const raw = img.getAttribute('data-fallback');
+        if (raw && !img.dataset.triedFallback) {
+          img.dataset.triedFallback = '1';
+          img.src = raw; // zweiter Versuch mit RAW-URL
+        } else {
+          img.hidden = true;
+          fallbackBox.hidden = false;
+        }
+      }, { once: false });
+    })();
+  </script>
 </body>
 </html>
