@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>2sale 4</title>
+  <title>2 Sale 4 U</title>
   <meta name="description" content="#1 personalisiertes Glas Tag zum Preis von 3 EUR">
   <style>
     :root { color-scheme: light dark; }
@@ -19,29 +19,58 @@
     }
     main { width: min(900px, 100%); }
     h1 { margin: 0; font-size: clamp(2.5rem, 10vw, 6rem); }
-    .spacer { height: 2em; } /* exakt ~2 Zeilen Abstand */
+    .spacer { height: 2em; } /* ~2 Zeilen Abstand */
     p  { margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); }
+
     img {
       display: block;
       max-width: 100%;
       height: auto;
       margin: 1.5rem auto 0;
-      pointer-events: none;    /* nicht anklickbar */
+      pointer-events: none;   /* nicht anklickbar */
       -webkit-user-drag: none;
       user-select: none;
     }
+
+    .slots {
+      margin-top: 1.5rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+    .slot {
+      border: 2px dashed #999;
+      border-radius: 12px;
+      padding: 2rem;
+      font-weight: 700;
+      font-size: clamp(1.6rem, 6vw, 2.4rem);
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 1rem;
+      opacity: .9;
+    }
+    footer a { color: inherit; }
   </style>
 </head>
 <body>
   <main>
-    <h1>2sale 4</h1>
+    <h1>2 Sale 4 U</h1>
     <div class="spacer" aria-hidden="true"></div>
-    <p>#1 personalisiertes Glas Tag zum Preis von 3&nbsp;EUR</p>
 
-    <!-- Bilddatei muss exakt 'Tag.jpeg' heißen und im gleichen Ordner liegen wie diese index.html -->
+    <p>#1 personalisiertes Glas Tag zum Preis von 3&nbsp;EUR</p>
     <img src="Tag.jpeg" alt="">
+
+    <!-- vorbereitete Plätze für #2 und #3 -->
+    <div class="slots" aria-label="Weitere Produkte folgen">
+      <div class="slot">#2</div>
+      <div class="slot">#3</div>
+    </div>
+
+    <footer>
+      Gib deine Bestellung ab unter <a href="mailto:xxx.@obs-bbg.de">xxx.@obs-bbg.de</a>
+    </footer>
   </main>
 </body>
 </html>
-
-
