@@ -19,29 +19,16 @@
     }
     main { width: min(900px, 100%); }
     h1 { margin: 0; font-size: clamp(2.5rem, 10vw, 6rem); }
-    .spacer { height: 2em; } /* genau ~2 Zeilen Abstand */
+    .spacer { height: 2em; } /* exakt ~2 Zeilen Abstand */
     p  { margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); }
-    .img-wrap { margin-top: 1.5rem; }
-    .product-img {
+    img {
+      display: block;
       max-width: 100%;
       height: auto;
-      display: block;
-      margin: 0 auto;
-      pointer-events: none;      /* nicht anklickbar */
-      user-select: none;
+      margin: 1.5rem auto 0;
+      pointer-events: none;    /* nicht anklickbar */
       -webkit-user-drag: none;
-    }
-    .img-fallback {
-      display: grid;
-      place-items: center;
-      margin: 0 auto;
-      width: min(800px, 100%);
-      aspect-ratio: 4 / 3;
-      border: 2px dashed #999;
-      border-radius: 12px;
-      padding: 1rem;
-      font-size: 1rem;
-      opacity: .85;
+      user-select: none;
     }
   </style>
 </head>
@@ -51,32 +38,10 @@
     <div class="spacer" aria-hidden="true"></div>
     <p>#1 personalisiertes Glas Tag zum Preis von 3&nbsp;EUR</p>
 
-    <div class="img-wrap">
-      <!--
-        WICHTIG:
-        - Lege die Datei exakt als 'Tag.jpeg' in DENSELBEN Ordner wie diese index.html.
-        - Bei Projekt-Pages mit /docs: index.html UND Tag.jpeg beide in /docs/.
-        - Cache-Busting: erhöhe die Zahl hinter ?v= wenn das alte Bild klebt.
-      -->
-      <img
-        id="produktbild"
-        class="product-img"
-        src="Tag.jpeg?v=1"
-        alt="Personalisiertes Glas Tag – Produktfoto"
-        loading="lazy"
-        decoding="async"
-        draggable="false"
-        onerror="this.hidden=true;document.getElementById('img-err').hidden=false;"
-      >
-      <div id="img-err" class="img-fallback" hidden>
-        <div>
-          <strong>Bild konnte nicht geladen werden.</strong><br>
-          Prüfe Dateiname/Endung/Ordner (Groß-/Kleinschreibung, .jpeg vs .jpg).<br>
-          Liegt <code>Tag.jpeg</code> im selben Ordner wie diese <code>index.html</code>?
-        </div>
-      </div>
-    </div>
+    <!-- Bilddatei muss exakt 'Tag.jpeg' heißen und im gleichen Ordner liegen wie diese index.html -->
+    <img src="Tag.jpeg" alt="">
   </main>
 </body>
 </html>
+
 
