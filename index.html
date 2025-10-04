@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2 Sale 4 U</title>
-  <meta name="description" content="#1 personalisiertes Glas-Tag zum Preis von 3 €">
+  <meta name="description" content="#1 personalisiertes Glas-Tag 3 €, #2 Deluxe Kakao 5 €. Jetzt bestellen per E-Mail.">
   <style>
     :root { color-scheme: light dark; }
     * { box-sizing: border-box; }
@@ -16,11 +16,12 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       text-align: center;
       padding: 2rem;
+      line-height: 1.35;
     }
     main { width: min(900px, 100%); }
     h1 { margin: 0; font-size: clamp(2.5rem, 10vw, 6rem); }
     .spacer { height: 2em; }
-    p  { margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); }
+    p  { margin: 0; font-size: clamp(1.1rem, 3.6vw, 1.4rem); }
 
     img {
       display: block;
@@ -31,23 +32,33 @@
       user-select: none;
     }
 
+    /* Karten-/Slot-Styles */
+    .slot {
+      border: 2px dashed #999;
+      border-radius: 12px;
+      padding: 1.25rem;
+      font-weight: 400;
+      font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+      text-align: left;
+    }
+    .slot + .slot { margin-top: 1rem; } /* Abstand, falls Slots untereinander stehen */
+
+    /* Grid für #2 und #3 */
     .slots {
       margin-top: 1.5rem;
       display: grid;
       gap: 1rem;
       grid-template-columns: 1fr;
     }
-    .slot {
-      border: 2px dashed #999;
-      border-radius: 12px;
-      padding: 2rem;
-      font-weight: 400;
-      font-size: clamp(1.6rem, 6vw, 2.4rem);
-      text-align: left;
+    @media (min-width: 720px) {
+      .slots { grid-template-columns: repeat(2, 1fr); }
     }
 
+    .price { font-weight: 700; }
+    .desc { margin-top: .5rem; font-size: clamp(1rem, 3.2vw, 1.1rem); }
+
     footer {
-      margin-top: 2.5rem;
+      margin-top: 2.0rem;
       font-size: 1rem;
       opacity: .9;
     }
@@ -59,26 +70,48 @@
     <h1>2 Sale 4 U</h1>
     <div class="spacer" aria-hidden="true"></div>
 
-    <!-- #1 jetzt auch mit gestrichelter Umrandung -->
+    <!-- #1 jetzt mit gestrichelter Umrandung + Beschreibung -->
     <div class="slot">
-      <p>#1 personalisiertes Glas-Tag 3 €</p>
-      <img src="Tag.jpeg" alt="Personalisierter Glas-Tag" style="max-width:100%;height:auto;margin-top:1rem;">
+      <p><strong>#1 Personalisierter Glas-Tag</strong> <span class="price">3 €</span></p>
+      <p class="desc">
+        Der sinnvolle Helfer, wo sich Leute zur Geselligkeit treffen. Nachhaltig, weil wiederverwendbar.
+        Und kein unnötiges Vollstellen mit Gläsern, von denen keiner mehr weiß, wem es gehörte.
+        Spart den Geldbeutel bei der Spülmaschine und schont die Umwelt.
+      </p>
+      <img
+        src="Tag.jpeg"
+        alt="Personalisierter Glas-Tag mit Gravur"
+        width="900" height="600"
+      >
     </div>
 
-    <!-- #2 und #3 wie gehabt (Fehler entfernt) -->
+    <!-- #2 und #3 im Grid; #2 mit Beschreibung -->
     <div class="slots" aria-label="Weitere Produkte folgen">
       <div class="slot">
-        #2 Deluxe Kakao "All inclusive" 5 €
-        <img src="Tag2.jpeg" alt="Deluxe Kakao (Winter)" style="max-width:100%;height:auto;margin-top:1rem;">
+        <p><strong>#2 Deluxe Kakao „All inclusive“</strong> <span class="price">5 €</span></p>
+        <p class="desc">
+          Das Wohlfühlglas mit der extra Portion Schokolade. Die Kugeln einfach mit heißer Milch übergießen –
+          fertig ist der Winter-Schoko-Traum. Das Glas einfach in die Spülmaschine und beim nächsten Getränk
+          nur den Strohhalm austauschen.
+        </p>
+        <img
+          src="Tag2.jpeg"
+          alt="Deluxe Kakao im Glas mit Schokoladen-Toppings"
+          width="900" height="600"
+        >
       </div>
 
-      <div class="slot">#3</div>
+      <div class="slot">
+        <p><strong>#3</strong> – bald verfügbar</p>
+      </div>
     </div>
 
     <footer>
-      Gib deine Bestellung ab unter <a href="mailto:xxx.@obs-bbg.de">xxx.@obs-bbg.de</a>
+      Gib deine Bestellung ab unter
+      <a href="mailto:shop@obs-bbg.de">shop@obs-bbg.de</a>
     </footer>
   </main>
 </body>
 </html>
+
 
