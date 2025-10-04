@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2 Sale 4 U</title>
-  <meta name="description" content="#1 personalisiertes Glas Tag zum Preis von 3 EUR">
+  <meta name="description" content="#1 personalisiertes Glas-Tag zum Preis von 3 €">
   <style>
     :root { color-scheme: light dark; }
     * { box-sizing: border-box; }
@@ -19,7 +19,7 @@
     }
     main { width: min(900px, 100%); }
     h1 { margin: 0; font-size: clamp(2.5rem, 10vw, 6rem); }
-    .spacer { height: 2em; } /* ~2 Zeilen Abstand */
+    .spacer { height: 2em; }
     p  { margin: 0; font-size: clamp(1.2rem, 4vw, 2rem); }
 
     img {
@@ -27,7 +27,6 @@
       max-width: 100%;
       height: auto;
       margin: 1.5rem auto 0;
-      pointer-events: none;   /* nicht anklickbar */
       -webkit-user-drag: none;
       user-select: none;
     }
@@ -44,6 +43,7 @@
       padding: 2rem;
       font-weight: 400;
       font-size: clamp(1.6rem, 6vw, 2.4rem);
+      text-align: left;
     }
 
     footer {
@@ -59,15 +59,18 @@
     <h1>2 Sale 4 U</h1>
     <div class="spacer" aria-hidden="true"></div>
 
-    <p>#1 personalisiertes Glas Tag 3€</p>
-    <img src="Tag.jpeg" alt="">
+    <!-- #1 jetzt auch mit gestrichelter Umrandung -->
+    <div class="slot">
+      <p>#1 personalisiertes Glas-Tag 3 €</p>
+      <img src="Tag.jpeg" alt="Personalisierter Glas-Tag" style="max-width:100%;height:auto;margin-top:1rem;">
+    </div>
 
-    <!-- vorbereitete Plätze für #2 und #3 -->
+    <!-- #2 und #3 wie gehabt (Fehler entfernt) -->
     <div class="slots" aria-label="Weitere Produkte folgen">
       <div class="slot">
-  #2 Deluxe Kakao "All inclusive" 5€<Deluxe Kakao all inclusive>
-  <img src="Tag2.jpeg" alt="Winter" style="max-width:100%;height:auto;margin-top:1rem;">
-</div>
+        #2 Deluxe Kakao "All inclusive" 5 €
+        <img src="Tag2.jpeg" alt="Deluxe Kakao (Winter)" style="max-width:100%;height:auto;margin-top:1rem;">
+      </div>
 
       <div class="slot">#3</div>
     </div>
@@ -78,3 +81,4 @@
   </main>
 </body>
 </html>
+
