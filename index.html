@@ -4,9 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2 Sale 4 U</title>
-  <meta name="description" content="#1 personalisiertes Glas-Tag 3 €, #2 Deluxe Kakao 5 €. Jetzt bestellen per E-Mail.">
+  <meta name="description" content="Sonderaktion: Glas-Tag jetzt günstiger – Einzel 1,50 €, 5er 4,95 €, 10er 9,95 €. Deluxe Kakao 5 €. Jetzt per E-Mail bestellen.">
+  <meta name="theme-color" content="#ffffff">
   <style>
-    :root { color-scheme: light dark; }
+    :root { color-scheme: light dark; --accent:#d40000; }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -20,30 +21,31 @@
     }
     main { width: min(900px, 100%); }
     h1 { margin: 0; font-size: clamp(2.5rem, 10vw, 6rem); }
+    h2 { margin: 0 0 .25rem; font-size: clamp(1.3rem, 4.5vw, 1.8rem); }
     .spacer { height: 2em; }
-    p  { margin: 0; font-size: clamp(1.1rem, 3.6vw, 1.4rem); }
+    p  { margin: 0; font-size: clamp(1.1rem, 3.6vw, 1.2rem); }
 
     img {
       display: block;
       max-width: 100%;
       height: auto;
-      margin: 1.5rem auto 0;
+      margin: 1.0rem auto 0;
       -webkit-user-drag: none;
       user-select: none;
+      border-radius: 8px;
     }
 
-    /* Karten-/Slot-Styles */
     .slot {
       border: 2px dashed #999;
       border-radius: 12px;
       padding: 1.25rem;
       font-weight: 400;
-      font-size: clamp(1.2rem, 4.5vw, 1.6rem);
+      font-size: clamp(1.1rem, 3.8vw, 1.2rem);
       text-align: left;
+      background: transparent;
     }
-    .slot + .slot { margin-top: 1rem; } /* Abstand, falls Slots untereinander stehen */
+    .slot + .slot { margin-top: 1rem; }
 
-    /* Grid für #2 und #3 */
     .slots {
       margin-top: 1.5rem;
       display: grid;
@@ -57,12 +59,50 @@
     .price { font-weight: 700; }
     .desc { margin-top: .5rem; font-size: clamp(1rem, 3.2vw, 1.1rem); }
 
+    /* Aktion/Preisgestaltung */
+    .badge {
+      display:inline-block; margin-left:.5rem;
+      background: var(--accent); color:#fff; border-radius:.5rem;
+      padding:.1rem .5rem; font-size:.9em; vertical-align: middle;
+    }
+    .price-old {
+      color: var(--accent);
+      text-decoration: line-through;
+      text-decoration-thickness: .12em;
+      text-decoration-color: var(--accent);
+      font-weight: 700;
+    }
+    .price-new { color: var(--accent); font-weight: 800; }
+    .price-list {
+      margin:.5rem 0 0; padding-left:1.1rem;
+      color: var(--accent); font-weight: 700;
+    }
+    .price-list li { margin:.15rem 0; }
+
+    .note {
+      margin-top:.6rem;
+      font-size: .95em;
+      font-weight: 600;
+    }
+    .asterisk-note{
+      margin-top:.4rem;
+      font-size:.95em;
+      color:var(--accent);
+      font-weight:700;
+    }
+
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid #666; outline-offset: 2px; border-radius: 6px;
+    }
+
     footer {
       margin-top: 2.0rem;
-      font-size: 1rem;
+      font-size: .95rem;
       opacity: .9;
     }
-    footer a { color: inherit; }
+    footer small { display: block; margin-top: .25rem; opacity: .9; }
+    footer nav a { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -70,25 +110,49 @@
     <h1>2 Sale 4 U</h1>
     <div class="spacer" aria-hidden="true"></div>
 
-    <!-- #1 jetzt mit gestrichelter Umrandung + Beschreibung -->
-    <div class="slot">
-      <p><strong>#1 Personalisierter Glas-Tag</strong> <span class="price">3 €</span></p>
+    <!-- #1: Sonderaktion mit Altpreis + neuen roten Preisen + Sternchen + Erklärung -->
+    <article class="slot">
+      <h2>
+        #1 Personalisierter Glas-Tag
+        <span class="badge" aria-describedby="deal-note" aria-label="Sonderaktion">*</span>
+      </h2>
+
       <p class="desc">
+        Vorher: <span class="price-old">3 €</span>
+      </p>
+
+      <ul class="price-list" aria-label="Aktionspreise">
+        <li>Einzelpreis: <span class="price-new">1,50 €</span></li>
+        <li>Fünferpack: <span class="price-new">4,95 €</span></li>
+        <li>Zehnerpack: <span class="price-new">9,95 €</span></li>
+      </ul>
+
+      <!-- sichtbare Sternchen-Erklärung direkt beim Produkt -->
+      <p id="deal-note" class="asterisk-note">
+        * Sonderaktion: gültig solange der Vorrat reicht.
+      </p>
+
+      <p class="desc" style="margin-top:.6rem">
         Der sinnvolle Helfer, wo sich Leute zur Geselligkeit treffen. Nachhaltig, weil wiederverwendbar.
         Und kein unnötiges Vollstellen mit Gläsern, von denen keiner mehr weiß, wem es gehörte.
         Spart den Geldbeutel bei der Spülmaschine und schont die Umwelt.
       </p>
+
+      <p class="note">
+        Wichtig: Bitte bei <strong>jeder Bestellung</strong> die <strong>Namen</strong> angeben, die auf die Glas-Tags sollen.
+      </p>
+
       <img
         src="Tag.jpeg"
         alt="Personalisierter Glas-Tag mit Gravur"
         width="900" height="600"
+        loading="eager" fetchpriority="high" decoding="async"
       >
-    </div>
+    </article>
 
-    <!-- #2 und #3 im Grid; #2 mit Beschreibung -->
-    <div class="slots" aria-label="Weitere Produkte folgen">
-      <div class="slot">
-        <p><strong>#2 Deluxe Kakao „All inclusive“</strong> <span class="price">5 €</span></p>
+    <section class="slots" aria-label="Weitere Produkte folgen">
+      <article class="slot">
+        <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· 5 €</span></h2>
         <p class="desc">
           Das Wohlfühlglas mit der extra Portion Schokolade. Die Kugeln einfach mit heißer Milch übergießen –
           fertig ist der Winter-Schoko-Traum. Das Glas einfach in die Spülmaschine und beim nächsten Getränk
@@ -98,20 +162,27 @@
           src="Tag2.jpeg"
           alt="Deluxe Kakao im Glas mit Schokoladen-Toppings"
           width="900" height="600"
+          loading="lazy" decoding="async"
         >
-      </div>
+      </article>
 
-      <div class="slot">
-        <p><strong>#3</strong> – bald verfügbar</p>
-      </div>
-    </div>
+      <article class="slot">
+        <h2>#3 – bald verfügbar</h2>
+        <p class="desc">Trag dich per E-Mail ein, wir informieren dich, sobald #3 da ist.</p>
+      </article>
+    </section>
 
     <footer>
-      Gib deine Bestellung ab unter
-      <a href="mailto:shop@obs-bbg.de">shop@obs-bbg.de</a>
-    </footer>
-  </main>
-</body>
-</html>
+      <p>
+        Bestellung an
+        <a
+          href="mailto:Shop-OBS@web.de?subject=Bestellung%202%20Sale%204%20U&body=Hallo%2C%20ich%20m%C3%B6chte%20bestellen%3A%0A-"
+        >Shop-OBS@web.de</a>
+      </p>
+      <small>* Sonderaktion: solange Vorrat reicht. Preise inkl. MwSt., ggf. zzgl. Versand. Lieferzeit: z. B. 2–4 Werktage.</small>
+      <nav aria-label="Rechtliches">
+        <a href="/impressum.html">Impressum</a> ·
+        <a href="/datenschutz.html">Datenschutz</a>
+
 
 
