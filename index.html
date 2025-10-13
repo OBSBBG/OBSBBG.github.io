@@ -110,7 +110,6 @@
     .success { color:#0a7a30; font-size:.95rem }
     .hidden { display:none }
     hr.sep { border:0; border-top:1px solid #eee; margin:12px 0 }
-    .footer-note { font-size:.85rem; color:#666; margin-top:.5rem }
   </style>
 </head>
 <body>
@@ -270,10 +269,6 @@
       </div>
       <div id="formError" class="error hidden" role="alert"></div>
       <div id="formOk" class="success hidden" role="status">Bestellung gesendet. Danke! Bitte Posteingang/Spam prüfen.</div>
-
-      <div class="footer-note">
-        Hinweis: Mailversand erfolgt über EmailJS (clientseitig). Absender im Template = eure web.de-Adresse. Antworten gehen an die Kundenadresse (Reply-To).
-      </div>
     </form>
 
     <footer>
@@ -289,11 +284,11 @@
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     // =================== KONFIGURATION =========================
-    const EMAILJS_PUBLIC_KEY = "xAOygDJhZcJrXGuSb";   // <- dein Public Key
-    const EMAILJS_SERVICE_ID = "service_l642tri";     // <- deine Service ID
-    const EMAILJS_TEMPLATE_ID = "template_ggtexbv";   // <- deine Template ID
+    const EMAILJS_PUBLIC_KEY = "xAOygDJhZcJrXGuSb";
+    const EMAILJS_SERVICE_ID = "service_l642tri";
+    const EMAILJS_TEMPLATE_ID = "template_ggtexbv";
 
-    // Preise: Produkt 1 Staffel, Produkt 2 fix
+    // Preise
     const PRICES = {
       p1: { single: 1.50, pack5: 4.95, pack10: 9.95 },
       p1PiecesPer: { single: 1, pack5: 5, pack10: 10 },
