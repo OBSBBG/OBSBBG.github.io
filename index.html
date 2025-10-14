@@ -19,12 +19,12 @@
     }
     main{width:min(1000px,100%)}
 
-    /* ===== TICKER ===== */
+    /* ===== TICKER (größer + langsamer) ===== */
     .ticker{width:100%;overflow:hidden;margin:-1rem 0 1rem 0}
-    .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.6rem 0}
-    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 75s linear infinite}
-    .ticker-item{display:inline-flex;align-items:center;gap:.35rem;margin:0 1.25rem}
-    .ticker-item small{opacity:.85;font-weight:700}
+    .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.85rem 0}
+    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 110s linear infinite;font-size:1.05rem}
+    .ticker-item{display:inline-flex;align-items:center;gap:.45rem;margin:0 1.5rem}
+    .ticker-item small{opacity:.9;font-weight:700}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
     /* ===== Hero ===== */
@@ -300,40 +300,40 @@
     document.getElementById('orderForm').addEventListener('submit',async(e)=>{e.preventDefault();el('formError').classList.add('hidden');el('formOk').classList.add('hidden');const v=validate();if(!v.ok){el('formError').textContent=v.msg;el('formError').classList.remove('hidden');return}const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;const p1SubtotalVal=PRICES.p1[pack]*p1Qty;const p2SubtotalVal=PRICES.p2*p2Qty;const cartLines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);const coupon=el('coupon').value.trim();if(coupon)cartLines.push(`Gewinncode: ${coupon}`);const payload={customer_name:el('name').value.trim(),customer_phone:el('phone').value.trim(),customer_email:el('email').value.trim(),items_text:cartLines.join(' | '),total:el('grandTotal').textContent,p1_names:el('p1Names').value,reply_to:el('email').value.trim()};try{const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);if(result&&result.status>=200&&result.status<300){el('formOk').classList.remove('hidden')}else{throw new Error('EmailJS: Unerwartete Antwort')}}catch(err){el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';el('formError').classList.remove('hidden')}});
   </script>
 
-  <!-- ===== FRED-TICKER (mit robustem CORS-Proxy-Fallback) ===== -->
+  <!-- ===== FRED-TICKER erweitert (mit robustem CORS-Proxy-Fallback) ===== -->
   <script>
     const FRED_API_KEY="66cc415ca598043527786a24b0dad230";
-    const SERIES={ cocoa:"PCOCOUSDM", sugar:"PSUGAISAUSDM" }; // IMF: Kakao USD/t, Zucker Cent/lb
+    // IMF-Serien (monatlich, USD/t). Zucker = Cent/lb (No.11)
+    const SERIES={
+      cocoa:"PCOCOUSDM",
+      sugar:"PSUGAISAUSDM",
+      wheat:"PWHEAMTUSDM",
+      corn:"PMAIZMTUSDM",
+      rice:"PRICENPQUSDM" // Thailand
+    };
 
-    // --- robuster Fetch-Helper mit mehreren Fallbacks + Debug-Ausgabe ---
+    // robuster Fetch mit Proxy-Fallback
     async function j(url){
-      // 1) Direkt
       try{
         const r=await fetch(url,{cache:'no-store'});
         if(!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
         return await r.json();
       }catch(e1){
-        console.warn('Direct fetch failed:', e1);
-        // 2) AllOrigins RAW
         try{
           const raw='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
           const r2=await fetch(raw,{cache:'no-store'});
-          if(!r2.ok) throw new Error(`AllOrigins RAW ${r2.status} ${r2.statusText}`);
-          const text=await r2.text();
-          return JSON.parse(text);
+          if(!r2.ok) throw new Error(`AllOrigins RAW ${r2.status}`);
+          return JSON.parse(await r2.text());
         }catch(e2){
-          console.warn('AllOrigins RAW failed:', e2);
-          // 3) AllOrigins JSON (/get -> { contents: "…" })
           try{
             const wrap='https://api.allorigins.win/get?url='+encodeURIComponent(url);
             const r3=await fetch(wrap,{cache:'no-store'});
-            if(!r3.ok) throw new Error(`AllOrigins GET ${r3.status} ${r3.statusText}`);
+            if(!r3.ok) throw new Error(`AllOrigins GET ${r3.status}`);
             const obj=await r3.json();
-            if(!obj || typeof obj.contents!=='string') throw new Error('AllOrigins GET: no contents');
+            if(!obj?.contents) throw new Error('AllOrigins GET: no contents');
             return JSON.parse(obj.contents);
           }catch(e3){
-            console.warn('AllOrigins GET failed:', e3);
-            const err=new Error(`Fetch failed for ${url}: ${e1.message} | ${e2.message} | ${e3.message}`);
+            const err=new Error(`Fetch failed: ${e1.message} | ${e2.message} | ${e3.message}`);
             err._stack={direct:String(e1),raw:String(e2),get:String(e3)};
             throw err;
           }
@@ -358,19 +358,22 @@
 
     async function loadTicker(){
       const usd2eur=await usdToEur();
-      const [cocoaObs,sugarObs]=await Promise.all([
+      const [cocoaObs,sugarObs,wheatObs,cornObs,riceObs]=await Promise.all([
         fredMonthly(SERIES.cocoa,"2024-01-01"),
-        fredMonthly(SERIES.sugar,"2024-01-01")
+        fredMonthly(SERIES.sugar,"2024-01-01"),
+        fredMonthly(SERIES.wheat,"2024-01-01"),
+        fredMonthly(SERIES.corn,"2024-01-01"),
+        fredMonthly(SERIES.rice,"2024-01-01")
       ]);
 
-      function calcCocoa(){
-        if(!cocoaObs.length)return null;
-        const cur=cocoaObs.at(-1).v, prev=cocoaObs.at(-2)?.v??null;
-        const y24=cocoaObs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
+      function calcUSDton(obs){ // für Kakao, Weizen, Mais, Reis (alle USD/t)
+        if(!obs.length)return null;
+        const cur=obs.at(-1).v, prev=obs.at(-2)?.v??null;
+        const y24=obs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
         const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
         return {curEUR:cur*usd2eur,vsPrev:pct(cur,prev),vsY2024:pct(cur,avg24)};
       }
-      function calcSugar(){
+      function calcSugar(){ // Cent/lb -> USD/t -> EUR/t
         if(!sugarObs.length)return null;
         const FACTOR=22.04622; // (cent/lb) -> USD/t
         const curC=sugarObs.at(-1).v, prevC=sugarObs.at(-2)?.v??null;
@@ -380,15 +383,29 @@
         return {curEUR,vsPrev:pct(curC,prevC),vsY2024:pct(curC,avg24)};
       }
 
-      const c=calcCocoa(), s=calcSugar();
-      const cocoaItem=c?`<span class="ticker-item">🍫 Kakao: <strong>${euro0(c.curEUR)}</strong>/t <small>(${signPct(c.vsPrev)} vs VM • ${signPct(c.vsY2024)} vs 2024-Ø)</small></span>`:`<span class="ticker-item">🍫 Kakao: –</span>`;
-      const sugarItem=s?`<span class="ticker-item">🍚 Zucker: <strong>${euro0(s.curEUR)}</strong>/t <small>(${signPct(s.vsPrev)} vs VM • ${signPct(s.vsY2024)} vs 2024-Ø)</small></span>`:`<span class="ticker-item">🍚 Zucker: –</span>`;
-      const source=`<span class="ticker-item">Quelle: IMF über FRED (St. Louis Fed)</span>`;
+      const cocoa=calcUSDton(cocoaObs);
+      const sugar=calcSugar();
+      const wheat=calcUSDton(wheatObs);
+      const corn =calcUSDton(cornObs);
+      const rice =calcUSDton(riceObs);
+
+      const mk=(label,data)=> data
+        ? `<span class="ticker-item">${label}: <strong>${euro0(data.curEUR)}</strong>/t <small>(${signPct(data.vsPrev)} vs VM • ${signPct(data.vsY2024)} vs 2024-Ø)</small></span>`
+        : `<span class="ticker-item">${label}: –</span>`;
+
+      const items = [
+        mk("🍫 Kakao", cocoa),
+        mk("🍚 Zucker", sugar),
+        mk("🌾 Weizen", wheat),
+        mk("🌽 Mais",   corn),
+        mk("🍚 Reis",   rice),
+        `<span class="ticker-item">Quelle: IMF über FRED (St. Louis Fed)</span>`
+      ];
+
       const track=document.getElementById("tickerTrack");
-      if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
+      if(track){ track.innerHTML = items.concat(items).join(""); } // doppelt für lückenloses Band
     }
 
-    // --- besserer Fehlerhinweis direkt im Ticker ---
     loadTicker().catch(err=>{
       console.error('Ticker-Fehler:', err, err._stack || '');
       const t=document.getElementById('tickerTrack');
@@ -396,7 +413,7 @@
         const msg=['⚠️ Ticker-Error', navigator.onLine?'(online)':'(offline)', (err && err.message)?'· '+err.message:''].join(' ');
         t.innerHTML = `
           <span class="ticker-item">${msg}</span>
-          <span class="ticker-item">Hinweis: Schulnetz/Firewall blockiert oft externe APIs. Test via GitHub Pages oder Handy-Hotspot.</span>
+          <span class="ticker-item">Hinweis: Netzwerk/CORS kann blocken. Test via GitHub Pages oder Handy-Hotspot.</span>
           <span class="ticker-item">Quelle: IMF über FRED</span>
         `;
       }
