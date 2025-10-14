@@ -107,10 +107,10 @@
   </style>
 </head>
 <body>
-  <!-- Ticker -->
+  <!-- ===== TICKER ===== -->
   <div class="ticker">
     <div class="ticker-bar">
-      <div id="tickerTrack" class="ticker-track"></div>
+      <div id="tickerTrack" class="ticker-track">Lade Marktdaten …</div>
     </div>
   </div>
 
@@ -280,67 +280,55 @@
     ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));recalc();
     document.getElementById('orderForm').addEventListener('submit',async(e)=>{e.preventDefault();el('formError').classList.add('hidden');el('formOk').classList.add('hidden');const v=validate();if(!v.ok){el('formError').textContent=v.msg;el('formError').classList.remove('hidden');return}const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;const p1SubtotalVal=PRICES.p1[pack]*p1Qty;const p2SubtotalVal=PRICES.p2*p2Qty;const cartLines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);const coupon=el('coupon').value.trim();if(coupon)cartLines.push(`Gewinncode: ${coupon}`);const payload={customer_name:el('name').value.trim(),customer_phone:el('phone').value.trim(),customer_email:el('email').value.trim(),items_text:cartLines.join(' | '),total:el('grandTotal').textContent,p1_names:el('p1Names').value,reply_to:el('email').value.trim()};try{const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);if(result&&result.status>=200&&result.status<300){el('formOk').classList.remove('hidden')}else{throw new Error('EmailJS: Unerwartete Antwort')}}catch(err){el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';el('formError').classList.remove('hidden')}});
 
-    /* ===== Ticker: Vormonats-Ø & Jahres-Ø 2024 ===== */
-    async function j(url){const r=await fetch(url);if(!r.ok)throw new Error('net');return r.json()}
-    function ymd(d){const z=n=>String(n).padStart(2,'0');return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())}
-    function firstDayOfPrevMonth(d){return new Date(d.getFullYear(),d.getMonth()-1,1)}
-    function lastDayOfPrevMonth(d){return new Date(d.getFullYear(),d.getMonth(),0)}
+    /* ===== FRED-TICKER (kostenlos) ===== */
+    const FRED_API_KEY="66cc415ca598043527786a24b0dad230";
+    const SERIES={ cocoa:"PCOCOUSDM", sugar:"PSUGAISAUSDM" }; // IMF: Kakao USD/t, Zucker Cent/lb
+
+    async function j(url){const r=await fetch(url);if(!r.ok)throw new Error("net");return r.json()}
     function pct(cur,base){if(base==null)return null;return (cur-base)/base*100}
-    function signFmtMaybe(v){if(v==null||!isFinite(v))return 'n/a';const s=v>=0?'+':'';return s+v.toFixed(2).replace('.',',')+' %'}
-    function euroFmt(n){return new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
-    function avgInRange(arr,fromStr,toStr){if(!Array.isArray(arr)||!arr.length)return null;const from=new Date(fromStr+'T00:00:00Z').getTime();const to=new Date(toStr+'T23:59:59Z').getTime();let sum=0,n=0;for(const x of arr){if(x?.Date==null||x?.Value==null)continue;const t=new Date(x.Date).getTime();if(t>=from&&t<=to){sum+=Number(x.Value);n++}}return n>0?sum/n:null}
+    function signPct(v){if(v==null||!isFinite(v))return "n/a";const s=v>=0?"+":"";return s+v.toFixed(2).replace(".",",")+" %"}
+    function euro0(n){return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n)}
 
-    async function loadTicker(){
-      const today=new Date();
-      const prevStart=firstDayOfPrevMonth(today), prevEnd=lastDayOfPrevMonth(today);
-      const prevStartStr=ymd(prevStart), prevEndStr=ymd(prevEnd);
+    async function usdToEur(){try{const fx=await j("https://api.exchangerate.host/latest?base=USD&symbols=EUR");return fx?.rates?.EUR??0.93}catch{return 0.93}}
 
-      // USD->EUR
-      let usd2eur=1; try{const fx=await j('https://api.exchangerate.host/latest?base=USD&symbols=EUR');usd2eur=fx?.rates?.EUR??1}catch{usd2eur=0.93}
-
-      async function getCommodity(symbol){
-        try{
-          const curArr=await j(`https://api.tradingeconomics.com/commodity/${symbol}?c=guest:guest&format=json`);
-          const curUSD=Array.isArray(curArr)&&curArr[0]?.Price!=null?Number(curArr[0].Price):null;
-
-          const histPrev=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${prevStartStr}/${prevEndStr}?c=guest:guest&format=json`);
-          const avgPrev=avgInRange(histPrev,prevStartStr,prevEndStr);
-
-          const y2024Start='2024-01-01', y2024End='2024-12-31';
-          const hist2024=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${y2024Start}/${y2024End}?c=guest:guest&format=json`);
-          const avg2024=avgInRange(hist2024,y2024Start,y2024End);
-
-          return {curUSD,avgPrevUSD:avgPrev,avg2024USD:avg2024};
-        }catch{return {curUSD:null,avgPrevUSD:null,avg2024USD:null}}
-      }
-
-      const [cocoa,sugar]=await Promise.all([getCommodity('cocoa'),getCommodity('sugar')]);
-
-      // Zucker: US-Cent/lb -> USD/t: (cents/lb)/100 * 2204.622  => Faktor 0.2204622
-      const SUGAR_TO_TONNE=0.2204622;
-
-      function toEURtonne(c,f){const cur=c.curUSD!=null?c.curUSD*f*usd2eur:null;const mPrev=c.avgPrevUSD!=null?c.avgPrevUSD*f*usd2eur:null;const y2024=c.avg2024USD!=null?c.avg2024USD*f*usd2eur:null;return {cur,mPrev,y2024}}
-      const cocoaEUR=toEURtonne(cocoa,1);
-      const sugarEUR=toEURtonne(sugar,SUGAR_TO_TONNE);
-
-      // Nur aktuelle Preise fallbacken
-      const cCur = (cocoaEUR.cur==null)?3500*usd2eur:cocoaEUR.cur;
-      const sCur = (sugarEUR.cur==null)? 500*usd2eur:sugarEUR.cur;
-
-      const cVsM=pct(cCur,cocoaEUR.mPrev), cVsY=pct(cCur,cocoaEUR.y2024);
-      const sVsM=pct(sCur,sugarEUR.mPrev), sVsY=pct(sCur,sugarEUR.y2024);
-
-      const cocoaItem=`<span class="ticker-item">🍫 Kakao: <strong>${euroFmt(cCur)}</strong>/t <small>(${signFmtMaybe(cVsM)} vs Mon.-Ø • ${signFmtMaybe(cVsY)} vs 2024-Ø)</small></span>`;
-      const sugarItem=`<span class="ticker-item">🍚 Zucker: <strong>${euroFmt(sCur)}</strong>/t <small>(${signFmtMaybe(sVsM)} vs Mon.-Ø • ${signFmtMaybe(sVsY)} vs 2024-Ø)</small></span>`;
-      const source=`<span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`;
-
-      const track=document.getElementById('tickerTrack');
-      if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
+    async function fredMonthly(series_id,start="2024-01-01"){
+      const url=`https://api.stlouisfed.org/fred/series/observations?series_id=${series_id}&api_key=${FRED_API_KEY}&file_type=json&observation_start=${start}`;
+      const d=await j(url);
+      return (d.observations||[]).map(o=>({date:o.date,v:(o.value==="."?null:Number(o.value))})).filter(o=>o.v!=null);
     }
 
-    // Start + Fallback
-    loadTicker().catch(()=>{const track=document.getElementById('tickerTrack');if(track){track.innerHTML=`<span class="ticker-item">🍫 Kakao: –</span><span class="ticker-item">🍚 Zucker: –</span><span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`}});
+    async function loadTicker(){
+      const usd2eur=await usdToEur();
+      const [cocoaObs,sugarObs]=await Promise.all([
+        fredMonthly(SERIES.cocoa,"2024-01-01"),
+        fredMonthly(SERIES.sugar,"2024-01-01")
+      ]);
+
+      function calcCocoa(){
+        if(!cocoaObs.length)return null;
+        const cur=cocoaObs.at(-1).v, prev=cocoaObs.at(-2)?.v??null;
+        const y24=cocoaObs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
+        const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
+        return {curEUR:cur*usd2eur,vsPrev:pct(cur,prev),vsY2024:pct(cur,avg24)};
+      }
+      function calcSugar(){
+        if(!sugarObs.length)return null;
+        const FACTOR=22.04622; // (cent/lb) -> USD/t
+        const curC=sugarObs.at(-1).v, prevC=sugarObs.at(-2)?.v??null;
+        const y24=sugarObs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
+        const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
+        const curEUR=curC*FACTOR*usd2eur;
+        return {curEUR,vsPrev:pct(curC,prevC),vsY2024:pct(curC,avg24)};
+      }
+
+      const c=calcCocoa(), s=calcSugar();
+      const cocoaItem=c?`<span class="ticker-item">🍫 Kakao: <strong>${euro0(c.curEUR)}</strong>/t <small>(${signPct(c.vsPrev)} vs VM • ${signPct(c.vsY2024)} vs 2024-Ø)</small></span>`:`<span class="ticker-item">🍫 Kakao: –</span>`;
+      const sugarItem=s?`<span class="ticker-item">🍚 Zucker: <strong>${euro0(s.curEUR)}</strong>/t <small>(${signPct(s.vsPrev)} vs VM • ${signPct(s.vsY2024)} vs 2024-Ø)</small></span>`:`<span class="ticker-item">🍚 Zucker: –</span>`;
+      const source=`<span class="ticker-item">Quelle: IMF über FRED (St. Louis Fed)</span>`;
+      const track=document.getElementById("tickerTrack");
+      if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
+    }
+    loadTicker().catch(()=>{const t=document.getElementById("tickerTrack");if(t){t.innerHTML=`<span class="ticker-item">🍫 Kakao: –</span><span class="ticker-item">🍚 Zucker: –</span><span class="ticker-item">Quelle: FRED</span>`}});
   </script>
 </body>
 </html>
-```0
