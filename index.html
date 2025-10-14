@@ -7,8 +7,12 @@
   <meta name="description" content="OBS-Die-Firma: Glas-Tags & Deluxe Kakao. Jetzt bestellen und in der Schülerfirma abholen.">
   <meta name="theme-color" content="#003b1f">
   <style>
-    :root{ color-scheme: light dark; --accent-green:#0c8a43; --green:#34c759; --deep-green:#0b5d2a; --gold:#d4af37; --price:#d40000; }
-    *{ box-sizing: border-box }
+    :root{
+      color-scheme: light dark;
+      --accent-green:#0c8a43; --green:#34c759; --deep-green:#0b5d2a; --gold:#d4af37;
+      --price:#d40000;
+    }
+    *{ box-sizing:border-box }
     body{
       margin:0; min-height:100vh; display:grid; place-items:start center;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
@@ -121,64 +125,60 @@
     /* Glas-SVG Größensteuerung */
     .glass { width:72px; height:72px; display:block }
 
-    /* ===== Gewinn-Effekte Overlay ===== */
-    .fx-layer{
-      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:9999;
-    }
+    /* ===== Gewinn-Effekte Overlay (INTENSIV) ===== */
+    .fx-layer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:9999; }
     .obs-logo-fx{
-      position:fixed; left:50%; top:-20vh; transform:translateX(-50%);
+      position:fixed; left:50%; top:-22vh; transform:translateX(-50%);
       font-weight:900; text-transform:uppercase; letter-spacing:.06em;
-      font-size:min(16vw,140px);
+      font-size:min(20vw,180px);
       background:linear-gradient(180deg, var(--deep-green), var(--green));
       -webkit-background-clip:text; background-clip:text; color:transparent;
-      text-shadow:0 4px 20px rgba(0,0,0,.35);
-      filter:drop-shadow(0 6px 20px rgba(0,0,0,.35));
-      animation:fx-drop 700ms cubic-bezier(.2,.8,.2,1) forwards,
-               fx-pulse 1200ms ease-in-out 700ms 2,
-               fx-explode 500ms ease-out 3100ms forwards;
+      text-shadow:0 6px 26px rgba(0,0,0,.45);
+      filter:drop-shadow(0 10px 30px rgba(0,0,0,.45));
+      animation:
+        fx-drop 1200ms cubic-bezier(.2,.8,.2,1) forwards,
+        fx-pulse 1800ms ease-in-out 1200ms 3,
+        fx-explode 700ms ease-out 6600ms forwards;
     }
     @keyframes fx-drop{
-      0%{ top:-20vh; transform:translateX(-50%) scale(.9) }
+      0%{ top:-22vh; transform:translateX(-50%) scale(.88) }
       100%{ top:40vh; transform:translateX(-50%) scale(1) }
     }
     @keyframes fx-pulse{
       0%,100%{ transform:translateX(-50%) scale(1) }
-      50%{ transform:translateX(-50%) scale(1.08) }
+      50%{ transform:translateX(-50%) scale(1.12) }
     }
     @keyframes fx-explode{
-      to{ transform:translateX(-50%) scale(3.2); opacity:0 }
+      to{ transform:translateX(-50%) scale(3.6); opacity:0 }
     }
 
-    .flash{
-      position:fixed; inset:0; opacity:0; pointer-events:none; z-index:9998;
-      mix-blend-mode:screen;
-    }
+    .flash{ position:fixed; inset:0; opacity:0; pointer-events:none; z-index:9998; mix-blend-mode:screen; }
     .flash.green{
-      background:radial-gradient(ellipse at center, rgba(12,138,67,.75), rgba(12,138,67,0) 60%);
-      animation:flash-pop 250ms ease-out 3000ms both;
+      background:radial-gradient(ellipse at center, rgba(12,138,67,.88), rgba(12,138,67,0) 62%);
+      animation:flash-pop 420ms ease-out 6600ms both;
     }
     .flash.gold{
-      background:radial-gradient(ellipse at center, rgba(212,175,55,.75), rgba(212,175,55,0) 60%);
-      animation:flash-pop 250ms ease-out 3050ms both;
+      background:radial-gradient(ellipse at center, rgba(212,175,55,.88), rgba(212,175,55,0) 62%);
+      animation:flash-pop 420ms ease-out 6800ms both;
     }
-    @keyframes flash-pop{
-      from{ opacity:0 }
-      50%{ opacity:1 }
-      to{ opacity:0 }
-    }
+    @keyframes flash-pop{ from{opacity:0} 45%{opacity:1} to{opacity:0} }
 
     .star-fx{
-      position:fixed; font-weight:900; font-size:18px;
-      text-shadow:0 0 10px rgba(0,0,0,.25);
-      opacity:0; transform:scale(.8);
-      animation:star-fade var(--dur, 2.5s) ease-out var(--delay, 0s) forwards;
+      position:fixed; font-weight:900;
+      text-shadow:
+        0 0 14px rgba(0,0,0,.28),
+        0 0 24px currentColor,
+        0 0 46px currentColor;
+      filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 18px currentColor);
+      opacity:0; transform:scale(.85);
+      animation:star-fade var(--dur, 4.8s) ease-out var(--delay, 0s) forwards;
       z-index:9997;
     }
     @keyframes star-fade{
-      0%{ opacity:0; transform:scale(.8) translateY(0) }
-      10%{ opacity:1; transform:scale(1) translateY(-6px) }
-      80%{ opacity:.9 }
-      100%{ opacity:0; transform:scale(1.1) translateY(-14px) }
+      0%   { opacity:0; transform:scale(.85) translateY(0) }
+      12%  { opacity:1; transform:scale(1.05) translateY(-8px) }
+      78%  { opacity:.95 }
+      100% { opacity:0; transform:scale(1.18) translateY(-22px) }
     }
 
     .disabled{ opacity:.6; cursor:not-allowed }
@@ -207,9 +207,7 @@
         <li>Zehnerpack: <span class="price-new">9,95 €</span></li>
       </ul>
       <p id="deal-note" class="asterisk-note">* Sonderaktion: gültig solange der Vorrat reicht.</p>
-      <p class="desc" style="margin-top:.6rem">
-        Der sinnvolle Helfer, wo sich Leute zur Geselligkeit treffen. Nachhaltig, wiederverwendbar und gut für die Umwelt.
-      </p>
+      <p class="desc" style="margin-top:.6rem">Der sinnvolle Helfer, wo sich Leute zur Geselligkeit treffen. Nachhaltig, wiederverwendbar und gut für die Umwelt.</p>
       <p class="note">Wichtig: Bitte bei <strong>jeder Bestellung</strong> die <strong>Namen</strong> angeben, die auf die Glas-Tags sollen.</p>
       <ul class="price-list" aria-label="Material & Pflege Glas-Tags" style="margin-top:.6rem;color:inherit;font-weight:700">
         <li style="color:inherit">Material: PLA, PETG</li>
@@ -221,7 +219,6 @@
 
     <section class="slots" aria-label="Weitere Produkte">
       <article class="slot">
-        <!-- Preis oben schwarz -->
         <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· <span class="price-kakao">5 €</span></span></h2>
         <p class="desc">Kugeln mit heißer Milch übergießen – fertig ist der Winter-Schoko-Traum.</p>
         <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver, Mini-Marshmallows (Supermarktqualität).</p>
@@ -291,7 +288,6 @@
         <div class="row">
           <div>
             <label>Produkt 2: Deluxe Kakao</label>
-            <!-- Preis unten schwarz -->
             <div class="muted">Stückpreis: <span class="price-kakao" id="p2PriceLabel">5,00</span> €</div>
           </div>
           <div><label for="p2Qty">Menge</label><input id="p2Qty" name="p2Qty" type="number" min="0" value="0" /></div>
@@ -377,18 +373,14 @@
     }
 
     function newBoard(){
-      // Blockieren, falls Start-Cooldown aktiv
-      if (startLocked) return;
-
-      // Genau 7 verschiedene Farben: 1× dreifach, 6× einzeln
+      if (startLocked) return;  // gesperrt bis Cooldown durch
+      // 7 verschiedene Farben ins Board: 1× dreifach, 6× einzeln
       const seven = pickUnique(COLORS, 7);
       const winColor = seven[Math.floor(Math.random()*seven.length)];
-
       const tiles = [];
       for(let i=0;i<3;i++) tiles.push(winColor);
       const others = seven.filter(c => c !== winColor).slice(0, 6);
       tiles.push(...others);
-
       board = tiles.map(c=>({c,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.c);
 
       // Reset
@@ -399,7 +391,7 @@
 
       renderBoard();
 
-      // Buttons umschalten
+      // Buttons
       el('startGameBtn').classList.add('hidden');
       el('newGameBtn').classList.remove('hidden');
       el('cooldownPill').classList.add('hidden');
@@ -430,7 +422,6 @@
       tile.classList.add('revealed');
       const cover = tile.querySelector('.cover'); cover.style.opacity='0';
 
-      // zähle Farben der aufgedeckten Felder
       const counts={}; revealed.forEach(i=>{ const c=board[i]; counts[c]=(counts[c]||0)+1; });
       const maxSame = Math.max(...Object.values(counts));
       el('matchCount').textContent = String(maxSame);
@@ -440,7 +431,7 @@
         el('gameMsg').innerHTML = `<span class="win">Gewonnen! 🎉 Du erhältst einen Glas-Tag gratis zu deiner Bestellung.</span>`;
         const couponEl = el('coupon');
         if (couponEl && !couponEl.value.trim()) { couponEl.value = 'Shop'; recalc(); }
-        winEffects(); // OBS-Logo + Sterne + Blitze
+        winEffects();
         endGameStartCooldown();
         return;
       }
@@ -456,8 +447,8 @@
     function endGameStartCooldown(){
       gamesPlayed += 1;
       const delaySec = gamesPlayed * 5; // 5s, 10s, 15s, ...
-      // Buttons sperren, Grid bleibt sichtbar
       startLocked = delaySec > 0;
+
       const startBtn = el('startGameBtn');
       const newBtn   = el('newGameBtn');
       startBtn.classList.remove('hidden');
@@ -466,19 +457,22 @@
       if (!startLocked) return;
 
       startBtn.classList.add('disabled');
-      el('cooldownPill').classList.remove('hidden');
-      startCooldownRemaining = delaySec;
-      el('cooldownSec').textContent = String(startCooldownRemaining);
+      const pill = el('cooldownPill');
+      const out  = el('cooldownSec');
+      pill.classList.remove('hidden');
+      let remain = delaySec;
+      out.textContent = String(remain);
+
       clearInterval(startCooldownTimer);
       startCooldownTimer = setInterval(()=>{
-        startCooldownRemaining -= 1;
-        if (startCooldownRemaining <= 0){
+        remain -= 1;
+        if (remain <= 0){
           clearInterval(startCooldownTimer);
           startLocked = false;
-          el('cooldownPill').classList.add('hidden');
+          pill.classList.add('hidden');
           startBtn.classList.remove('disabled');
         } else {
-          el('cooldownSec').textContent = String(startCooldownRemaining);
+          out.textContent = String(remain);
         }
       }, 1000);
     }
@@ -490,41 +484,40 @@
       layer.className = 'fx-layer';
       document.body.appendChild(layer);
 
-      // OBS-Logo
+      // OBS-Logo (Timings in CSS)
       const logo = document.createElement('div');
       logo.className = 'obs-logo-fx';
       logo.textContent = 'OBS';
       layer.appendChild(logo);
 
       // Lichtblitze
-      const flashG = document.createElement('div');
-      flashG.className = 'flash green';
-      const flashGold = document.createElement('div');
-      flashGold.className = 'flash gold';
-      layer.appendChild(flashG);
-      layer.appendChild(flashGold);
+      const flashG = document.createElement('div'); flashG.className = 'flash green';
+      const flashGold = document.createElement('div'); flashGold.className = 'flash gold';
+      layer.appendChild(flashG); layer.appendChild(flashGold);
 
-      // Sterne
+      // Viele & größere Sterne, lange Dauer
       const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
       const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-      const STAR_COUNT = 60;
+      const STAR_COUNT = 160;
       for (let i=0;i<STAR_COUNT;i++){
         const s = document.createElement('span');
         s.className = 'star-fx';
-        s.textContent = Math.random() < 0.6 ? '✦' : '✸';
-        const color = Math.random() < 0.55 ? 'var(--green)' : 'var(--gold)';
-        s.style.color = color;
-        const x = Math.random()*vw;
-        const y = Math.random()*vh;
-        s.style.left = x + 'px';
-        s.style.top  = y + 'px';
-        s.style.setProperty('--delay', (0.2 + Math.random()*1.8).toFixed(2)+'s');
-        s.style.setProperty('--dur', (2.2 + Math.random()*2.8).toFixed(2)+'s');
+        s.textContent = (Math.random() < 0.65) ? '✦' : (Math.random() < 0.5 ? '✸' : '✪');
+        const isGreen = Math.random() < 0.58;
+        s.style.color = isGreen ? 'var(--green)' : 'var(--gold)';
+        const size = 20 + Math.random()*24; // 20–44px
+        s.style.fontSize = size.toFixed(0) + 'px';
+        s.style.left = (Math.random()*vw) + 'px';
+        s.style.top  = (Math.random()*vh) + 'px';
+        const delay = 0.1 + Math.random()*1.6;
+        const dur   = 3.8 + Math.random()*3.2;
+        s.style.setProperty('--delay', delay.toFixed(2)+'s');
+        s.style.setProperty('--dur',   dur.toFixed(2)+'s');
         layer.appendChild(s);
       }
 
-      // Aufräumen nach ~6s
-      setTimeout(()=>{ layer.remove(); }, 6000);
+      // Aufräumen nach 9s (alles konnte auslaufen)
+      setTimeout(()=>{ layer.remove(); }, 9000);
     }
 
     // Buttons
@@ -548,8 +541,13 @@
       el('p2Subtotal').value=formatEUR(p2Subtotal);
       el('grandTotal').textContent=formatEUR(total);
 
-      if(p1Pieces>0){ el('p1NamesBlock').classList.remove('hidden'); }
-      else{ el('p1NamesBlock').classList.add('hidden'); el('p1Names').value=''; el('p1NamesError').classList.add('hidden'); }
+      if(p1Pieces>0){
+        el('p1NamesBlock').classList.remove('hidden');
+      }else{
+        el('p1NamesBlock').classList.add('hidden');
+        el('p1Names').value='';
+        el('p1NamesError').classList.add('hidden');
+      }
 
       const lines=[];
       if(p1Qty>0){
@@ -582,7 +580,9 @@
         if(names.length!==p1Pieces){
           el('p1NamesError').classList.remove('hidden');
           return {ok:false,msg:`Anzahl der Glas-Tag-Namen (${names.length}) passt nicht zur Stückzahl (${p1Pieces}).`};
-        } else { el('p1NamesError').classList.add('hidden'); }
+        } else {
+          el('p1NamesError').classList.add('hidden');
+        }
       }
       return {ok:true};
     }
