@@ -9,7 +9,14 @@
   <style>
     :root{color-scheme:light dark;--accent-green:#0c8a43;--green:#34c759;--deep-green:#0b5d2a;--gold:#d4af37;--price:#d40000}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;display:grid;place-items:start center;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;text-align:center;padding:2rem;line-height:1.35;background:radial-gradient(1200px 600px at 10% -10%, rgba(0,180,90,.10), transparent 60%),radial-gradient(800px 400px at 110% -20%, rgba(0,60,30,.10), transparent 60%),radial-gradient(1200px 600px at 50% 120%, rgba(0,0,0,.06), transparent 60%),#fff}
+    body{
+      margin:0;min-height:100vh;display:grid;place-items:start center;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      text-align:center;padding:2rem;line-height:1.35;
+      background:radial-gradient(1200px 600px at 10% -10%, rgba(0,180,90,.10), transparent 60%),
+                 radial-gradient(800px 400px at 110% -20%, rgba(0,60,30,.10), transparent 60%),
+                 radial-gradient(1200px 600px at 50% 120%, rgba(0,0,0,.06), transparent 60%), #fff
+    }
     main{width:min(1000px,100%)}
 
     /* ===== TICKER ===== */
@@ -23,9 +30,21 @@
     /* ===== Hero ===== */
     .hero{margin:0 0 1.5rem;text-align:center;perspective:1000px}
     .brand-wrap{position:relative;display:inline-block}
-    .brand{margin:0;text-transform:uppercase;letter-spacing:.06em;font-weight:900;font-size:clamp(3rem,12vw,7rem);line-height:.95;background:linear-gradient(180deg,#0b5d2a 0%,#0c8a43 35%,#34c759 65%,#c8ffd8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.25),0 8px 30px rgba(0,0,0,.25);filter:saturate(1.08) contrast(1.06);transform-style:preserve-3d;transform-origin:center;animation:slowFlip 18s linear infinite;position:relative}
+    .brand{
+      margin:0;text-transform:uppercase;letter-spacing:.06em;font-weight:900;
+      font-size:clamp(3rem,12vw,7rem);line-height:.95;
+      background:linear-gradient(180deg,#0b5d2a 0%,#0c8a43 35%,#34c759 65%,#c8ffd8 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      text-shadow:0 1px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.25),0 8px 30px rgba(0,0,0,.25);
+      filter:saturate(1.08) contrast(1.06);
+      transform-style:preserve-3d;transform-origin:center;animation:slowFlip 18s linear infinite;position:relative
+    }
     @keyframes slowFlip{0%{transform:rotateX(0)}50%{transform:rotateX(180deg)}100%{transform:rotateX(360deg)}}
-    .brand::before{content:"";position:absolute;inset:-6% -10%;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.35) 12%,rgba(255,255,255,0) 24%);transform:translateX(-130%) skewX(-10deg);filter:blur(.5px);mix-blend-mode:screen;animation:shine 6s ease-in-out infinite}
+    .brand::before{
+      content:"";position:absolute;inset:-6% -10%;pointer-events:none;
+      background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.35) 12%,rgba(255,255,255,0) 24%);
+      transform:translateX(-130%) skewX(-10deg);filter:blur(.5px);mix-blend-mode:screen;animation:shine 6s ease-in-out infinite
+    }
     @keyframes shine{0%{transform:translateX(-130%) skewX(-10deg)}55%,100%{transform:translateX(135%) skewX(-10deg)}}
     .brand-stars{position:absolute;inset:-22% -10% -8% -10%;pointer-events:none}
     .star{position:absolute;font-size:clamp(14px,2.8vw,24px);color:#fff;text-shadow:0 0 6px rgba(52,199,89,.9),0 0 16px rgba(12,138,67,.7),0 0 28px rgba(12,138,67,.4);opacity:0;transform:scale(.6);animation:twinkle 3.2s ease-out infinite}
@@ -279,24 +298,46 @@
     function validate(){if(el('hp_field').value)return{ok:false,msg:'Spam erkannt.'};const name=el('name').value.trim();const phone=el('phone').value.trim();const email=el('email').value.trim();const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;if(!name||!phone||!email)return{ok:false,msg:'Bitte Name, Telefon und E-Mail ausfüllen.'};if(p1Qty+p2Qty===0)return{ok:false,msg:'Bitte mindestens ein Produkt auswählen.'};if(p1Pieces>0){const names=el('p1Names').value.split('\n').map(s=>s.trim()).filter(Boolean);if(names.length!==p1Pieces){el('p1NamesError').classList.remove('hidden');return{ok:false,msg:`Anzahl der Glas-Tag-Namen (${names.length}) passt nicht zur Stückzahl (${p1Pieces}).`}}else{el('p1NamesError').classList.add('hidden')}}return{ok:true}}
     ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));recalc();
     document.getElementById('orderForm').addEventListener('submit',async(e)=>{e.preventDefault();el('formError').classList.add('hidden');el('formOk').classList.add('hidden');const v=validate();if(!v.ok){el('formError').textContent=v.msg;el('formError').classList.remove('hidden');return}const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;const p1SubtotalVal=PRICES.p1[pack]*p1Qty;const p2SubtotalVal=PRICES.p2*p2Qty;const cartLines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);const coupon=el('coupon').value.trim();if(coupon)cartLines.push(`Gewinncode: ${coupon}`);const payload={customer_name:el('name').value.trim(),customer_phone:el('phone').value.trim(),customer_email:el('email').value.trim(),items_text:cartLines.join(' | '),total:el('grandTotal').textContent,p1_names:el('p1Names').value,reply_to:el('email').value.trim()};try{const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);if(result&&result.status>=200&&result.status<300){el('formOk').classList.remove('hidden')}else{throw new Error('EmailJS: Unerwartete Antwort')}}catch(err){el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';el('formError').classList.remove('hidden')}});
+  </script>
 
-    /* ===== FRED-TICKER (mit CORS-Proxy-Fallback) ===== */
+  <!-- ===== FRED-TICKER (mit robustem CORS-Proxy-Fallback) ===== -->
+  <script>
     const FRED_API_KEY="66cc415ca598043527786a24b0dad230";
     const SERIES={ cocoa:"PCOCOUSDM", sugar:"PSUGAISAUSDM" }; // IMF: Kakao USD/t, Zucker Cent/lb
 
-    // Fetch-Helper mit Proxy-Fallback (AllOrigins)
+    // --- robuster Fetch-Helper mit mehreren Fallbacks + Debug-Ausgabe ---
     async function j(url){
+      // 1) Direkt
       try{
-        const r = await fetch(url, {cache:'no-store'});
-        if(!r.ok) throw new Error(`HTTP ${r.status}`);
+        const r=await fetch(url,{cache:'no-store'});
+        if(!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
         return await r.json();
-      }catch(err){
-        const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-        const r2 = await fetch(proxy, {cache:'no-store'});
-        if(!r2.ok) throw new Error(`Proxy HTTP ${r2.status}`);
-        const text = await r2.text();
-        try{ return JSON.parse(text); }
-        catch(parseErr){ console.error('Proxy JSON parse error:', parseErr, text.slice(0,200)); throw parseErr; }
+      }catch(e1){
+        console.warn('Direct fetch failed:', e1);
+        // 2) AllOrigins RAW
+        try{
+          const raw='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
+          const r2=await fetch(raw,{cache:'no-store'});
+          if(!r2.ok) throw new Error(`AllOrigins RAW ${r2.status} ${r2.statusText}`);
+          const text=await r2.text();
+          return JSON.parse(text);
+        }catch(e2){
+          console.warn('AllOrigins RAW failed:', e2);
+          // 3) AllOrigins JSON (/get -> { contents: "…" })
+          try{
+            const wrap='https://api.allorigins.win/get?url='+encodeURIComponent(url);
+            const r3=await fetch(wrap,{cache:'no-store'});
+            if(!r3.ok) throw new Error(`AllOrigins GET ${r3.status} ${r3.statusText}`);
+            const obj=await r3.json();
+            if(!obj || typeof obj.contents!=='string') throw new Error('AllOrigins GET: no contents');
+            return JSON.parse(obj.contents);
+          }catch(e3){
+            console.warn('AllOrigins GET failed:', e3);
+            const err=new Error(`Fetch failed for ${url}: ${e1.message} | ${e2.message} | ${e3.message}`);
+            err._stack={direct:String(e1),raw:String(e2),get:String(e3)};
+            throw err;
+          }
+        }
       }
     }
 
@@ -346,12 +387,20 @@
       const track=document.getElementById("tickerTrack");
       if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
     }
+
+    // --- besserer Fehlerhinweis direkt im Ticker ---
     loadTicker().catch(err=>{
-      console.error("Ticker-Fehler:", err);
-      const t=document.getElementById("tickerTrack");
-      if(t){t.innerHTML=`<span class="ticker-item">⚠️ Ticker-Error (siehe Console)</span>`}
+      console.error('Ticker-Fehler:', err, err._stack || '');
+      const t=document.getElementById('tickerTrack');
+      if(t){
+        const msg=['⚠️ Ticker-Error', navigator.onLine?'(online)':'(offline)', (err && err.message)?'· '+err.message:''].join(' ');
+        t.innerHTML = `
+          <span class="ticker-item">${msg}</span>
+          <span class="ticker-item">Hinweis: Schulnetz/Firewall blockiert oft externe APIs. Test via GitHub Pages oder Handy-Hotspot.</span>
+          <span class="ticker-item">Quelle: IMF über FRED</span>
+        `;
+      }
     });
   </script>
 </body>
 </html>
-```0
