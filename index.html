@@ -13,7 +13,7 @@
     main{width:min(1000px,100%)}
     .ticker{width:100%;overflow:hidden;margin:-1rem 0 1rem 0}
     .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.6rem 0}
-    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 45s linear infinite}
+    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 75s linear infinite}
     .ticker-item{display:inline-flex;align-items:center;gap:.35rem;margin:0 1.25rem}
     .ticker-item small{opacity:.85;font-weight:700}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
@@ -231,13 +231,16 @@
     const EMAILJS_SERVICE_ID="service_l642tri";
     const EMAILJS_TEMPLATE_ID="template_ggtexbv";
     const PRICES={p1:{single:1.50,pack5:4.95,pack10:9.95},p1PiecesPer:{single:1,pack5:5,pack10:10},p2:5.00};
+
     (function(){emailjs.init(EMAILJS_PUBLIC_KEY)})();
     const el=(id)=>document.getElementById(id);
     const formatEUR=(n)=>n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
     const formatLines=(arr)=>arr.join(' | ');
+
     const COLORS=["#e74c3c","#f39c12","#f1c40f","#2ecc71","#3498db","#9b59b6","#e67e22","#1abc9c","#e84393"];
     let board=[],revealed=new Set(),triesLeft=0,won=false;
     let gamesPlayed=0,startLocked=false,startCooldownTimer=null;
+
     function glassSVG(color){const c=color;return `<svg class="glass" viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="18" width="56" height="70" rx="10" ry="10" fill="url(#g1)" stroke="#d0d0d0" stroke-width="2"/><rect x="26" y="48" width="48" height="36" rx="8" ry="8" fill="${c}" opacity="0.9"/><rect x="26" y="22" width="8" height="52" rx="4" fill="#ffffff" opacity="0.35"/><g transform="translate(70,30)"><circle r="10" fill="#2d2d2d"/><circle r="3.2" cx="-3" cy="-3" fill="#d9d9d9"/></g><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfdfd"/><stop offset="1" stop-color="#efefef"/></linearGradient></defs></svg>`}
     function pickUnique(a,k){const c=a.slice().map(x=>({x,r:Math.random()})).sort((p,q)=>p.r-q.r).map(o=>o.x);return c.slice(0,k)}
     function newBoard(){if(startLocked)return;const seven=pickUnique(COLORS,7);const winColor=seven[Math.floor(Math.random()*seven.length)];const tiles=[];for(let i=0;i<3;i++)tiles.push(winColor);const others=seven.filter(c=>c!==winColor).slice(0,6);tiles.push(...others);board=tiles.map(c=>({c,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.c);revealed.clear();triesLeft=5;won=false;el('triesLeft').textContent=String(triesLeft);el('matchCount').textContent="0";el('gameMsg').textContent="";renderBoard();el('startGameBtn').classList.add('hidden');el('newGameBtn').classList.remove('hidden');el('cooldownPill').classList.add('hidden')}
@@ -247,49 +250,49 @@
     function winEffects(){const layer=document.createElement('div');layer.className='fx-layer';document.body.appendChild(layer);const logo=document.createElement('div');logo.className='obs-logo-fx';logo.textContent='OBS';layer.appendChild(logo);const flashG=document.createElement('div');flashG.className='flash green';const flashGold=document.createElement('div');flashGold.className='flash gold';layer.appendChild(flashG);layer.appendChild(flashGold);const vw=Math.max(document.documentElement.clientWidth||0,window.innerWidth||0);const vh=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);const STAR_COUNT=160;for(let i=0;i<STAR_COUNT;i++){const s=document.createElement('span');s.className='star-fx';s.textContent=(Math.random()<0.65)?'✦':(Math.random()<0.5?'✸':'✪');const isGreen=Math.random()<0.58;s.style.color=isGreen?'var(--green)':'var(--gold)';const size=20+Math.random()*24;s.style.fontSize=size.toFixed(0)+'px';s.style.left=(Math.random()*vw)+'px';s.style.top=(Math.random()*vh)+'px';const delay=0.1+Math.random()*1.6;const dur=3.8+Math.random()*3.2;s.style.setProperty('--delay',delay.toFixed(2)+'s');s.style.setProperty('--dur',dur.toFixed(2)+'s');layer.appendChild(s)}setTimeout(()=>{layer.remove()},9000)}
     el('startGameBtn').addEventListener('click',newBoard);
     el('newGameBtn').addEventListener('click',newBoard);
+
     function recalc(){const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;el('p1PiecesHint').textContent=`Aktuell: ${p1Pieces} Stück`;const p1Subtotal=PRICES.p1[pack]*p1Qty;const p2Subtotal=PRICES.p2*p2Qty;const total=p1Subtotal+p2Subtotal;el('p1Subtotal').value=formatEUR(p1Subtotal);el('p2Subtotal').value=formatEUR(p2Subtotal);el('grandTotal').textContent=formatEUR(total);if(p1Pieces>0){el('p1NamesBlock').classList.remove('hidden')}else{el('p1NamesBlock').classList.add('hidden');el('p1Names').value='';el('p1NamesError').classList.add('hidden')}const lines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');lines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1Subtotal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)lines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2Subtotal)}`);const coupon=el('coupon').value.trim();if(coupon)lines.push(`Gewinncode: ${coupon}`);el('cartPreview').textContent=lines.length?formatLines(lines):'Noch keine Artikel.'}
     function validate(){if(el('hp_field').value)return{ok:false,msg:'Spam erkannt.'};const name=el('name').value.trim();const phone=el('phone').value.trim();const email=el('email').value.trim();const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;if(!name||!phone||!email)return{ok:false,msg:'Bitte Name, Telefon und E-Mail ausfüllen.'};if(p1Qty+p2Qty===0)return{ok:false,msg:'Bitte mindestens ein Produkt auswählen.'};if(p1Pieces>0){const names=el('p1Names').value.split('\n').map(s=>s.trim()).filter(Boolean);if(names.length!==p1Pieces){el('p1NamesError').classList.remove('hidden');return{ok:false,msg:`Anzahl der Glas-Tag-Namen (${names.length}) passt nicht zur Stückzahl (${p1Pieces}).`}}else{el('p1NamesError').classList.add('hidden')}}return{ok:true}}
     ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));recalc();
+
     document.getElementById('orderForm').addEventListener('submit',async(e)=>{e.preventDefault();el('formError').classList.add('hidden');el('formOk').classList.add('hidden');const v=validate();if(!v.ok){el('formError').textContent=v.msg;el('formError').classList.remove('hidden');return}const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;const p1SubtotalVal=PRICES.p1[pack]*p1Qty;const p2SubtotalVal=PRICES.p2*p2Qty;const cartLines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);const coupon=el('coupon').value.trim();if(coupon)cartLines.push(`Gewinncode: ${coupon}`);const payload={customer_name:el('name').value.trim(),customer_phone:el('phone').value.trim(),customer_email:el('email').value.trim(),items_text:cartLines.join(' | '),total:el('grandTotal').textContent,p1_names:el('p1Names').value,reply_to:el('email').value.trim()};try{const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);if(result&&result.status>=200&&result.status<300){el('formOk').classList.remove('hidden')}else{throw new Error('EmailJS: Unerwartete Antwort')}}catch(err){el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';el('formError').classList.remove('hidden')}});
 
     async function j(url){const r=await fetch(url);if(!r.ok)throw new Error('net');return r.json()}
     function ymd(d){const z=n=>String(n).padStart(2,'0');return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())}
     function shift(d,{days=0,months=0,years=0}){const t=new Date(d);t.setFullYear(t.getFullYear()+years);t.setMonth(t.getMonth()+months);t.setDate(t.getDate()+days);return t}
-    function pct(cur,base){if(!base||base===0)return 0;return (cur-base)/base*100}
-    function signFmt(v){const s=v>=0?'+':'';return s+v.toFixed(2).replace('.',',')+' %'}
+    function pct(cur,base){if(base==null)return null;return (cur-base)/base*100}
+    function signFmtMaybe(v){if(v==null||!isFinite(v))return 'n/a';const s=v>=0?'+':'';return s+v.toFixed(2).replace('.',',')+' %'}
     function euroFmt(n){return new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
-    function lastOnOrBefore(arr,targetDateStr){if(!Array.isArray(arr)||!arr.length)return null;const target=new Date(targetDateStr+'T23:59:59Z').getTime();let best=null,bestTime=-Infinity;for(const x of arr){if(!x.Date||x.Value==null)continue;const t=new Date(x.Date).getTime();if(t<=target&&t>bestTime){best=x;bestTime=t}}if(!best){const last=arr[arr.length-1];return last&&last.Value!=null?Number(last.Value):null}return Number(best.Value)}
+    function lastOnOrBefore(arr,targetDateStr){if(!Array.isArray(arr)||!arr.length)return null;const target=new Date(targetDateStr+'T23:59:59Z').getTime();let best=null,bestTime=-Infinity;for(const x of arr){if(x?.Date==null||x?.Value==null)continue;const t=new Date(x.Date).getTime();if(t<=target&&t>bestTime){best=x;bestTime=t}}if(!best)return null;return Number(best.Value)}
+
     async function loadTicker(){
       const today=new Date();
-      const d0=ymd(today);
-      const dDay=ymd(shift(today,{days:-1}));
-      const dMon=ymd(shift(today,{months:-1}));
-      const dYear=ymd(shift(today,{years:-1}));
-      let usd2eur=1;
-      try{const fx=await j('https://api.exchangerate.host/latest?base=USD&symbols=EUR');usd2eur=fx&&fx.rates&&fx.rates.EUR?fx.rates.EUR:1}catch(e){usd2eur=0.93}
+      const d0=ymd(today), dDay=ymd(shift(today,{days:-1})), dMon=ymd(shift(today,{months:-1})), dYear=ymd(shift(today,{years:-1}));
+      let usd2eur=1; try{const fx=await j('https://api.exchangerate.host/latest?base=USD&symbols=EUR');usd2eur=fx?.rates?.EUR??1}catch{usd2eur=0.93}
       async function getCommodity(symbol){
         try{
           const curArr=await j(`https://api.tradingeconomics.com/commodity/${symbol}?c=guest:guest&format=json`);
-          const curUSD=(Array.isArray(curArr)&&curArr[0]&&curArr[0].Price!=null)?Number(curArr[0].Price):null;
-          const h7=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-7}))}/${d0}?c=guest:guest&format=json`);
-          const h40=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-40}))}/${d0}?c=guest:guest&format=json`);
+          const curUSD=Array.isArray(curArr)&&curArr[0]?.Price!=null?Number(curArr[0].Price):null;
+          const h7  =await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-7}))}/${d0}?c=guest:guest&format=json`);
+          const h40 =await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-40}))}/${d0}?c=guest:guest&format=json`);
           const h370=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-370}))}/${d0}?c=guest:guest&format=json`);
           const pDay=lastOnOrBefore(h7,dDay);
           const pMon=lastOnOrBefore(h40,dMon);
-          const pYr=lastOnOrBefore(h370,dYear);
-          return {curUSD:curUSD,pDay:pDay,pMon:pMon,pYr:pYr}
-        }catch(e){return {curUSD:null,pDay:null,pMon:null,pYr:null}}
+          const pYr =lastOnOrBefore(h370,dYear);
+          return {curUSD,pDay,pMon,pYr};
+        }catch{return {curUSD:null,pDay:null,pMon:null,pYr:null}}
       }
       const [cocoa,sugar]=await Promise.all([getCommodity('cocoa'),getCommodity('sugar')]);
-      const SUGAR_TO_TONNE=22.04622;
+      const SUGAR_TO_TONNE=0.2204622;
       function toEURtonne(c,toTonFactor){const cur=c.curUSD!=null?c.curUSD*toTonFactor*usd2eur:null;const d=c.pDay!=null?c.pDay*toTonFactor*usd2eur:null;const m=c.pMon!=null?c.pMon*toTonFactor*usd2eur:null;const y=c.pYr!=null?c.pYr*toTonFactor*usd2eur:null;return {cur,d,m,y}}
       const cocoaEUR=toEURtonne(cocoa,1);
       const sugarEUR=toEURtonne(sugar,SUGAR_TO_TONNE);
-      function safe(v,fb){return (v==null||Number.isNaN(v))?fb:v}
-      let cCur=safe(cocoaEUR.cur,3500*usd2eur),cD=safe(cocoaEUR.d,cCur),cM=safe(cocoaEUR.m,cCur),cY=safe(cocoaEUR.y,cCur);
-      let sCur=safe(sugarEUR.cur,500*usd2eur),sD=safe(sugarEUR.d,sCur),sM=safe(sugarEUR.m,sCur),sY=safe(sugarEUR.y,sCur);
-      const cocoaItem=`<span class="ticker-item">🍫 Kakao: <strong>${euroFmt(cCur)}</strong>/t <small>(${signFmt(pct(cCur,cD))} vs VT • ${signFmt(pct(cCur,cM))} vs VM • ${signFmt(pct(cCur,cY))} vs VJ)</small></span>`;
-      const sugarItem=`<span class="ticker-item">🍚 Zucker: <strong>${euroFmt(sCur)}</strong>/t <small>(${signFmt(pct(sCur,sD))} vs VT • ${signFmt(pct(sCur,sM))} vs VM • ${signFmt(pct(sCur,sY))} vs VJ)</small></span>`;
+      const cCur=(cocoaEUR.cur==null)?3500*usd2eur:cocoaEUR.cur;
+      const sCur=(sugarEUR.cur==null)?500*usd2eur:sugarEUR.cur;
+      const cD=pct(cCur,cocoaEUR.d), cM=pct(cCur,cocoaEUR.m), cY=pct(cCur,cocoaEUR.y);
+      const sD=pct(sCur,sugarEUR.d), sM=pct(sCur,sugarEUR.m), sY=pct(sCur,sugarEUR.y);
+      const cocoaItem=`<span class="ticker-item">🍫 Kakao: <strong>${euroFmt(cCur)}</strong>/t <small>(${signFmtMaybe(cD)} vs VT • ${signFmtMaybe(cM)} vs VM • ${signFmtMaybe(cY)} vs VJ)</small></span>`;
+      const sugarItem=`<span class="ticker-item">🍚 Zucker: <strong>${euroFmt(sCur)}</strong>/t <small>(${signFmtMaybe(sD)} vs VT • ${signFmtMaybe(sM)} vs VM • ${signFmtMaybe(sY)} vs VJ)</small></span>`;
       const source=`<span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`;
       const track=document.getElementById('tickerTrack');
       if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
