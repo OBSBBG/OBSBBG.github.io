@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>OBS-Die-Firma – Sortiment</title>
   <meta name="description" content="OBS-Die-Firma: Glas-Tags & Deluxe Kakao. Jetzt bestellen und in der Schülerfirma abholen.">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#003b1f">
   <style>
-    :root { color-scheme: light dark; --accent:#d40000; }
+    :root { color-scheme: light dark; --accent:#0c8a43; }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -19,8 +19,8 @@
       padding: 2rem;
       line-height: 1.35;
       background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(255,215,0,.10), transparent 60%),
-        radial-gradient(800px 400px at 110% -20%, rgba(212,0,0,.10), transparent 60%),
+        radial-gradient(1200px 600px at 10% -10%, rgba(0,180,90,.10), transparent 60%),
+        radial-gradient(800px 400px at 110% -20%, rgba(0,60,30,.10), transparent 60%),
         radial-gradient(1200px 600px at 50% 120%, rgba(0,0,0,.06), transparent 60%),
         #fff;
     }
@@ -39,26 +39,53 @@
       font-weight: 900;
       font-size: clamp(3rem, 12vw, 7rem);
       line-height: .95;
-      background: linear-gradient(180deg, #fff7c4 0%, #ffd34d 22%, #d1a636 50%, #8a6a19 70%, #fff7c4 100%);
+
+      /* Grüner Verlauf: dunkel → hell */
+      background: linear-gradient(180deg, #0b5d2a 0%, #0c8a43 35%, #34c759 65%, #c8ffd8 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+
       text-shadow:
         0 1px 0 rgba(0,0,0,.25),
         0 2px 6px rgba(0,0,0,.25),
         0 8px 30px rgba(0,0,0,.25);
-      filter: saturate(1.05) contrast(1.05);
+      filter: saturate(1.08) contrast(1.06);
+      position: relative;
+      display: inline-block;
     }
+    /* Glitzer-/Shine-Animation */
+    .brand::before {
+      content: "";
+      position: absolute;
+      inset: -6% -10%;
+      pointer-events: none;
+      background:
+        linear-gradient(120deg,
+          rgba(255,255,255,0) 0%,
+          rgba(255,255,255,.35) 12%,
+          rgba(255,255,255,0) 24%) ;
+      transform: translateX(-120%) skewX(-10deg);
+      filter: blur(0.5px);
+      mix-blend-mode: screen;
+      animation: shine 2.6s ease-in-out infinite;
+    }
+    @keyframes shine {
+      0%   { transform: translateX(-130%) skewX(-10deg); opacity:.85; }
+      55%  { transform: translateX(135%)  skewX(-10deg); opacity:.85; }
+      100% { transform: translateX(135%)  skewX(-10deg); opacity:.85; }
+    }
+
     .brand::after {
-      /* dezenter Unterstrich-Balken */
+      /* Unterstrich-Balken in Grün */
       content: "";
       display: block;
       width: min(500px, 70%);
       height: 8px;
       margin: .6rem auto 0;
       border-radius: 6px;
-      background: linear-gradient(90deg, #ffd34d, #d1a636, #ffd34d);
-      box-shadow: 0 6px 20px rgba(209,166,54,.45);
+      background: linear-gradient(90deg, #34c759, #0c8a43, #34c759);
+      box-shadow: 0 6px 20px rgba(52,199,89,.45);
     }
     .tagline {
       margin: .9rem 0 0;
@@ -66,7 +93,7 @@
       font-size: clamp(1.1rem, 3.6vw, 1.6rem);
       letter-spacing: .08em;
       text-transform: uppercase;
-      color: #222;
+      color: #183c26;
     }
 
     /* ====== Bestehendes Layout ====== */
@@ -142,7 +169,6 @@
       font-size: .95rem;
       opacity: .9;
     }
-    footer small { display: block; margin-top: .25rem; opacity: .9; }
     footer nav a { text-decoration: underline; }
 
     /* --- Shop-Formular / Warenkorb --- */
@@ -162,7 +188,7 @@
       box-shadow: 0 8px 26px rgba(0,0,0,.25);
     }
     button:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(0,0,0,.28); }
-    .muted { color:#666; font-size: .95rem }
+    .muted { color:#444; font-size: .95rem }
     .totals { display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-weight:800 }
     .error { color:#b00020; font-size:.95rem }
     .success { color:#0a7a30; font-size:.95rem }
@@ -346,10 +372,6 @@
     </form>
 
     <footer>
-      <small>
-        <strong>Hinweis:</strong> Es gibt <u>keinen Versand</u>. Nach der Bestellung erhältst du per E-Mail
-        eine Bestätigung mit dem Abholtermin in der Schülerfirma.
-      </small>
       <nav aria-label="Rechtliches">
         <a href="/impressum.html">Impressum</a> ·
         <a href="/datenschutz.html">Datenschutz</a>
