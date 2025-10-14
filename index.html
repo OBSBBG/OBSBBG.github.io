@@ -32,8 +32,7 @@
       text-shadow:0 1px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.25),0 8px 30px rgba(0,0,0,.25);
       filter:saturate(1.08) contrast(1.06);
       transform-style:preserve-3d; transform-origin:center;
-      animation:slowFlip 18s linear infinite; /* 360° um X-Achse */
-      position:relative;
+      animation:slowFlip 18s linear infinite; position:relative;
     }
     @keyframes slowFlip{ 0%{transform:rotateX(0)} 50%{transform:rotateX(180deg)} 100%{transform:rotateX(360deg)} }
     .brand::before{
@@ -72,8 +71,12 @@
     .price{ font-weight:700 }
     .desc{ margin-top:.5rem; font-size:clamp(1rem,3.2vw,1.1rem) }
     .badge{ display:inline-block; margin-left:.5rem; background:var(--accent-green); color:#fff; border-radius:.5rem; padding:.1rem .5rem; font-size:.9em; vertical-align:middle }
+
+    /* Preisfarben */
     .price-old{ color:var(--price); text-decoration:line-through; text-decoration-thickness:.12em; text-decoration-color:var(--price); font-weight:700 }
-    .price-new{ color:var(--price); font-weight:800 }
+    .price-new{ color:var(--price); font-weight:800 }          /* rot (Standard) */
+    .price-kakao{ color:#000 !important; font-weight:800 }     /* schwarz speziell für Kakao */
+
     .price-list{ margin:.5rem 0 0; padding-left:1.1rem; color:var(--price); font-weight:700 }
     .price-list li{ margin:.15rem 0 }
     .note{ margin-top:.6rem; font-size:.95em; font-weight:600 }
@@ -156,7 +159,8 @@
 
     <section class="slots" aria-label="Weitere Produkte">
       <article class="slot">
-        <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· <span class="price-new">5 €</span></span></h2>
+        <!-- Preis oben jetzt schwarz -->
+        <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· <span class="price-kakao">5 €</span></span></h2>
         <p class="desc">Kugeln mit heißer Milch übergießen – fertig ist der Winter-Schoko-Traum.</p>
         <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver, Mini-Marshmallows (Supermarktqualität).</p>
         <img src="Tag2.jpeg" alt="Deluxe Kakao im Glas mit Schokoladen-Toppings" width="900" height="600" loading="lazy" decoding="async">
@@ -224,7 +228,11 @@
         <hr class="sep" />
 
         <div class="row">
-          <div><label>Produkt 2: Deluxe Kakao</label><div class="muted">Stückpreis: <span class="price-new" id="p2PriceLabel">5,00</span> €</div></div>
+          <div>
+            <label>Produkt 2: Deluxe Kakao</label>
+            <!-- Preis unten jetzt schwarz -->
+            <div class="muted">Stückpreis: <span class="price-kakao" id="p2PriceLabel">5,00</span> €</div>
+          </div>
           <div><label for="p2Qty">Menge</label><input id="p2Qty" name="p2Qty" type="number" min="0" value="0" /></div>
           <div><label>Zwischensumme</label><input id="p2Subtotal" type="text" value="0,00 €" readonly /></div>
         </div>
@@ -277,17 +285,12 @@
     let board=[], revealed=new Set(), triesLeft=0, won=false;
 
     function glassSVG(color){
-      // Einfaches Glas mit Flüssigkeit (Farbe) + kleiner Glas-Tag am Rand
       const c = color;
       return `
         <svg class="glass" viewBox="0 0 100 100" aria-hidden="true">
-          <!-- Glasform -->
           <rect x="22" y="18" width="56" height="70" rx="10" ry="10" fill="url(#g1)" stroke="#d0d0d0" stroke-width="2"/>
-          <!-- Flüssigkeit -->
           <rect x="26" y="48" width="48" height="36" rx="8" ry="8" fill="${c}" opacity="0.9"/>
-          <!-- Highlight -->
           <rect x="26" y="22" width="8" height="52" rx="4" fill="#ffffff" opacity="0.35"/>
-          <!-- Glas-Tag (kleiner runder Tag mit Loch) -->
           <g transform="translate(70,30)">
             <circle r="10" fill="#2d2d2d"/>
             <circle r="3.2" cx="-3" cy="-3" fill="#d9d9d9"/>
@@ -302,7 +305,6 @@
     }
 
     function newBoard(){
-      // Gewinnfarbe genau 3×
       const winColor = COLORS[Math.floor(Math.random()*COLORS.length)];
       const tiles = new Array(9).fill(null);
       let spots = [...Array(9).keys()];
@@ -323,12 +325,9 @@
       board.forEach((color,i)=>{
         const tile=document.createElement('button');
         tile.type='button'; tile.className='tile'; tile.dataset.index=String(i); tile.setAttribute('aria-label','verdeckt');
-        // SVG rein
         tile.innerHTML = glassSVG(color);
-        // Cover drüber
         const cover=document.createElement('div'); cover.className='cover'; cover.style.opacity='1'; cover.style.transition='opacity .18s ease';
         tile.appendChild(cover);
-
         tile.addEventListener('click', onReveal);
         grid.appendChild(tile);
       });
@@ -343,14 +342,12 @@
       tile.classList.add('revealed');
       const cover = tile.querySelector('.cover'); cover.style.opacity='0';
 
-      // zählen
       const counts={}; revealed.forEach(i=>{ const c=board[i]; counts[c]=(counts[c]||0)+1; });
       const maxSame = Math.max(...Object.values(counts)); el('matchCount').textContent=String(maxSame);
 
       if(maxSame>=3){
         won=true;
         el('gameMsg').innerHTML = `<span class="win">Gewonnen! 🎉 Du erhältst einen Glas-Tag gratis zu deiner Bestellung.</span>`;
-        // still: Code ins Formular übernehmen
         const couponEl = el('coupon');
         if (couponEl && !couponEl.value.trim()) { couponEl.value = 'Shop'; recalc(); }
         el('newGameBtn').classList.remove('hidden');
