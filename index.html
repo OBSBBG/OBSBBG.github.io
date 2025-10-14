@@ -280,16 +280,34 @@
     ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));recalc();
     document.getElementById('orderForm').addEventListener('submit',async(e)=>{e.preventDefault();el('formError').classList.add('hidden');el('formOk').classList.add('hidden');const v=validate();if(!v.ok){el('formError').textContent=v.msg;el('formError').classList.remove('hidden');return}const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;const p1SubtotalVal=PRICES.p1[pack]*p1Qty;const p2SubtotalVal=PRICES.p2*p2Qty;const cartLines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);const coupon=el('coupon').value.trim();if(coupon)cartLines.push(`Gewinncode: ${coupon}`);const payload={customer_name:el('name').value.trim(),customer_phone:el('phone').value.trim(),customer_email:el('email').value.trim(),items_text:cartLines.join(' | '),total:el('grandTotal').textContent,p1_names:el('p1Names').value,reply_to:el('email').value.trim()};try{const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);if(result&&result.status>=200&&result.status<300){el('formOk').classList.remove('hidden')}else{throw new Error('EmailJS: Unerwartete Antwort')}}catch(err){el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';el('formError').classList.remove('hidden')}});
 
-    /* ===== FRED-TICKER (kostenlos) ===== */
+    /* ===== FRED-TICKER (mit CORS-Proxy-Fallback) ===== */
     const FRED_API_KEY="66cc415ca598043527786a24b0dad230";
     const SERIES={ cocoa:"PCOCOUSDM", sugar:"PSUGAISAUSDM" }; // IMF: Kakao USD/t, Zucker Cent/lb
 
-    async function j(url){const r=await fetch(url);if(!r.ok)throw new Error("net");return r.json()}
+    // Fetch-Helper mit Proxy-Fallback (AllOrigins)
+    async function j(url){
+      try{
+        const r = await fetch(url, {cache:'no-store'});
+        if(!r.ok) throw new Error(`HTTP ${r.status}`);
+        return await r.json();
+      }catch(err){
+        const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+        const r2 = await fetch(proxy, {cache:'no-store'});
+        if(!r2.ok) throw new Error(`Proxy HTTP ${r2.status}`);
+        const text = await r2.text();
+        try{ return JSON.parse(text); }
+        catch(parseErr){ console.error('Proxy JSON parse error:', parseErr, text.slice(0,200)); throw parseErr; }
+      }
+    }
+
     function pct(cur,base){if(base==null)return null;return (cur-base)/base*100}
     function signPct(v){if(v==null||!isFinite(v))return "n/a";const s=v>=0?"+":"";return s+v.toFixed(2).replace(".",",")+" %"}
     function euro0(n){return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n)}
 
-    async function usdToEur(){try{const fx=await j("https://api.exchangerate.host/latest?base=USD&symbols=EUR");return fx?.rates?.EUR??0.93}catch{return 0.93}}
+    async function usdToEur(){
+      try{const fx=await j("https://api.exchangerate.host/latest?base=USD&symbols=EUR");return fx?.rates?.EUR??0.93}
+      catch{return 0.93}
+    }
 
     async function fredMonthly(series_id,start="2024-01-01"){
       const url=`https://api.stlouisfed.org/fred/series/observations?series_id=${series_id}&api_key=${FRED_API_KEY}&file_type=json&observation_start=${start}`;
@@ -328,7 +346,12 @@
       const track=document.getElementById("tickerTrack");
       if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
     }
-    loadTicker().catch(()=>{const t=document.getElementById("tickerTrack");if(t){t.innerHTML=`<span class="ticker-item">🍫 Kakao: –</span><span class="ticker-item">🍚 Zucker: –</span><span class="ticker-item">Quelle: FRED</span>`}});
+    loadTicker().catch(err=>{
+      console.error("Ticker-Fehler:", err);
+      const t=document.getElementById("tickerTrack");
+      if(t){t.innerHTML=`<span class="ticker-item">⚠️ Ticker-Error (siehe Console)</span>`}
+    });
   </script>
 </body>
 </html>
+```0
