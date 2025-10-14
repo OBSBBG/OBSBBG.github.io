@@ -11,12 +11,16 @@
     *{box-sizing:border-box}
     body{margin:0;min-height:100vh;display:grid;place-items:start center;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;text-align:center;padding:2rem;line-height:1.35;background:radial-gradient(1200px 600px at 10% -10%, rgba(0,180,90,.10), transparent 60%),radial-gradient(800px 400px at 110% -20%, rgba(0,60,30,.10), transparent 60%),radial-gradient(1200px 600px at 50% 120%, rgba(0,0,0,.06), transparent 60%),#fff}
     main{width:min(1000px,100%)}
+
+    /* ===== TICKER ===== */
     .ticker{width:100%;overflow:hidden;margin:-1rem 0 1rem 0}
     .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.6rem 0}
     .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 75s linear infinite}
     .ticker-item{display:inline-flex;align-items:center;gap:.35rem;margin:0 1.25rem}
     .ticker-item small{opacity:.85;font-weight:700}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+
+    /* ===== Hero ===== */
     .hero{margin:0 0 1.5rem;text-align:center;perspective:1000px}
     .brand-wrap{position:relative;display:inline-block}
     .brand{margin:0;text-transform:uppercase;letter-spacing:.06em;font-weight:900;font-size:clamp(3rem,12vw,7rem);line-height:.95;background:linear-gradient(180deg,#0b5d2a 0%,#0c8a43 35%,#34c759 65%,#c8ffd8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.25),0 8px 30px rgba(0,0,0,.25);filter:saturate(1.08) contrast(1.06);transform-style:preserve-3d;transform-origin:center;animation:slowFlip 18s linear infinite;position:relative}
@@ -29,6 +33,8 @@
     @keyframes twinkle{0%{opacity:0;transform:scale(.6)}35%{opacity:1;transform:scale(1)}60%{opacity:.95;transform:scale(1.05) rotate(6deg)}100%{opacity:0;transform:scale(.7) rotate(12deg)}}
     .brand-underline{width:min(500px,70%);height:8px;margin:.6rem auto 0;border-radius:6px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 6px 20px rgba(52,199,89,.45)}
     .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.1rem,3.6vw,1.6rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26}
+
+    /* ===== Content ===== */
     h2{margin:0 0 .25rem;font-size:clamp(1.3rem,4.5vw,1.8rem)}
     p{margin:0;font-size:clamp(1.05rem,3.4vw,1.15rem)}
     img{display:block;max-width:100%;height:auto;margin:1rem auto 0;user-select:none;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.08)}
@@ -39,6 +45,8 @@
     .price{font-weight:700}
     .desc{margin-top:.5rem;font-size:clamp(1rem,3.2vw,1.1rem)}
     .badge{display:inline-block;margin-left:.5rem;background:var(--accent-green);color:#fff;border-radius:.5rem;padding:.1rem .5rem;font-size:.9em;vertical-align:middle}
+
+    /* Preisfarben */
     .price-old{color:var(--price);text-decoration:line-through;text-decoration-thickness:.12em;text-decoration-color:var(--price);font-weight:700}
     .price-new{color:var(--price);font-weight:800}
     .price-kakao{color:#000!important;font-weight:800}
@@ -50,6 +58,8 @@
     a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #666;outline-offset:2px;border-radius:6px}
     footer{margin-top:2rem;font-size:.95rem;opacity:.9}
     footer nav a{text-decoration:underline}
+
+    /* ===== Formular / Warenkorb ===== */
     form.shop{text-align:left;margin-top:1.5rem}
     .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin-top:16px;background:#fff}
     .grid{display:grid;gap:12px}
@@ -66,6 +76,8 @@
     .success{color:#0a7a30;font-size:.95rem}
     .hidden{display:none}
     hr.sep{border:0;border-top:1px solid #eee;margin:12px 0}
+
+    /* ===== Werbeaktion Spiel ===== */
     .game-grid{display:grid;grid-template-columns:repeat(3,90px);grid-gap:10px;justify-content:center;margin-top:12px}
     .tile{width:90px;height:90px;border-radius:12px;border:1px solid #ccc;background:#efefef;cursor:pointer;position:relative;overflow:hidden;transition:transform .08s ease-in;display:grid;place-items:center}
     .tile:active{transform:scale(.98)}
@@ -75,7 +87,11 @@
     .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f6f6f6;border:1px solid #e5e5e5;font-weight:600}
     .win{color:#0a7a30;font-weight:800}
     .lose{color:#b00020;font-weight:800}
+
+    /* Glas-SVG */
     .glass{width:72px;height:72px;display:block}
+
+    /* ===== Gewinn-Effekte Overlay ===== */
     .fx-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}
     .obs-logo-fx{position:fixed;left:50%;top:-22vh;transform:translateX(-50%);font-weight:900;text-transform:uppercase;letter-spacing:.06em;font-size:min(20vw,180px);background:linear-gradient(180deg,var(--deep-green),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 6px 26px rgba(0,0,0,.45);filter:drop-shadow(0 10px 30px rgba(0,0,0,.45));animation:fx-drop 1200ms cubic-bezier(.2,.8,.2,1) forwards,fx-pulse 1800ms ease-in-out 1200ms 3,fx-explode 700ms ease-out 6600ms forwards}
     @keyframes fx-drop{0%{top:-22vh;transform:translateX(-50%) scale(.88)}100%{top:40vh;transform:translateX(-50%) scale(1)}}
@@ -91,6 +107,7 @@
   </style>
 </head>
 <body>
+  <!-- Ticker -->
   <div class="ticker">
     <div class="ticker-bar">
       <div id="tickerTrack" class="ticker-track"></div>
@@ -109,6 +126,7 @@
       <div class="tagline">Sortiment</div>
     </header>
 
+    <!-- Produkt 1 -->
     <article class="slot">
       <h2>#1 Personalisierter Glas-Tag <span class="badge" aria-label="Sonderaktion">*</span></h2>
       <p class="desc">Vorher: <span class="price-old">3 €</span></p>
@@ -142,6 +160,7 @@
       </article>
     </section>
 
+    <!-- ========= Werbeaktion: Spiel ========= -->
     <section class="card" aria-labelledby="promoTitle">
       <h2 id="promoTitle">Werbeaktion: Gewinne einen Glas-Tag</h2>
       <p class="desc">Decke in 5 Versuchen <strong>drei gleiche</strong> Gläser im 3×3-Feld auf. Gewinnst du, bekommst du einen <strong>Glas-Tag gratis</strong> zu deiner Bestellung.</p>
@@ -156,8 +175,10 @@
       <div id="gameMsg" class="desc" style="margin-top:8px;"></div>
     </section>
 
+    <!-- ========= Shop-Formular / Warenkorb ========= -->
     <form id="orderForm" class="shop" novalidate>
       <input type="text" id="hp_field" name="company" autocomplete="off" style="position:absolute;left:-9999px" tabindex="-1" aria-hidden="true">
+
       <div class="card">
         <h2>Kundendaten</h2>
         <div class="grid" style="grid-template-columns: 1fr 1fr; gap:12px">
@@ -225,18 +246,20 @@
     </footer>
   </main>
 
+  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
+    /* ===== EmailJS + Preise ===== */
     const EMAILJS_PUBLIC_KEY="xAOygDJhZcJrXGuSb";
     const EMAILJS_SERVICE_ID="service_l642tri";
     const EMAILJS_TEMPLATE_ID="template_ggtexbv";
     const PRICES={p1:{single:1.50,pack5:4.95,pack10:9.95},p1PiecesPer:{single:1,pack5:5,pack10:10},p2:5.00};
-
     (function(){emailjs.init(EMAILJS_PUBLIC_KEY)})();
     const el=(id)=>document.getElementById(id);
     const formatEUR=(n)=>n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
     const formatLines=(arr)=>arr.join(' | ');
 
+    /* ===== Spiel ===== */
     const COLORS=["#e74c3c","#f39c12","#f1c40f","#2ecc71","#3498db","#9b59b6","#e67e22","#1abc9c","#e84393"];
     let board=[],revealed=new Set(),triesLeft=0,won=false;
     let gamesPlayed=0,startLocked=false,startCooldownTimer=null;
@@ -245,58 +268,77 @@
     function pickUnique(a,k){const c=a.slice().map(x=>({x,r:Math.random()})).sort((p,q)=>p.r-q.r).map(o=>o.x);return c.slice(0,k)}
     function newBoard(){if(startLocked)return;const seven=pickUnique(COLORS,7);const winColor=seven[Math.floor(Math.random()*seven.length)];const tiles=[];for(let i=0;i<3;i++)tiles.push(winColor);const others=seven.filter(c=>c!==winColor).slice(0,6);tiles.push(...others);board=tiles.map(c=>({c,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.c);revealed.clear();triesLeft=5;won=false;el('triesLeft').textContent=String(triesLeft);el('matchCount').textContent="0";el('gameMsg').textContent="";renderBoard();el('startGameBtn').classList.add('hidden');el('newGameBtn').classList.remove('hidden');el('cooldownPill').classList.add('hidden')}
     function renderBoard(){const grid=el('gameGrid');grid.innerHTML="";board.forEach((color,i)=>{const tile=document.createElement('button');tile.type='button';tile.className='tile';tile.dataset.index=String(i);tile.setAttribute('aria-label','verdeckt');tile.innerHTML=glassSVG(color);const cover=document.createElement('div');cover.className='cover';cover.style.opacity='1';cover.style.transition='opacity .18s ease';tile.appendChild(cover);tile.addEventListener('click',onReveal);grid.appendChild(tile)})}
-    function onReveal(e){const tile=e.currentTarget;const idx=Number(tile.dataset.index);if(won||triesLeft<=0||revealed.has(idx))return;revealed.add(idx);triesLeft--;el('triesLeft').textContent=String(triesLeft);tile.classList.add('revealed');const cover=tile.querySelector('.cover');cover.style.opacity='0';const counts={};revealed.forEach(i=>{const c=board[i];counts[c]=(counts[c]||0)+1});const maxSame=Math.max(...Object.values(counts));el('matchCount').textContent=String(maxSame);if(maxSame>=3){won=true;el('gameMsg').innerHTML=`<span class="win">Gewonnen! 🎉 Du erhältst einen Glas-Tag gratis zu deiner Bestellung.</span>`;const couponEl=el('coupon');if(couponEl&&!couponEl.value.trim()){couponEl.value='Shop';recalc()}winEffects();endGameStartCooldown();return}if(triesLeft===0){el('gameMsg').innerHTML=`<span class="lose">Leider verloren. Versuch’s nochmal!</span>`;endGameStartCooldown();return}}
+    function onReveal(e){const tile=e.currentTarget;const idx=Number(tile.dataset.index);if(won||triesLeft<=0||revealed.has(idx))return;revealed.add(idx);triesLeft--;el('triesLeft').textContent=String(triesLeft);tile.classList.add('revealed');tile.querySelector('.cover').style.opacity='0';const counts={};revealed.forEach(i=>{const c=board[i];counts[c]=(counts[c]||0)+1});const maxSame=Math.max(...Object.values(counts));el('matchCount').textContent=String(maxSame);if(maxSame>=3){won=true;el('gameMsg').innerHTML=`<span class="win">Gewonnen! 🎉 Du erhältst einen Glas-Tag gratis zu deiner Bestellung.</span>`;const couponEl=el('coupon');if(couponEl&&!couponEl.value.trim()){couponEl.value='Shop';recalc()}winEffects();endGameStartCooldown();return}if(triesLeft===0){el('gameMsg').innerHTML=`<span class="lose">Leider verloren. Versuch’s nochmal!</span>`;endGameStartCooldown();return}}
     function endGameStartCooldown(){gamesPlayed+=1;const delaySec=gamesPlayed*5;startLocked=delaySec>0;const startBtn=el('startGameBtn');const newBtn=el('newGameBtn');startBtn.classList.remove('hidden');newBtn.classList.add('hidden');if(!startLocked)return;startBtn.classList.add('disabled');const pill=el('cooldownPill');const out=el('cooldownSec');pill.classList.remove('hidden');let remain=delaySec;out.textContent=String(remain);clearInterval(startCooldownTimer);startCooldownTimer=setInterval(()=>{remain-=1;if(remain<=0){clearInterval(startCooldownTimer);startLocked=false;pill.classList.add('hidden');startBtn.classList.remove('disabled')}else{out.textContent=String(remain)}},1000)}
     function winEffects(){const layer=document.createElement('div');layer.className='fx-layer';document.body.appendChild(layer);const logo=document.createElement('div');logo.className='obs-logo-fx';logo.textContent='OBS';layer.appendChild(logo);const flashG=document.createElement('div');flashG.className='flash green';const flashGold=document.createElement('div');flashGold.className='flash gold';layer.appendChild(flashG);layer.appendChild(flashGold);const vw=Math.max(document.documentElement.clientWidth||0,window.innerWidth||0);const vh=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);const STAR_COUNT=160;for(let i=0;i<STAR_COUNT;i++){const s=document.createElement('span');s.className='star-fx';s.textContent=(Math.random()<0.65)?'✦':(Math.random()<0.5?'✸':'✪');const isGreen=Math.random()<0.58;s.style.color=isGreen?'var(--green)':'var(--gold)';const size=20+Math.random()*24;s.style.fontSize=size.toFixed(0)+'px';s.style.left=(Math.random()*vw)+'px';s.style.top=(Math.random()*vh)+'px';const delay=0.1+Math.random()*1.6;const dur=3.8+Math.random()*3.2;s.style.setProperty('--delay',delay.toFixed(2)+'s');s.style.setProperty('--dur',dur.toFixed(2)+'s');layer.appendChild(s)}setTimeout(()=>{layer.remove()},9000)}
     el('startGameBtn').addEventListener('click',newBoard);
     el('newGameBtn').addEventListener('click',newBoard);
 
+    /* ===== Warenkorb ===== */
     function recalc(){const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;el('p1PiecesHint').textContent=`Aktuell: ${p1Pieces} Stück`;const p1Subtotal=PRICES.p1[pack]*p1Qty;const p2Subtotal=PRICES.p2*p2Qty;const total=p1Subtotal+p2Subtotal;el('p1Subtotal').value=formatEUR(p1Subtotal);el('p2Subtotal').value=formatEUR(p2Subtotal);el('grandTotal').textContent=formatEUR(total);if(p1Pieces>0){el('p1NamesBlock').classList.remove('hidden')}else{el('p1NamesBlock').classList.add('hidden');el('p1Names').value='';el('p1NamesError').classList.add('hidden')}const lines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');lines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1Subtotal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)lines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2Subtotal)}`);const coupon=el('coupon').value.trim();if(coupon)lines.push(`Gewinncode: ${coupon}`);el('cartPreview').textContent=lines.length?formatLines(lines):'Noch keine Artikel.'}
     function validate(){if(el('hp_field').value)return{ok:false,msg:'Spam erkannt.'};const name=el('name').value.trim();const phone=el('phone').value.trim();const email=el('email').value.trim();const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;if(!name||!phone||!email)return{ok:false,msg:'Bitte Name, Telefon und E-Mail ausfüllen.'};if(p1Qty+p2Qty===0)return{ok:false,msg:'Bitte mindestens ein Produkt auswählen.'};if(p1Pieces>0){const names=el('p1Names').value.split('\n').map(s=>s.trim()).filter(Boolean);if(names.length!==p1Pieces){el('p1NamesError').classList.remove('hidden');return{ok:false,msg:`Anzahl der Glas-Tag-Namen (${names.length}) passt nicht zur Stückzahl (${p1Pieces}).`}}else{el('p1NamesError').classList.add('hidden')}}return{ok:true}}
     ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));recalc();
-
     document.getElementById('orderForm').addEventListener('submit',async(e)=>{e.preventDefault();el('formError').classList.add('hidden');el('formOk').classList.add('hidden');const v=validate();if(!v.ok){el('formError').textContent=v.msg;el('formError').classList.remove('hidden');return}const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;const p1SubtotalVal=PRICES.p1[pack]*p1Qty;const p2SubtotalVal=PRICES.p2*p2Qty;const cartLines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);const coupon=el('coupon').value.trim();if(coupon)cartLines.push(`Gewinncode: ${coupon}`);const payload={customer_name:el('name').value.trim(),customer_phone:el('phone').value.trim(),customer_email:el('email').value.trim(),items_text:cartLines.join(' | '),total:el('grandTotal').textContent,p1_names:el('p1Names').value,reply_to:el('email').value.trim()};try{const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);if(result&&result.status>=200&&result.status<300){el('formOk').classList.remove('hidden')}else{throw new Error('EmailJS: Unerwartete Antwort')}}catch(err){el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';el('formError').classList.remove('hidden')}});
 
+    /* ===== Ticker: Vormonats-Ø & Jahres-Ø 2024 ===== */
     async function j(url){const r=await fetch(url);if(!r.ok)throw new Error('net');return r.json()}
     function ymd(d){const z=n=>String(n).padStart(2,'0');return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())}
-    function shift(d,{days=0,months=0,years=0}){const t=new Date(d);t.setFullYear(t.getFullYear()+years);t.setMonth(t.getMonth()+months);t.setDate(t.getDate()+days);return t}
+    function firstDayOfPrevMonth(d){return new Date(d.getFullYear(),d.getMonth()-1,1)}
+    function lastDayOfPrevMonth(d){return new Date(d.getFullYear(),d.getMonth(),0)}
     function pct(cur,base){if(base==null)return null;return (cur-base)/base*100}
     function signFmtMaybe(v){if(v==null||!isFinite(v))return 'n/a';const s=v>=0?'+':'';return s+v.toFixed(2).replace('.',',')+' %'}
     function euroFmt(n){return new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
-    function lastOnOrBefore(arr,targetDateStr){if(!Array.isArray(arr)||!arr.length)return null;const target=new Date(targetDateStr+'T23:59:59Z').getTime();let best=null,bestTime=-Infinity;for(const x of arr){if(x?.Date==null||x?.Value==null)continue;const t=new Date(x.Date).getTime();if(t<=target&&t>bestTime){best=x;bestTime=t}}if(!best)return null;return Number(best.Value)}
+    function avgInRange(arr,fromStr,toStr){if(!Array.isArray(arr)||!arr.length)return null;const from=new Date(fromStr+'T00:00:00Z').getTime();const to=new Date(toStr+'T23:59:59Z').getTime();let sum=0,n=0;for(const x of arr){if(x?.Date==null||x?.Value==null)continue;const t=new Date(x.Date).getTime();if(t>=from&&t<=to){sum+=Number(x.Value);n++}}return n>0?sum/n:null}
 
     async function loadTicker(){
       const today=new Date();
-      const d0=ymd(today), dDay=ymd(shift(today,{days:-1})), dMon=ymd(shift(today,{months:-1})), dYear=ymd(shift(today,{years:-1}));
+      const prevStart=firstDayOfPrevMonth(today), prevEnd=lastDayOfPrevMonth(today);
+      const prevStartStr=ymd(prevStart), prevEndStr=ymd(prevEnd);
+
+      // USD->EUR
       let usd2eur=1; try{const fx=await j('https://api.exchangerate.host/latest?base=USD&symbols=EUR');usd2eur=fx?.rates?.EUR??1}catch{usd2eur=0.93}
+
       async function getCommodity(symbol){
         try{
           const curArr=await j(`https://api.tradingeconomics.com/commodity/${symbol}?c=guest:guest&format=json`);
           const curUSD=Array.isArray(curArr)&&curArr[0]?.Price!=null?Number(curArr[0].Price):null;
-          const h7  =await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-7}))}/${d0}?c=guest:guest&format=json`);
-          const h40 =await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-40}))}/${d0}?c=guest:guest&format=json`);
-          const h370=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-370}))}/${d0}?c=guest:guest&format=json`);
-          const pDay=lastOnOrBefore(h7,dDay);
-          const pMon=lastOnOrBefore(h40,dMon);
-          const pYr =lastOnOrBefore(h370,dYear);
-          return {curUSD,pDay,pMon,pYr};
-        }catch{return {curUSD:null,pDay:null,pMon:null,pYr:null}}
+
+          const histPrev=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${prevStartStr}/${prevEndStr}?c=guest:guest&format=json`);
+          const avgPrev=avgInRange(histPrev,prevStartStr,prevEndStr);
+
+          const y2024Start='2024-01-01', y2024End='2024-12-31';
+          const hist2024=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${y2024Start}/${y2024End}?c=guest:guest&format=json`);
+          const avg2024=avgInRange(hist2024,y2024Start,y2024End);
+
+          return {curUSD,avgPrevUSD:avgPrev,avg2024USD:avg2024};
+        }catch{return {curUSD:null,avgPrevUSD:null,avg2024USD:null}}
       }
+
       const [cocoa,sugar]=await Promise.all([getCommodity('cocoa'),getCommodity('sugar')]);
+
+      // Zucker: US-Cent/lb -> USD/t: (cents/lb)/100 * 2204.622  => Faktor 0.2204622
       const SUGAR_TO_TONNE=0.2204622;
-      function toEURtonne(c,toTonFactor){const cur=c.curUSD!=null?c.curUSD*toTonFactor*usd2eur:null;const d=c.pDay!=null?c.pDay*toTonFactor*usd2eur:null;const m=c.pMon!=null?c.pMon*toTonFactor*usd2eur:null;const y=c.pYr!=null?c.pYr*toTonFactor*usd2eur:null;return {cur,d,m,y}}
+
+      function toEURtonne(c,f){const cur=c.curUSD!=null?c.curUSD*f*usd2eur:null;const mPrev=c.avgPrevUSD!=null?c.avgPrevUSD*f*usd2eur:null;const y2024=c.avg2024USD!=null?c.avg2024USD*f*usd2eur:null;return {cur,mPrev,y2024}}
       const cocoaEUR=toEURtonne(cocoa,1);
       const sugarEUR=toEURtonne(sugar,SUGAR_TO_TONNE);
-      const cCur=(cocoaEUR.cur==null)?3500*usd2eur:cocoaEUR.cur;
-      const sCur=(sugarEUR.cur==null)?500*usd2eur:sugarEUR.cur;
-      const cD=pct(cCur,cocoaEUR.d), cM=pct(cCur,cocoaEUR.m), cY=pct(cCur,cocoaEUR.y);
-      const sD=pct(sCur,sugarEUR.d), sM=pct(sCur,sugarEUR.m), sY=pct(sCur,sugarEUR.y);
-      const cocoaItem=`<span class="ticker-item">🍫 Kakao: <strong>${euroFmt(cCur)}</strong>/t <small>(${signFmtMaybe(cD)} vs VT • ${signFmtMaybe(cM)} vs VM • ${signFmtMaybe(cY)} vs VJ)</small></span>`;
-      const sugarItem=`<span class="ticker-item">🍚 Zucker: <strong>${euroFmt(sCur)}</strong>/t <small>(${signFmtMaybe(sD)} vs VT • ${signFmtMaybe(sM)} vs VM • ${signFmtMaybe(sY)} vs VJ)</small></span>`;
+
+      // Nur aktuelle Preise fallbacken
+      const cCur = (cocoaEUR.cur==null)?3500*usd2eur:cocoaEUR.cur;
+      const sCur = (sugarEUR.cur==null)? 500*usd2eur:sugarEUR.cur;
+
+      const cVsM=pct(cCur,cocoaEUR.mPrev), cVsY=pct(cCur,cocoaEUR.y2024);
+      const sVsM=pct(sCur,sugarEUR.mPrev), sVsY=pct(sCur,sugarEUR.y2024);
+
+      const cocoaItem=`<span class="ticker-item">🍫 Kakao: <strong>${euroFmt(cCur)}</strong>/t <small>(${signFmtMaybe(cVsM)} vs Mon.-Ø • ${signFmtMaybe(cVsY)} vs 2024-Ø)</small></span>`;
+      const sugarItem=`<span class="ticker-item">🍚 Zucker: <strong>${euroFmt(sCur)}</strong>/t <small>(${signFmtMaybe(sVsM)} vs Mon.-Ø • ${signFmtMaybe(sVsY)} vs 2024-Ø)</small></span>`;
       const source=`<span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`;
+
       const track=document.getElementById('tickerTrack');
       if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
     }
+
+    // Start + Fallback
     loadTicker().catch(()=>{const track=document.getElementById('tickerTrack');if(track){track.innerHTML=`<span class="ticker-item">🍫 Kakao: –</span><span class="ticker-item">🍚 Zucker: –</span><span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`}});
   </script>
 </body>
