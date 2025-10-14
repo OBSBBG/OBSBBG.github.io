@@ -159,7 +159,7 @@
 
     <section class="slots" aria-label="Weitere Produkte">
       <article class="slot">
-        <!-- Preis oben jetzt schwarz -->
+        <!-- Preis oben schwarz -->
         <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· <span class="price-kakao">5 €</span></span></h2>
         <p class="desc">Kugeln mit heißer Milch übergießen – fertig ist der Winter-Schoko-Traum.</p>
         <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver, Mini-Marshmallows (Supermarktqualität).</p>
@@ -180,6 +180,7 @@
         <button type="button" id="startGameBtn">Spiel starten</button>
         <span class="pill">Versuche übrig: <span id="triesLeft">–</span></span>
         <span class="pill">Treffer gleichfarbig: <span id="matchCount">0</span></span>
+        <span class="pill hidden" id="cooldownPill">Warte: <span id="cooldownSec">0</span>s</span>
       </div>
       <div id="gameGrid" class="game-grid" aria-label="3x3 Spielfeld"></div>
       <div id="gameMsg" class="desc" style="margin-top:8px;"></div>
@@ -230,7 +231,7 @@
         <div class="row">
           <div>
             <label>Produkt 2: Deluxe Kakao</label>
-            <!-- Preis unten jetzt schwarz -->
+            <!-- Preis unten schwarz -->
             <div class="muted">Stückpreis: <span class="price-kakao" id="p2PriceLabel">5,00</span> €</div>
           </div>
           <div><label for="p2Qty">Menge</label><input id="p2Qty" name="p2Qty" type="number" min="0" value="0" /></div>
@@ -284,6 +285,40 @@
     const COLORS = ["#e74c3c","#f39c12","#f1c40f","#2ecc71","#3498db","#9b59b6","#e67e22","#1abc9c","#e84393"];
     let board=[], revealed=new Set(), triesLeft=0, won=false;
 
+    // Cooldown-Zustand
+    let clickLocked = false;
+    let cooldownTimer = null;
+    let cooldownRemaining = 0;
+
+    function showCooldown(sec){
+      const pill = el('cooldownPill');
+      const out  = el('cooldownSec');
+      if (sec > 0){
+        pill.classList.remove('hidden');
+        out.textContent = String(sec);
+      } else {
+        pill.classList.add('hidden');
+      }
+    }
+
+    function startCooldown(sec){
+      if (sec <= 0) return;
+      clickLocked = true;
+      cooldownRemaining = sec;
+      showCooldown(cooldownRemaining);
+      clearInterval(cooldownTimer);
+      cooldownTimer = setInterval(()=>{
+        cooldownRemaining -= 1;
+        if (cooldownRemaining <= 0){
+          clearInterval(cooldownTimer);
+          clickLocked = false;
+          showCooldown(0);
+        } else {
+          showCooldown(cooldownRemaining);
+        }
+      }, 1000);
+    }
+
     function glassSVG(color){
       const c = color;
       return `
@@ -304,18 +339,34 @@
         </svg>`;
     }
 
+    function pickUnique(array, k){
+      const copy = array.slice().map(x=>({x, r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.x);
+      return copy.slice(0, k);
+    }
+
     function newBoard(){
-      const winColor = COLORS[Math.floor(Math.random()*COLORS.length)];
-      const tiles = new Array(9).fill(null);
-      let spots = [...Array(9).keys()];
-      for(let i=0;i<3;i++){ const idx=Math.floor(Math.random()*spots.length); const pos=spots.splice(idx,1)[0]; tiles[pos]=winColor; }
-      for(const pos of spots){ tiles[pos]=COLORS[Math.floor(Math.random()*COLORS.length)]; }
+      // Genau 7 verschiedene Farben insgesamt:
+      // 1 Gewinnfarbe dreifach, 6 weitere unterschiedliche Farben je einmal.
+      const seven = pickUnique(COLORS, 7);
+      const winColor = seven[Math.floor(Math.random()*seven.length)];
+
+      const tiles = [];
+      // 3× Gewinnfarbe
+      for(let i=0;i<3;i++) tiles.push(winColor);
+      // 6 weitere (alle unterschiedlich, ohne die Gewinnfarbe erneut hinzuzufügen)
+      const others = seven.filter(c => c !== winColor).slice(0, 6);
+      tiles.push(...others); // ergibt 9
+
+      // mischen
       board = tiles.map(c=>({c,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.c);
 
-      revealed.clear(); triesLeft=5; won=false;
-      el('triesLeft').textContent=String(triesLeft);
-      el('matchCount').textContent="0";
-      el('gameMsg').textContent="";
+      // Reset
+      revealed.clear(); triesLeft = 5; won = false;
+      el('triesLeft').textContent = String(triesLeft);
+      el('matchCount').textContent = "0";
+      el('gameMsg').textContent = "";
+      clearInterval(cooldownTimer); clickLocked = false; showCooldown(0);
+
       renderBoard();
       el('newGameBtn').classList.add('hidden');
     }
@@ -334,31 +385,50 @@
     }
 
     function onReveal(e){
+      if (clickLocked) return; // während Cooldown gesperrt
+
       const tile=e.currentTarget;
       const idx=Number(tile.dataset.index);
       if(won || triesLeft<=0 || revealed.has(idx)) return;
 
-      revealed.add(idx); triesLeft--; el('triesLeft').textContent=String(triesLeft);
+      revealed.add(idx);
+      triesLeft--;
+      el('triesLeft').textContent = String(triesLeft);
+
       tile.classList.add('revealed');
       const cover = tile.querySelector('.cover'); cover.style.opacity='0';
 
+      // zähle Farben der aufgedeckten Felder
       const counts={}; revealed.forEach(i=>{ const c=board[i]; counts[c]=(counts[c]||0)+1; });
-      const maxSame = Math.max(...Object.values(counts)); el('matchCount').textContent=String(maxSame);
+      const maxSame = Math.max(...Object.values(counts));
+      el('matchCount').textContent = String(maxSame);
 
+      // Gewinn?
       if(maxSame>=3){
         won=true;
         el('gameMsg').innerHTML = `<span class="win">Gewonnen! 🎉 Du erhältst einen Glas-Tag gratis zu deiner Bestellung.</span>`;
+        // still: Code ins Formular setzen
         const couponEl = el('coupon');
         if (couponEl && !couponEl.value.trim()) { couponEl.value = 'Shop'; recalc(); }
         el('newGameBtn').classList.remove('hidden');
         autoRevealRest();
+        clearInterval(cooldownTimer); clickLocked=false; showCooldown(0);
         return;
       }
+
+      // Verloren?
       if(triesLeft===0){
         el('gameMsg').innerHTML = `<span class="lose">Leider verloren. Versuch’s nochmal!</span>`;
         el('newGameBtn').classList.remove('hidden');
         autoRevealRest();
+        clearInterval(cooldownTimer); clickLocked=false; showCooldown(0);
+        return;
       }
+
+      // Cooldown vor dem nächsten Versuch:
+      // Nach 1. Aufdecken -> 5s, nach 2. -> 10s, ... = revealed.size * 5s
+      const delaySec = revealed.size * 5;
+      startCooldown(delaySec);
     }
 
     function autoRevealRest(){
