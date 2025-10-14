@@ -13,7 +13,7 @@
     main{width:min(1000px,100%)}
     .ticker{width:100%;overflow:hidden;margin:-1rem 0 1rem 0}
     .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.6rem 0}
-    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 28s linear infinite}
+    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 45s linear infinite}
     .ticker-item{display:inline-flex;align-items:center;gap:.35rem;margin:0 1.25rem}
     .ticker-item small{opacity:.85;font-weight:700}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
@@ -258,44 +258,44 @@
     function pct(cur,base){if(!base||base===0)return 0;return (cur-base)/base*100}
     function signFmt(v){const s=v>=0?'+':'';return s+v.toFixed(2).replace('.',',')+' %'}
     function euroFmt(n){return new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
+    function lastOnOrBefore(arr,targetDateStr){if(!Array.isArray(arr)||!arr.length)return null;const target=new Date(targetDateStr+'T23:59:59Z').getTime();let best=null,bestTime=-Infinity;for(const x of arr){if(!x.Date||x.Value==null)continue;const t=new Date(x.Date).getTime();if(t<=target&&t>bestTime){best=x;bestTime=t}}if(!best){const last=arr[arr.length-1];return last&&last.Value!=null?Number(last.Value):null}return Number(best.Value)}
     async function loadTicker(){
-      const today=new Date();const d0=ymd(today);const dY=ymd(shift(today,{days:-1}));const dM=ymd(shift(today,{months:-1}));const dY1=ymd(shift(today,{years:-1}));
+      const today=new Date();
+      const d0=ymd(today);
+      const dDay=ymd(shift(today,{days:-1}));
+      const dMon=ymd(shift(today,{months:-1}));
+      const dYear=ymd(shift(today,{years:-1}));
       let usd2eur=1;
       try{const fx=await j('https://api.exchangerate.host/latest?base=USD&symbols=EUR');usd2eur=fx&&fx.rates&&fx.rates.EUR?fx.rates.EUR:1}catch(e){usd2eur=0.93}
-      async function getCommodity(teSymbol){
+      async function getCommodity(symbol){
         try{
-          const curArr=await j(`https://api.tradingeconomics.com/commodity/${teSymbol}?c=guest:guest&format=json`);
-          const curUSD=(Array.isArray(curArr)&&curArr[0]&&curArr[0].Price)?Number(curArr[0].Price):null;
-          const hY=await j(`https://api.tradingeconomics.com/commodity/${teSymbol}/historical/${dY}/${d0}?c=guest:guest&format=json`);
-          const hM=await j(`https://api.tradingeconomics.com/commodity/${teSymbol}/historical/${dM}/${d0}?c=guest:guest&format=json`);
-          const h1=await j(`https://api.tradingeconomics.com/commodity/${teSymbol}/historical/${dY1}/${d0}?c=guest:guest&format=json`);
-          function lastOn(arr,dateStr){if(!Array.isArray(arr)||arr.length===0)return null;let best=null;for(const x of arr){if(x.Date){best=x}}return best&&best.Value!=null?Number(best.Value):null}
-          const pDay=lastOn(hY,dY);const pMon=lastOn(hM,dM);const pYr=lastOn(h1,dY1);
-          return {curUSD,pDay,pMon,pYr}
+          const curArr=await j(`https://api.tradingeconomics.com/commodity/${symbol}?c=guest:guest&format=json`);
+          const curUSD=(Array.isArray(curArr)&&curArr[0]&&curArr[0].Price!=null)?Number(curArr[0].Price):null;
+          const h7=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-7}))}/${d0}?c=guest:guest&format=json`);
+          const h40=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-40}))}/${d0}?c=guest:guest&format=json`);
+          const h370=await j(`https://api.tradingeconomics.com/commodity/${symbol}/historical/${ymd(shift(today,{days:-370}))}/${d0}?c=guest:guest&format=json`);
+          const pDay=lastOnOrBefore(h7,dDay);
+          const pMon=lastOnOrBefore(h40,dMon);
+          const pYr=lastOnOrBefore(h370,dYear);
+          return {curUSD:curUSD,pDay:pDay,pMon:pMon,pYr:pYr}
         }catch(e){return {curUSD:null,pDay:null,pMon:null,pYr:null}}
       }
       const [cocoa,sugar]=await Promise.all([getCommodity('cocoa'),getCommodity('sugar')]);
-      function buildItem(labelEmoji,labelTxt,usdPerUnit,toTonFactor,srcLabel){
-        const curEUR=(c)=>c&&c.curUSD!=null?c.curUSD*usd2eur*toTonFactor:null;
-        const dayEUR=(c)=>c&&c.pDay!=null?c.pDay*usd2eur*toTonFactor:null;
-        const monEUR=(c)=>c&&c.pMon!=null?c.pMon*usd2eur*toTonFactor:null;
-        const yrEUR=(c)=>c&&c.pYr!=null?c.pYr*usd2eur*toTonFactor:null;
-        const c=(labelTxt==='Kakao'?cocoa:sugar);
-        let vCur=curEUR(c),vD=dayEUR(c),vM=monEUR(c),vY=yrEUR(c);
-        if(vCur==null){vCur=3500*usd2eur}
-        if(vD==null){vD=vCur}
-        if(vM==null){vM=vCur}
-        if(vY==null){vY=vCur}
-        const d1=pct(vCur,vD),d30=pct(vCur,vM),d365=pct(vCur,vY);
-        return `<span class="ticker-item">${labelEmoji} ${labelTxt}: <strong>${euroFmt(vCur)}</strong>/t <small>(${signFmt(d1)} vs VT • ${signFmt(d30)} vs VM • ${signFmt(d365)} vs VJ)</small></span>`
-      }
-      const cocoaItem=buildItem('🍫','Kakao',1,1,'ICE');
-      const sugarItem=buildItem('🍚','Zucker',1,1000,'ICE');
+      const SUGAR_TO_TONNE=22.04622;
+      function toEURtonne(c,toTonFactor){const cur=c.curUSD!=null?c.curUSD*toTonFactor*usd2eur:null;const d=c.pDay!=null?c.pDay*toTonFactor*usd2eur:null;const m=c.pMon!=null?c.pMon*toTonFactor*usd2eur:null;const y=c.pYr!=null?c.pYr*toTonFactor*usd2eur:null;return {cur,d,m,y}}
+      const cocoaEUR=toEURtonne(cocoa,1);
+      const sugarEUR=toEURtonne(sugar,SUGAR_TO_TONNE);
+      function safe(v,fb){return (v==null||Number.isNaN(v))?fb:v}
+      let cCur=safe(cocoaEUR.cur,3500*usd2eur),cD=safe(cocoaEUR.d,cCur),cM=safe(cocoaEUR.m,cCur),cY=safe(cocoaEUR.y,cCur);
+      let sCur=safe(sugarEUR.cur,500*usd2eur),sD=safe(sugarEUR.d,sCur),sM=safe(sugarEUR.m,sCur),sY=safe(sugarEUR.y,sCur);
+      const cocoaItem=`<span class="ticker-item">🍫 Kakao: <strong>${euroFmt(cCur)}</strong>/t <small>(${signFmt(pct(cCur,cD))} vs VT • ${signFmt(pct(cCur,cM))} vs VM • ${signFmt(pct(cCur,cY))} vs VJ)</small></span>`;
+      const sugarItem=`<span class="ticker-item">🍚 Zucker: <strong>${euroFmt(sCur)}</strong>/t <small>(${signFmt(pct(sCur,sD))} vs VT • ${signFmt(pct(sCur,sM))} vs VM • ${signFmt(pct(sCur,sY))} vs VJ)</small></span>`;
       const source=`<span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`;
-      const track=el('tickerTrack');
-      track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source;
+      const track=document.getElementById('tickerTrack');
+      if(track){track.innerHTML=cocoaItem+sugarItem+source+cocoaItem+sugarItem+source}
     }
-    loadTicker().catch(()=>{const track=el('tickerTrack');track.innerHTML=`<span class="ticker-item">🍫 Kakao: –</span><span class="ticker-item">🍚 Zucker: –</span><span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`});
+    loadTicker().catch(()=>{const track=document.getElementById('tickerTrack');if(track){track.innerHTML=`<span class="ticker-item">🍫 Kakao: –</span><span class="ticker-item">🍚 Zucker: –</span><span class="ticker-item">Quelle: ICE Futures / TradingEconomics</span>`}});
   </script>
 </body>
 </html>
+```0
