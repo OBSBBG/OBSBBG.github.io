@@ -7,7 +7,11 @@
   <meta name="description" content="OBS-Die-Firma: Glas-Tags & Deluxe Kakao. Jetzt bestellen und in der Schülerfirma abholen.">
   <meta name="theme-color" content="#003b1f">
   <style>
-    :root { color-scheme: light dark; --accent:#0c8a43; }
+    :root {
+      color-scheme: light dark;
+      --accent-green:#0c8a43;   /* Marken-/Badge-Farbe */
+      --price:#d40000;          /* Preisfarbe rot */
+    }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -31,7 +35,9 @@
     .hero {
       margin: 0 0 1.5rem;
       text-align: center;
+      perspective: 1000px; /* 3D-Perspektive für die X-Rotation */
     }
+    .brand-wrap { position: relative; display: inline-block; }
     .brand {
       margin: 0;
       text-transform: uppercase;
@@ -51,10 +57,18 @@
         0 2px 6px rgba(0,0,0,.25),
         0 8px 30px rgba(0,0,0,.25);
       filter: saturate(1.08) contrast(1.06);
-      position: relative;
-      display: inline-block;
+
+      transform-style: preserve-3d;
+      transform-origin: center;
+      animation: slowFlip 18s linear infinite;   /* gemächliche 360° X-Rotation */
     }
-    /* Glitzer-/Shine-Animation */
+    @keyframes slowFlip {
+      0%   { transform: rotateX(0deg); }
+      50%  { transform: rotateX(180deg); }
+      100% { transform: rotateX(360deg); }
+    }
+
+    /* Glitzer-/Shine-Animation (langsamer) */
     .brand::before {
       content: "";
       position: absolute;
@@ -64,11 +78,11 @@
         linear-gradient(120deg,
           rgba(255,255,255,0) 0%,
           rgba(255,255,255,.35) 12%,
-          rgba(255,255,255,0) 24%) ;
-      transform: translateX(-120%) skewX(-10deg);
+          rgba(255,255,255,0) 24%);
+      transform: translateX(-130%) skewX(-10deg);
       filter: blur(0.5px);
       mix-blend-mode: screen;
-      animation: shine 2.6s ease-in-out infinite;
+      animation: shine 6s ease-in-out infinite;  /* langsamer als vorher */
     }
     @keyframes shine {
       0%   { transform: translateX(-130%) skewX(-10deg); opacity:.85; }
@@ -76,8 +90,40 @@
       100% { transform: translateX(135%)  skewX(-10deg); opacity:.85; }
     }
 
-    .brand::after {
-      /* Unterstrich-Balken in Grün */
+    /* Sterne: langsam aufpoppen, schneller verschwinden */
+    .brand-stars {
+      position: absolute;
+      inset: -22% -10% -8% -10%;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .star {
+      position: absolute;
+      font-size: clamp(14px, 2.8vw, 24px);
+      color: #fff;
+      text-shadow:
+        0 0 6px rgba(52,199,89,.9),
+        0 0 16px rgba(12,138,67,.7),
+        0 0 28px rgba(12,138,67,.4);
+      opacity: 0;
+      transform: scale(0.6);
+      animation: twinkle 3.2s ease-out infinite;
+    }
+    /* versetzte Delays + Positionen */
+    .star:nth-child(1){ top:6%;  left:10%; animation-delay:.4s; }
+    .star:nth-child(2){ top:18%; right:8%;  animation-delay:1.1s; }
+    .star:nth-child(3){ bottom:10%; left:12%; animation-delay:1.8s; }
+    .star:nth-child(4){ top:10%; left:50%; transform-origin:-30% -50%; animation-delay:2.3s; }
+    .star:nth-child(5){ bottom:6%; right:12%; animation-delay:2.9s; }
+
+    @keyframes twinkle {
+      0%   { opacity: 0; transform: scale(0.6); }
+      35%  { opacity: 1; transform: scale(1.0); }  /* langsam erscheinen */
+      60%  { opacity: .95; transform: scale(1.05) rotate(6deg); }
+      100% { opacity: 0; transform: scale(0.7) rotate(12deg); } /* etwas schneller weg */
+    }
+
+    .brand-underline {
       content: "";
       display: block;
       width: min(500px, 70%);
@@ -87,6 +133,7 @@
       background: linear-gradient(90deg, #34c759, #0c8a43, #34c759);
       box-shadow: 0 6px 20px rgba(52,199,89,.45);
     }
+
     .tagline {
       margin: .9rem 0 0;
       font-weight: 800;
@@ -96,7 +143,7 @@
       color: #183c26;
     }
 
-    /* ====== Bestehendes Layout ====== */
+    /* ====== Seiten-Layout ====== */
     h2 { margin: 0 0 .25rem; font-size: clamp(1.3rem, 4.5vw, 1.8rem); }
     .spacer { height: 1.2em; }
     p  { margin: 0; font-size: clamp(1.05rem, 3.4vw, 1.15rem); }
@@ -139,25 +186,18 @@
 
     .badge {
       display:inline-block; margin-left:.5rem;
-      background: var(--accent); color:#fff; border-radius:.5rem;
+      background: var(--accent-green); color:#fff; border-radius:.5rem;
       padding:.1rem .5rem; font-size:.9em; vertical-align: middle;
     }
-    .price-old {
-      color: var(--accent);
-      text-decoration: line-through;
-      text-decoration-thickness: .12em;
-      text-decoration-color: var(--accent);
-      font-weight: 700;
-    }
-    .price-new { color: var(--accent); font-weight: 800; }
-    .price-list {
-      margin:.5rem 0 0; padding-left:1.1rem;
-      color: var(--accent); font-weight: 700;
-    }
+
+    /* Preise konsequent Rot */
+    .price-old { color: var(--price); text-decoration: line-through; text-decoration-thickness: .12em; text-decoration-color: var(--price); font-weight: 700; }
+    .price-new { color: var(--price); font-weight: 800; }
+    .price-list { margin:.5rem 0 0; padding-left:1.1rem; color: var(--price); font-weight: 700; }
     .price-list li { margin:.15rem 0; }
 
     .note { margin-top:.6rem; font-size: .95em; font-weight: 600; }
-    .asterisk-note{ margin-top:.4rem; font-size:.95em; color:var(--accent); font-weight:700; }
+    .asterisk-note{ margin-top:.4rem; font-size:.95em; color:var(--price); font-weight:700; }
 
     a { color: inherit; }
     a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
@@ -200,7 +240,18 @@
   <main>
     <!-- Neuer, auffälliger Header -->
     <header class="hero" aria-label="Markenbereich">
-      <h1 class="brand">OBS-Die-Firma</h1>
+      <div class="brand-wrap">
+        <h1 class="brand">OBS-Die-Firma</h1>
+        <!-- Deko-Sterne -->
+        <div class="brand-stars" aria-hidden="true">
+          <span class="star">✦</span>
+          <span class="star">✦</span>
+          <span class="star">✦</span>
+          <span class="star">✦</span>
+          <span class="star">✦</span>
+        </div>
+      </div>
+      <div class="brand-underline" aria-hidden="true"></div>
       <div class="tagline">Sortiment</div>
     </header>
 
@@ -234,10 +285,10 @@
       </p>
 
       <!-- Material & Pflegehinweise zu Glas-Tags -->
-      <ul class="price-list" aria-label="Material & Pflege Glas-Tags" style="margin-top:.6rem;color:inherit;font-weight:600">
-        <li>Material: PLA, PETG</li>
-        <li>Reinigung: nur feucht abwischen (nicht spülmaschinengeeignet)</li>
-        <li>Passform: passend auf alle von uns getesteten Gläser; leicht flexibel, fester Sitz</li>
+      <ul class="price-list" aria-label="Material & Pflege Glas-Tags" style="margin-top:.6rem;color:inherit;font-weight:700">
+        <li style="color:inherit">Material: PLA, PETG</li>
+        <li style="color:inherit">Reinigung: nur feucht abwischen (nicht spülmaschinengeeignet)</li>
+        <li style="color:inherit">Passform: passend auf alle von uns getesteten Gläser; leicht flexibel, fester Sitz</li>
       </ul>
 
       <img
@@ -248,9 +299,9 @@
       >
     </article>
 
-    <section class="slots" aria-label="Weitere Produkte folgen">
+    <section class="slots" aria-label="Weitere Produkte">
       <article class="slot">
-        <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· 5 €</span></h2>
+        <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· <span class="price-new">5 €</span></span></h2>
         <p class="desc">
           Das Wohlfühlglas mit der extra Portion Schokolade. Die Kugeln einfach mit heißer Milch übergießen –
           fertig ist der Winter-Schoko-Traum. Das Glas einfach in die Spülmaschine und beim nächsten Getränk
@@ -335,7 +386,7 @@
         <div class="row">
           <div>
             <label>Produkt 2: Deluxe Kakao</label>
-            <div class="muted">Stückpreis: <span id="p2PriceLabel">5,00</span> €</div>
+            <div class="muted">Stückpreis: <span class="price-new" id="p2PriceLabel">5,00</span> €</div>
           </div>
           <div>
             <label for="p2Qty">Menge</label>
@@ -393,7 +444,6 @@
       p1PiecesPer: { single: 1, pack5: 5, pack10: 10 },
       p2: 5.00
     };
-    // ===========================================================
 
     (function(){ emailjs.init(EMAILJS_PUBLIC_KEY); })();
 
