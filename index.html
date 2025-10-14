@@ -21,9 +21,9 @@
 
     /* ===== TICKER (größer + langsamer) ===== */
     .ticker{width:100%;overflow:hidden;margin:-1rem 0 1rem 0}
-    .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.85rem 0}
-    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 110s linear infinite;font-size:1.05rem}
-    .ticker-item{display:inline-flex;align-items:center;gap:.45rem;margin:0 1.5rem}
+    .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.95rem 0}
+    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 120s linear infinite;font-size:1.08rem}
+    .ticker-item{display:inline-flex;align-items:center;gap:.45rem;margin:0 1.6rem}
     .ticker-item small{opacity:.9;font-weight:700}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
@@ -53,7 +53,7 @@
     .brand-underline{width:min(500px,70%);height:8px;margin:.6rem auto 0;border-radius:6px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 6px 20px rgba(52,199,89,.45)}
     .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.1rem,3.6vw,1.6rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26}
 
-    /* ===== Content ===== */
+    /* ===== Content / Shop ===== */
     h2{margin:0 0 .25rem;font-size:clamp(1.3rem,4.5vw,1.8rem)}
     p{margin:0;font-size:clamp(1.05rem,3.4vw,1.15rem)}
     img{display:block;max-width:100%;height:auto;margin:1rem auto 0;user-select:none;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.08)}
@@ -64,8 +64,6 @@
     .price{font-weight:700}
     .desc{margin-top:.5rem;font-size:clamp(1rem,3.2vw,1.1rem)}
     .badge{display:inline-block;margin-left:.5rem;background:var(--accent-green);color:#fff;border-radius:.5rem;padding:.1rem .5rem;font-size:.9em;vertical-align:middle}
-
-    /* Preisfarben */
     .price-old{color:var(--price);text-decoration:line-through;text-decoration-thickness:.12em;text-decoration-color:var(--price);font-weight:700}
     .price-new{color:var(--price);font-weight:800}
     .price-kakao{color:#000!important;font-weight:800}
@@ -77,8 +75,6 @@
     a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #666;outline-offset:2px;border-radius:6px}
     footer{margin-top:2rem;font-size:.95rem;opacity:.9}
     footer nav a{text-decoration:underline}
-
-    /* ===== Formular / Warenkorb ===== */
     form.shop{text-align:left;margin-top:1.5rem}
     .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin-top:16px;background:#fff}
     .grid{display:grid;gap:12px}
@@ -95,8 +91,6 @@
     .success{color:#0a7a30;font-size:.95rem}
     .hidden{display:none}
     hr.sep{border:0;border-top:1px solid #eee;margin:12px 0}
-
-    /* ===== Werbeaktion Spiel ===== */
     .game-grid{display:grid;grid-template-columns:repeat(3,90px);grid-gap:10px;justify-content:center;margin-top:12px}
     .tile{width:90px;height:90px;border-radius:12px;border:1px solid #ccc;background:#efefef;cursor:pointer;position:relative;overflow:hidden;transition:transform .08s ease-in;display:grid;place-items:center}
     .tile:active{transform:scale(.98)}
@@ -106,11 +100,7 @@
     .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f6f6f6;border:1px solid #e5e5e5;font-weight:600}
     .win{color:#0a7a30;font-weight:800}
     .lose{color:#b00020;font-weight:800}
-
-    /* Glas-SVG */
     .glass{width:72px;height:72px;display:block}
-
-    /* ===== Gewinn-Effekte Overlay ===== */
     .fx-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}
     .obs-logo-fx{position:fixed;left:50%;top:-22vh;transform:translateX(-50%);font-weight:900;text-transform:uppercase;letter-spacing:.06em;font-size:min(20vw,180px);background:linear-gradient(180deg,var(--deep-green),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 6px 26px rgba(0,0,0,.45);filter:drop-shadow(0 10px 30px rgba(0,0,0,.45));animation:fx-drop 1200ms cubic-bezier(.2,.8,.2,1) forwards,fx-pulse 1800ms ease-in-out 1200ms 3,fx-explode 700ms ease-out 6600ms forwards}
     @keyframes fx-drop{0%{top:-22vh;transform:translateX(-50%) scale(.88)}100%{top:40vh;transform:translateX(-50%) scale(1)}}
@@ -278,11 +268,9 @@
     const formatEUR=(n)=>n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
     const formatLines=(arr)=>arr.join(' | ');
 
-    /* ===== Spiel ===== */
+    /* ===== Spiel (unverändert) ===== */
     const COLORS=["#e74c3c","#f39c12","#f1c40f","#2ecc71","#3498db","#9b59b6","#e67e22","#1abc9c","#e84393"];
-    let board=[],revealed=new Set(),triesLeft=0,won=false;
-    let gamesPlayed=0,startLocked=false,startCooldownTimer=null;
-
+    let board=[],revealed=new Set(),triesLeft=0,won=false,gamesPlayed=0,startLocked=false,startCooldownTimer=null;
     function glassSVG(color){const c=color;return `<svg class="glass" viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="18" width="56" height="70" rx="10" ry="10" fill="url(#g1)" stroke="#d0d0d0" stroke-width="2"/><rect x="26" y="48" width="48" height="36" rx="8" ry="8" fill="${c}" opacity="0.9"/><rect x="26" y="22" width="8" height="52" rx="4" fill="#ffffff" opacity="0.35"/><g transform="translate(70,30)"><circle r="10" fill="#2d2d2d"/><circle r="3.2" cx="-3" cy="-3" fill="#d9d9d9"/></g><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfdfd"/><stop offset="1" stop-color="#efefef"/></linearGradient></defs></svg>`}
     function pickUnique(a,k){const c=a.slice().map(x=>({x,r:Math.random()})).sort((p,q)=>p.r-q.r).map(o=>o.x);return c.slice(0,k)}
     function newBoard(){if(startLocked)return;const seven=pickUnique(COLORS,7);const winColor=seven[Math.floor(Math.random()*seven.length)];const tiles=[];for(let i=0;i<3;i++)tiles.push(winColor);const others=seven.filter(c=>c!==winColor).slice(0,6);tiles.push(...others);board=tiles.map(c=>({c,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.c);revealed.clear();triesLeft=5;won=false;el('triesLeft').textContent=String(triesLeft);el('matchCount').textContent="0";el('gameMsg').textContent="";renderBoard();el('startGameBtn').classList.add('hidden');el('newGameBtn').classList.remove('hidden');el('cooldownPill').classList.add('hidden')}
@@ -300,19 +288,33 @@
     document.getElementById('orderForm').addEventListener('submit',async(e)=>{e.preventDefault();el('formError').classList.add('hidden');el('formOk').classList.add('hidden');const v=validate();if(!v.ok){el('formError').textContent=v.msg;el('formError').classList.remove('hidden');return}const pack=el('p1Pack').value;const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;const p1SubtotalVal=PRICES.p1[pack]*p1Qty;const p2SubtotalVal=PRICES.p2*p2Qty;const cartLines=[];if(p1Qty>0){const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`)}if(p2Qty>0)cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);const coupon=el('coupon').value.trim();if(coupon)cartLines.push(`Gewinncode: ${coupon}`);const payload={customer_name:el('name').value.trim(),customer_phone:el('phone').value.trim(),customer_email:el('email').value.trim(),items_text:cartLines.join(' | '),total:el('grandTotal').textContent,p1_names:el('p1Names').value,reply_to:el('email').value.trim()};try{const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);if(result&&result.status>=200&&result.status<300){el('formOk').classList.remove('hidden')}else{throw new Error('EmailJS: Unerwartete Antwort')}}catch(err){el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';el('formError').classList.remove('hidden')}});
   </script>
 
-  <!-- ===== FRED-TICKER erweitert (mit robustem CORS-Proxy-Fallback) ===== -->
+  <!-- ===== FRED-TICKER (seriell + Retry + Cache) ===== -->
   <script>
     const FRED_API_KEY="66cc415ca598043527786a24b0dad230";
-    // IMF-Serien (monatlich, USD/t). Zucker = Cent/lb (No.11)
-    const SERIES={
+    const SERIES={ // IMF monatlich (USD/t), Zucker in Cent/lb
       cocoa:"PCOCOUSDM",
       sugar:"PSUGAISAUSDM",
       wheat:"PWHEAMTUSDM",
       corn:"PMAIZMTUSDM",
-      rice:"PRICENPQUSDM" // Thailand
+      rice:"PRICENPQUSDM"
     };
+    const CACHE_KEY="tickerCache_v2";           // neue Version => frischer Cache
+    const CACHE_TTL_MS=6*60*60*1000;            // 6 Stunden
+    const BETWEEN_CALLS_MS=500;                 // 0.5s Pause zwischen Requests (Drossel)
+    const MAX_RETRY=2;                          // 1 + 2 Wiederholungen
+    const RETRY_WAIT_MS=1200;                   // Backoff-Basis
 
-    // robuster Fetch mit Proxy-Fallback
+    const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+    async function withRetry(fn, max=MAX_RETRY){
+      let err,lastDelay=0;
+      for(let i=0;i<=max;i++){
+        try{ return await fn(); }
+        catch(e){ err=e; lastDelay = RETRY_WAIT_MS*(i+1); await sleep(lastDelay); }
+      }
+      throw err;
+    }
+
+    // robuster Fetch (mit CORS-Fallback)
     async function j(url){
       try{
         const r=await fetch(url,{cache:'no-store'});
@@ -346,74 +348,98 @@
     function euro0(n){return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n)}
 
     async function usdToEur(){
-      try{const fx=await j("https://api.exchangerate.host/latest?base=USD&symbols=EUR");return fx?.rates?.EUR??0.93}
-      catch{return 0.93}
+      // seriell + Retry
+      return await withRetry(async()=>{
+        try{const fx=await j("https://api.exchangerate.host/latest?base=USD&symbols=EUR");return fx?.rates?.EUR??0.93}
+        catch{return 0.93}
+      }, MAX_RETRY);
     }
 
     async function fredMonthly(series_id,start="2024-01-01"){
       const url=`https://api.stlouisfed.org/fred/series/observations?series_id=${series_id}&api_key=${FRED_API_KEY}&file_type=json&observation_start=${start}`;
-      const d=await j(url);
+      const d=await withRetry(()=>j(url), MAX_RETRY);
       return (d.observations||[]).map(o=>({date:o.date,v:(o.value==="."?null:Number(o.value))})).filter(o=>o.v!=null);
     }
 
-    async function loadTicker(){
-      const usd2eur=await usdToEur();
-      const [cocoaObs,sugarObs,wheatObs,cornObs,riceObs]=await Promise.all([
-        fredMonthly(SERIES.cocoa,"2024-01-01"),
-        fredMonthly(SERIES.sugar,"2024-01-01"),
-        fredMonthly(SERIES.wheat,"2024-01-01"),
-        fredMonthly(SERIES.corn,"2024-01-01"),
-        fredMonthly(SERIES.rice,"2024-01-01")
-      ]);
+    function calcUSDton(obs, usd2eur){
+      if(!obs.length)return null;
+      const cur=obs.at(-1).v, prev=obs.at(-2)?.v??null;
+      const y24=obs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
+      const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
+      return {curEUR:cur*usd2eur,vsPrev:pct(cur,prev),vsY2024:pct(cur,avg24)};
+    }
+    function calcSugar(obs, usd2eur){
+      if(!obs.length)return null;
+      const F=22.04622; // (cent/lb) -> USD/t
+      const curC=obs.at(-1).v, prevC=obs.at(-2)?.v??null;
+      const y24=obs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
+      const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
+      const curEUR=curC*F*usd2eur;
+      return {curEUR,vsPrev:pct(curC,prevC),vsY2024:pct(curC,avg24)};
+    }
 
-      function calcUSDton(obs){ // für Kakao, Weizen, Mais, Reis (alle USD/t)
-        if(!obs.length)return null;
-        const cur=obs.at(-1).v, prev=obs.at(-2)?.v??null;
-        const y24=obs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
-        const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
-        return {curEUR:cur*usd2eur,vsPrev:pct(cur,prev),vsY2024:pct(cur,avg24)};
-      }
-      function calcSugar(){ // Cent/lb -> USD/t -> EUR/t
-        if(!sugarObs.length)return null;
-        const FACTOR=22.04622; // (cent/lb) -> USD/t
-        const curC=sugarObs.at(-1).v, prevC=sugarObs.at(-2)?.v??null;
-        const y24=sugarObs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
-        const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
-        const curEUR=curC*FACTOR*usd2eur;
-        return {curEUR,vsPrev:pct(curC,prevC),vsY2024:pct(curC,avg24)};
-      }
-
-      const cocoa=calcUSDton(cocoaObs);
-      const sugar=calcSugar();
-      const wheat=calcUSDton(wheatObs);
-      const corn =calcUSDton(cornObs);
-      const rice =calcUSDton(riceObs);
-
-      const mk=(label,data)=> data
-        ? `<span class="ticker-item">${label}: <strong>${euro0(data.curEUR)}</strong>/t <small>(${signPct(data.vsPrev)} vs VM • ${signPct(data.vsY2024)} vs 2024-Ø)</small></span>`
+    function renderTicker(payload){
+      const mk=(label,d)=> d
+        ? `<span class="ticker-item">${label}: <strong>${euro0(d.curEUR)}</strong>/t <small>(${signPct(d.vsPrev)} vs VM • ${signPct(d.vsY2024)} vs 2024-Ø)</small></span>`
         : `<span class="ticker-item">${label}: –</span>`;
-
-      const items = [
-        mk("🍫 Kakao", cocoa),
-        mk("🍚 Zucker", sugar),
-        mk("🌾 Weizen", wheat),
-        mk("🌽 Mais",   corn),
-        mk("🍚 Reis",   rice),
+      const items=[
+        mk("🍫 Kakao", payload.cocoa),
+        mk("🍚 Zucker", payload.sugar),
+        mk("🌾 Weizen", payload.wheat),
+        mk("🌽 Mais",   payload.corn),
+        mk("🍚 Reis",   payload.rice),
         `<span class="ticker-item">Quelle: IMF über FRED (St. Louis Fed)</span>`
       ];
-
       const track=document.getElementById("tickerTrack");
-      if(track){ track.innerHTML = items.concat(items).join(""); } // doppelt für lückenloses Band
+      if(track){ track.innerHTML = items.concat(items).join(""); }
+    }
+
+    function tryRenderFromCache(){
+      try{
+        const raw=localStorage.getItem(CACHE_KEY);
+        if(!raw) return false;
+        const {ts,data}=JSON.parse(raw);
+        if(!data || Date.now()-ts > CACHE_TTL_MS) return false;
+        renderTicker(data);
+        return true;
+      }catch{ return false; }
+    }
+
+    async function loadTicker(){
+      // 1) Sofort mit Cache bedienen (falls vorhanden)
+      const hadCache=tryRenderFromCache();
+
+      // 2) Serielle Live-Abfragen (mit Pausen & Retry)
+      const usd2eur=await usdToEur();
+
+      const cocoaObs=await fredMonthly(SERIES.cocoa,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
+      const sugarObs=await fredMonthly(SERIES.sugar,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
+      const wheatObs=await fredMonthly(SERIES.wheat,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
+      const cornObs =await fredMonthly(SERIES.corn ,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
+      const riceObs =await fredMonthly(SERIES.rice ,"2024-01-01");
+
+      const data={
+        cocoa: calcUSDton(cocoaObs, usd2eur),
+        sugar: calcSugar(sugarObs, usd2eur),
+        wheat: calcUSDton(wheatObs, usd2eur),
+        corn : calcUSDton(cornObs , usd2eur),
+        rice : calcUSDton(riceObs , usd2eur)
+      };
+
+      // 3) Render + Cache aktualisieren
+      renderTicker(data);
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), data})); }catch{}
     }
 
     loadTicker().catch(err=>{
       console.error('Ticker-Fehler:', err, err._stack || '');
+      // Falls gar nichts geht, aber Cache existierte, bleibt Anzeige stehen.
       const t=document.getElementById('tickerTrack');
-      if(t){
+      if(t && t.textContent.includes('Lade Marktdaten')){ // kein Cache, gar nichts gerendert
         const msg=['⚠️ Ticker-Error', navigator.onLine?'(online)':'(offline)', (err && err.message)?'· '+err.message:''].join(' ');
         t.innerHTML = `
           <span class="ticker-item">${msg}</span>
-          <span class="ticker-item">Hinweis: Netzwerk/CORS kann blocken. Test via GitHub Pages oder Handy-Hotspot.</span>
+          <span class="ticker-item">Hinweis: Netzwerk/CORS/Proxy blockt. Test via GitHub Pages oder Handy-Hotspot.</span>
           <span class="ticker-item">Quelle: IMF über FRED</span>
         `;
       }
