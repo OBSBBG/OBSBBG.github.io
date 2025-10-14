@@ -7,7 +7,7 @@
   <meta name="description" content="OBS-Die-Firma: Glas-Tags & Deluxe Kakao. Jetzt bestellen und in der Schülerfirma abholen.">
   <meta name="theme-color" content="#003b1f">
   <style>
-    :root{ color-scheme: light dark; --accent-green:#0c8a43; --price:#d40000; }
+    :root{ color-scheme: light dark; --accent-green:#0c8a43; --green:#34c759; --deep-green:#0b5d2a; --gold:#d4af37; --price:#d40000; }
     *{ box-sizing: border-box }
     body{
       margin:0; min-height:100vh; display:grid; place-items:start center;
@@ -120,6 +120,68 @@
 
     /* Glas-SVG Größensteuerung */
     .glass { width:72px; height:72px; display:block }
+
+    /* ===== Gewinn-Effekte Overlay ===== */
+    .fx-layer{
+      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:9999;
+    }
+    .obs-logo-fx{
+      position:fixed; left:50%; top:-20vh; transform:translateX(-50%);
+      font-weight:900; text-transform:uppercase; letter-spacing:.06em;
+      font-size:min(16vw,140px);
+      background:linear-gradient(180deg, var(--deep-green), var(--green));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 4px 20px rgba(0,0,0,.35);
+      filter:drop-shadow(0 6px 20px rgba(0,0,0,.35));
+      animation:fx-drop 700ms cubic-bezier(.2,.8,.2,1) forwards,
+               fx-pulse 1200ms ease-in-out 700ms 2,
+               fx-explode 500ms ease-out 3100ms forwards;
+    }
+    @keyframes fx-drop{
+      0%{ top:-20vh; transform:translateX(-50%) scale(.9) }
+      100%{ top:40vh; transform:translateX(-50%) scale(1) }
+    }
+    @keyframes fx-pulse{
+      0%,100%{ transform:translateX(-50%) scale(1) }
+      50%{ transform:translateX(-50%) scale(1.08) }
+    }
+    @keyframes fx-explode{
+      to{ transform:translateX(-50%) scale(3.2); opacity:0 }
+    }
+
+    .flash{
+      position:fixed; inset:0; opacity:0; pointer-events:none; z-index:9998;
+      mix-blend-mode:screen;
+    }
+    .flash.green{
+      background:radial-gradient(ellipse at center, rgba(12,138,67,.75), rgba(12,138,67,0) 60%);
+      animation:flash-pop 250ms ease-out 3000ms both;
+    }
+    .flash.gold{
+      background:radial-gradient(ellipse at center, rgba(212,175,55,.75), rgba(212,175,55,0) 60%);
+      animation:flash-pop 250ms ease-out 3050ms both;
+    }
+    @keyframes flash-pop{
+      from{ opacity:0 }
+      50%{ opacity:1 }
+      to{ opacity:0 }
+    }
+
+    .star-fx{
+      position:fixed; font-weight:900; font-size:18px;
+      text-shadow:0 0 10px rgba(0,0,0,.25);
+      opacity:0; transform:scale(.8);
+      animation:star-fade var(--dur, 2.5s) ease-out var(--delay, 0s) forwards;
+      z-index:9997;
+    }
+    @keyframes star-fade{
+      0%{ opacity:0; transform:scale(.8) translateY(0) }
+      10%{ opacity:1; transform:scale(1) translateY(-6px) }
+      80%{ opacity:.9 }
+      100%{ opacity:0; transform:scale(1.1) translateY(-14px) }
+    }
+
+    .disabled{ opacity:.6; cursor:not-allowed }
   </style>
 </head>
 <body>
@@ -178,15 +240,13 @@
       <p class="desc">Decke in 5 Versuchen <strong>drei gleiche</strong> Gläser im 3×3-Feld auf. Gewinnst du, bekommst du einen <strong>Glas-Tag gratis</strong> zu deiner Bestellung.</p>
       <div class="game-controls">
         <button type="button" id="startGameBtn">Spiel starten</button>
+        <button type="button" id="newGameBtn" class="hidden">Neues Spiel</button>
         <span class="pill">Versuche übrig: <span id="triesLeft">–</span></span>
         <span class="pill">Treffer gleichfarbig: <span id="matchCount">0</span></span>
-        <span class="pill hidden" id="cooldownPill">Warte: <span id="cooldownSec">0</span>s</span>
+        <span class="pill hidden" id="cooldownPill">Nächstes Spiel in <span id="cooldownSec">0</span>s</span>
       </div>
       <div id="gameGrid" class="game-grid" aria-label="3x3 Spielfeld"></div>
       <div id="gameMsg" class="desc" style="margin-top:8px;"></div>
-      <div class="game-controls">
-        <button type="button" id="newGameBtn" class="hidden">Neues Spiel</button>
-      </div>
     </section>
 
     <!-- ========= Shop-Formular / Warenkorb ========= -->
@@ -285,39 +345,11 @@
     const COLORS = ["#e74c3c","#f39c12","#f1c40f","#2ecc71","#3498db","#9b59b6","#e67e22","#1abc9c","#e84393"];
     let board=[], revealed=new Set(), triesLeft=0, won=false;
 
-    // Cooldown-Zustand
-    let clickLocked = false;
-    let cooldownTimer = null;
-    let cooldownRemaining = 0;
-
-    function showCooldown(sec){
-      const pill = el('cooldownPill');
-      const out  = el('cooldownSec');
-      if (sec > 0){
-        pill.classList.remove('hidden');
-        out.textContent = String(sec);
-      } else {
-        pill.classList.add('hidden');
-      }
-    }
-
-    function startCooldown(sec){
-      if (sec <= 0) return;
-      clickLocked = true;
-      cooldownRemaining = sec;
-      showCooldown(cooldownRemaining);
-      clearInterval(cooldownTimer);
-      cooldownTimer = setInterval(()=>{
-        cooldownRemaining -= 1;
-        if (cooldownRemaining <= 0){
-          clearInterval(cooldownTimer);
-          clickLocked = false;
-          showCooldown(0);
-        } else {
-          showCooldown(cooldownRemaining);
-        }
-      }, 1000);
-    }
+    // Start-Cooldown für NÄCHSTE Spiele
+    let gamesPlayed = 0;       // nach Ende eines Spiels erhöht
+    let startLocked = false;
+    let startCooldownTimer = null;
+    let startCooldownRemaining = 0;
 
     function glassSVG(color){
       const c = color;
@@ -345,19 +377,18 @@
     }
 
     function newBoard(){
-      // Genau 7 verschiedene Farben insgesamt:
-      // 1 Gewinnfarbe dreifach, 6 weitere unterschiedliche Farben je einmal.
+      // Blockieren, falls Start-Cooldown aktiv
+      if (startLocked) return;
+
+      // Genau 7 verschiedene Farben: 1× dreifach, 6× einzeln
       const seven = pickUnique(COLORS, 7);
       const winColor = seven[Math.floor(Math.random()*seven.length)];
 
       const tiles = [];
-      // 3× Gewinnfarbe
       for(let i=0;i<3;i++) tiles.push(winColor);
-      // 6 weitere (alle unterschiedlich, ohne die Gewinnfarbe erneut hinzuzufügen)
       const others = seven.filter(c => c !== winColor).slice(0, 6);
-      tiles.push(...others); // ergibt 9
+      tiles.push(...others);
 
-      // mischen
       board = tiles.map(c=>({c,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.c);
 
       // Reset
@@ -365,10 +396,13 @@
       el('triesLeft').textContent = String(triesLeft);
       el('matchCount').textContent = "0";
       el('gameMsg').textContent = "";
-      clearInterval(cooldownTimer); clickLocked = false; showCooldown(0);
 
       renderBoard();
-      el('newGameBtn').classList.add('hidden');
+
+      // Buttons umschalten
+      el('startGameBtn').classList.add('hidden');
+      el('newGameBtn').classList.remove('hidden');
+      el('cooldownPill').classList.add('hidden');
     }
 
     function renderBoard(){
@@ -385,8 +419,6 @@
     }
 
     function onReveal(e){
-      if (clickLocked) return; // während Cooldown gesperrt
-
       const tile=e.currentTarget;
       const idx=Number(tile.dataset.index);
       if(won || triesLeft<=0 || revealed.has(idx)) return;
@@ -403,42 +435,99 @@
       const maxSame = Math.max(...Object.values(counts));
       el('matchCount').textContent = String(maxSame);
 
-      // Gewinn?
       if(maxSame>=3){
         won=true;
         el('gameMsg').innerHTML = `<span class="win">Gewonnen! 🎉 Du erhältst einen Glas-Tag gratis zu deiner Bestellung.</span>`;
-        // still: Code ins Formular setzen
         const couponEl = el('coupon');
         if (couponEl && !couponEl.value.trim()) { couponEl.value = 'Shop'; recalc(); }
-        el('newGameBtn').classList.remove('hidden');
-        autoRevealRest();
-        clearInterval(cooldownTimer); clickLocked=false; showCooldown(0);
+        winEffects(); // OBS-Logo + Sterne + Blitze
+        endGameStartCooldown();
         return;
       }
 
-      // Verloren?
       if(triesLeft===0){
         el('gameMsg').innerHTML = `<span class="lose">Leider verloren. Versuch’s nochmal!</span>`;
-        el('newGameBtn').classList.remove('hidden');
-        autoRevealRest();
-        clearInterval(cooldownTimer); clickLocked=false; showCooldown(0);
+        endGameStartCooldown();
         return;
       }
-
-      // Cooldown vor dem nächsten Versuch:
-      // Nach 1. Aufdecken -> 5s, nach 2. -> 10s, ... = revealed.size * 5s
-      const delaySec = revealed.size * 5;
-      startCooldown(delaySec);
     }
 
-    function autoRevealRest(){
-      Array.from(el('gameGrid').children).forEach(tile=>{
-        const cover = tile.querySelector('.cover');
-        if (cover) cover.style.opacity='0';
-        tile.classList.add('revealed');
-      });
+    // ==== Start-Cooldown (nur zwischen Spielen) ====
+    function endGameStartCooldown(){
+      gamesPlayed += 1;
+      const delaySec = gamesPlayed * 5; // 5s, 10s, 15s, ...
+      // Buttons sperren, Grid bleibt sichtbar
+      startLocked = delaySec > 0;
+      const startBtn = el('startGameBtn');
+      const newBtn   = el('newGameBtn');
+      startBtn.classList.remove('hidden');
+      newBtn.classList.add('hidden');
+
+      if (!startLocked) return;
+
+      startBtn.classList.add('disabled');
+      el('cooldownPill').classList.remove('hidden');
+      startCooldownRemaining = delaySec;
+      el('cooldownSec').textContent = String(startCooldownRemaining);
+      clearInterval(startCooldownTimer);
+      startCooldownTimer = setInterval(()=>{
+        startCooldownRemaining -= 1;
+        if (startCooldownRemaining <= 0){
+          clearInterval(startCooldownTimer);
+          startLocked = false;
+          el('cooldownPill').classList.add('hidden');
+          startBtn.classList.remove('disabled');
+        } else {
+          el('cooldownSec').textContent = String(startCooldownRemaining);
+        }
+      }, 1000);
     }
 
+    // ==== Gewinn-Effekte ====
+    function winEffects(){
+      // Layer
+      const layer = document.createElement('div');
+      layer.className = 'fx-layer';
+      document.body.appendChild(layer);
+
+      // OBS-Logo
+      const logo = document.createElement('div');
+      logo.className = 'obs-logo-fx';
+      logo.textContent = 'OBS';
+      layer.appendChild(logo);
+
+      // Lichtblitze
+      const flashG = document.createElement('div');
+      flashG.className = 'flash green';
+      const flashGold = document.createElement('div');
+      flashGold.className = 'flash gold';
+      layer.appendChild(flashG);
+      layer.appendChild(flashGold);
+
+      // Sterne
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      const STAR_COUNT = 60;
+      for (let i=0;i<STAR_COUNT;i++){
+        const s = document.createElement('span');
+        s.className = 'star-fx';
+        s.textContent = Math.random() < 0.6 ? '✦' : '✸';
+        const color = Math.random() < 0.55 ? 'var(--green)' : 'var(--gold)';
+        s.style.color = color;
+        const x = Math.random()*vw;
+        const y = Math.random()*vh;
+        s.style.left = x + 'px';
+        s.style.top  = y + 'px';
+        s.style.setProperty('--delay', (0.2 + Math.random()*1.8).toFixed(2)+'s');
+        s.style.setProperty('--dur', (2.2 + Math.random()*2.8).toFixed(2)+'s');
+        layer.appendChild(s);
+      }
+
+      // Aufräumen nach ~6s
+      setTimeout(()=>{ layer.remove(); }, 6000);
+    }
+
+    // Buttons
     el('startGameBtn').addEventListener('click', newBoard);
     el('newGameBtn').addEventListener('click', newBoard);
 
