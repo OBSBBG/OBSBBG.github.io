@@ -1,0 +1,39 @@
+name: Update Ticker (täglich)
+
+on:
+  schedule:
+    - cron: "0 4 * * *"   # täglich 06:00 Europa/Berlin ≈ 04:00 UTC
+  workflow_dispatch: {}   # manuell startbar
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Keine Dependencies nötig – Schritt bleibt der Form halber drin
+      - name: Install (no deps)
+        run: npm ci --ignore-scripts --fund=false --audit=false || true
+
+      - name: Generate ticker.json
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          node -v
+          npm run update:ticker
+
+      - name: Commit & push if changed
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "ticker.json"
+          message: "chore: daily ticker update"
+          default_author: github_actions
