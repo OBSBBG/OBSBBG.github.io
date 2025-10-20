@@ -20,7 +20,7 @@
     }
     main{width:min(1000px,100%)}
 
-    /* ===== TICKER (größer + langsamer) ===== */
+    /* ===== TICKER ===== */
     .ticker{width:100%;overflow:hidden;margin:-1rem 0 1rem 0}
     .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.95rem 0}
     .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 120s linear infinite;font-size:1.08rem}
@@ -139,7 +139,7 @@
   <!-- ===== TICKER ===== -->
   <div class="ticker">
     <div class="ticker-bar">
-      <div id="tickerTrack" class="ticker-track">Lade Marktdaten …</div>
+      <div id="tickerTrack" class="ticker-track">Lade Neuigkeiten …</div>
     </div>
   </div>
 
@@ -546,158 +546,88 @@
     });
   </script>
 
-  <!-- ===== STABILER FRED-TICKER (fix: sauberer Timeout/Retry, kein "Signal aborted") ===== -->
+  <!-- ===== LOKALER TICKER: lädt ./ticker.json (24h Cache, Retry, kein CORS, kein Key) ===== -->
   <script>
-    // === KONFIG ===
-    const FRED_API_KEY = "66cc415ca598043527786a24b0dad230"; // dein Key
-    const SERIES = {
-      cocoa: "PCOCOUSDM",     // USD/t (monatlich)
-      sugar: "PSUGAISAUSDM",  // Cent/lb (monatlich) -> in USD/t wandeln
-      wheat: "PWHEAMTUSDM",   // USD/t
-      corn:  "PMAIZMTUSDM",   // USD/t
-      rice:  "PRICENPQUSDM"   // USD/t
-    };
-    const CACHE_KEY = "tickerCache_v3";
-    const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6h
-    const TIMEOUT_MS = 9000;                 // konservativer Timeout
+    const TICKER_URL = "./ticker.json";
+    const CACHE_KEY = "localTickerCache_v1";
+    const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
+    const TIMEOUT_MS = 8000;
     const MAX_RETRY = 2;
 
-    // === Utils ===
     const euro0 = (n) => new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n);
-    const pct = (cur, base) => (base == null ? null : ((cur - base) / base) * 100);
-    const signPct = (v) => (v == null || !isFinite(v)) ? "n/a" : `${v >= 0 ? "+" : ""}${v.toFixed(2).replace(".", ",")} %`;
 
-    function renderTicker(payload, fromCache = false) {
-      const mk = (label, d) => d
-        ? `<span class="ticker-item">${label}: <strong>${euro0(d.curEUR)}</strong>/t <small>(${signPct(d.vsPrev)} vs VM • ${signPct(d.vsY2024)} vs 2024-Ø)</small></span>`
-        : `<span class="ticker-item">${label}: –</span>`;
-      const items = [
-        mk("🍫 Kakao", payload.cocoa),
-        mk("🍚 Zucker", payload.sugar),
-        mk("🌾 Weizen", payload.wheat),
-        mk("🌽 Mais",   payload.corn),
-        mk("🍚 Reis",   payload.rice),
-        `<span class="ticker-item">Quelle: IMF über FRED${fromCache ? " (Cache)" : ""}</span>`
-      ];
+    function renderTicker(items, fromCache=false){
+      const mk = (it) => {
+        const text = it.text || "";
+        const url  = it.url;
+        const val  = (typeof it.value === "number") ? ` <strong>${euro0(it.value)}</strong>` : "";
+        const extra= it.extra ? ` <small>${it.extra}</small>` : "";
+        if (url) return `<span class="ticker-item">• <a href="${url}" target="_blank" rel="noreferrer">${text}</a>${val}${extra}</span>`;
+        return `<span class="ticker-item">• ${text}${val}${extra}</span>`;
+      };
+      const html = items.map(mk);
       const track = document.getElementById("tickerTrack");
-      if (track) track.innerHTML = items.concat(items).join(""); // doppelt => Endlosschleife
+      if (track) track.innerHTML = html.concat(html).join("") + (fromCache ? `<span class="ticker-item">(Cache)</span>` : "");
     }
 
-    function tryRenderFromCache() {
-      try {
+    function tryRenderFromCache(){
+      try{
         const raw = localStorage.getItem(CACHE_KEY);
-        if (!raw) return false;
-        const { ts, data } = JSON.parse(raw);
-        if (!data || (Date.now() - ts) > CACHE_TTL_MS) return false;
-        renderTicker(data, true);
+        if(!raw) return false;
+        const {ts,items} = JSON.parse(raw);
+        if(!Array.isArray(items) || (Date.now()-ts)>CACHE_TTL_MS) return false;
+        renderTicker(items,true);
         return true;
-      } catch { return false; }
+      }catch{ return false; }
     }
 
-    // Solider JSON-Fetch mit per-Versuch-Controller, Timeout & Backoff
-    async function fetchJSON(url, { timeout = TIMEOUT_MS, retries = MAX_RETRY } = {}) {
-      let attempt = 0, lastErr;
-      while (attempt <= retries) {
-        const controller = new AbortController();
-        const timer = setTimeout(() => {
-          controller.abort(new DOMException(`Timeout nach ${timeout}ms`, "TimeoutError"));
-        }, timeout);
-
-        try {
-          const res = await fetch(url, {
-            signal: controller.signal,
-            cache: "no-store",
-            keepalive: false,
-            headers: { "cache-control": "no-cache" }
-          });
+    async function fetchJSON(url, {timeout=TIMEOUT_MS, retries=MAX_RETRY} = {}){
+      let lastErr;
+      for(let attempt=0; attempt<=retries; attempt++){
+        const ac = new AbortController();
+        const timer = setTimeout(()=>ac.abort(new DOMException(`Timeout nach ${timeout}ms`,"TimeoutError")), timeout);
+        try{
+          const r = await fetch(url, {signal: ac.signal, cache: "no-store"});
           clearTimeout(timer);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return await res.json();
-        } catch (err) {
+          if(!r.ok) throw new Error(`HTTP ${r.status}`);
+          return await r.json();
+        }catch(e){
           clearTimeout(timer);
-          if (err.name === "AbortError" || err.name === "TimeoutError") {
-            lastErr = new Error(`Timeout nach ${timeout}ms`);
-          } else {
-            lastErr = err;
-          }
-          if (attempt === retries) break;
-          const wait = 400 * (attempt + 1); // 400, 800, 1200ms
-          await new Promise(r => setTimeout(r, wait));
-          attempt++;
+          lastErr = e;
+          if(attempt<retries) await new Promise(res=>setTimeout(res, 400*(attempt+1)));
         }
       }
       throw lastErr;
     }
 
-    function reduceMonthly(observations, usd2eur, kind) {
-      if (!observations?.length) return null;
-      const cur = observations.at(-1).v;
-      const prev = observations.at(-2)?.v ?? null;
-      const y24 = observations.filter(o => o.date.startsWith("2024-")).map(o => o.v);
-      const avg24 = y24.length ? (y24.reduce((a, b) => a + b, 0) / y24.length) : null;
-
-      if (kind === "sugar") {
-        const F = 22.04622; // Cent/lb -> USD/t
-        return { curEUR: cur * F * usd2eur, vsPrev: pct(cur, prev), vsY2024: pct(cur, avg24) };
-      }
-      return { curEUR: cur * usd2eur, vsPrev: pct(cur, prev), vsY2024: pct(cur, avg24) };
-    }
-
-    async function loadTicker() {
-      tryRenderFromCache();
-
-      const fred = (series, start = "2024-01-01") =>
-        fetchJSON(`https://api.stlouisfed.org/fred/series/observations?series_id=${encodeURIComponent(series)}&api_key=${encodeURIComponent(FRED_API_KEY)}&file_type=json&observation_start=${encodeURIComponent(start)}`);
-
-      const [fx, cocoa, sugar, wheat, corn, rice] = await Promise.all([
-        fetchJSON("https://api.exchangerate.host/latest?base=USD&symbols=EUR"),
-        fred(SERIES.cocoa),
-        fred(SERIES.sugar),
-        fred(SERIES.wheat),
-        fred(SERIES.corn),
-        fred(SERIES.rice)
-      ]);
-
-      const usd2eur = fx?.rates?.EUR ?? 0.93;
-      const mapObs = d => (d?.observations || [])
-        .map(o => ({ date: o.date, v: o.value === "." ? null : Number(o.value) }))
-        .filter(o => o.v != null);
-
-      const payload = {
-        cocoa: reduceMonthly(mapObs(cocoa), usd2eur, "usd"),
-        sugar: reduceMonthly(mapObs(sugar), usd2eur, "sugar"),
-        wheat: reduceMonthly(mapObs(wheat), usd2eur, "usd"),
-        corn:  reduceMonthly(mapObs(corn),  usd2eur, "usd"),
-        rice:  reduceMonthly(mapObs(rice),  usd2eur, "usd"),
-      };
-
-      renderTicker(payload);
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: payload })); } catch {}
+    async function loadLocalTicker(){
+      tryRenderFromCache(); // sofort
+      const data = await fetchJSON(TICKER_URL);
+      if(!data || !Array.isArray(data.items) || data.items.length===0) throw new Error("Ungültiges ticker.json Format");
+      renderTicker(data.items);
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), items:data.items})); }catch{}
     }
 
     (async () => {
       const track = document.getElementById("tickerTrack");
-      if (track) track.textContent = "Lade Marktdaten …";
+      if (track) track.textContent = "Lade Neuigkeiten …";
       try {
-        await loadTicker();
+        await loadLocalTicker();
       } catch (err) {
         console.error("Ticker-Fehler:", err);
-        if (!tryRenderFromCache()) {
+        if(!tryRenderFromCache()){
           const t = document.getElementById("tickerTrack");
           if (t) {
             const msg = ['⚠️ Ticker-Error', navigator.onLine?'(online)':'(offline)', (err && err.message)?'· '+err.message:''].join(' ');
             t.innerHTML = `
               <span class="ticker-item">${msg}</span>
-              <span class="ticker-item">Hinweis: Prüfe FRED-Key / Netz.</span>
-              <span class="ticker-item">Quelle: IMF über FRED</span>
+              <span class="ticker-item">Hinweis: <code>ticker.json</code> fehlt oder ist ungültig.</span>
             `;
           }
         }
       }
-      // monatliche Reihen ändern selten – 6h Refresh reicht
-      setInterval(() => {
-        loadTicker().catch(e => console.warn("Ticker-Reload Fehler:", e));
-      }, 6 * 60 * 60 * 1000);
+      // 24h-Refresh
+      setInterval(()=>loadLocalTicker().catch(()=>{}), 24*60*60*1000);
     })();
   </script>
 </body>
