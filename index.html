@@ -123,7 +123,8 @@
     /* ===== Gewinn-Effekte Overlay ===== */
     .fx-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}
     .obs-logo-fx{position:fixed;left:50%;top:-22vh;transform:translateX(-50%);font-weight:900;text-transform:uppercase;letter-spacing:.06em;font-size:min(20vw,180px);background:linear-gradient(180deg,var(--deep-green),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 6px 26px rgba(0,0,0,.45);filter:drop-shadow(0 10px 30px rgba(0,0,0,.45));animation:fx-drop 1200ms cubic-bezier(.2,.8,.2,1) forwards,fx-pulse 1800ms ease-in-out 1200ms 3,fx-explode 700ms ease-out 6600ms forwards}
-    @keyframes fx-drop{0%{top:-22vh;transform:translateX(-50%) scale(.88)}100%{top:40vh;transform:translateX(-50%) scale(1)}}
+    @keyframes fx-drop{0%{top:-22vh;transform:translateX(-50%) scale(.88)}100%{top:40vh;transform:translateX(-50%) scale(1)}
+    }
     @keyframes fx-pulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.12)}}
     @keyframes fx-explode{to{transform:translateX(-50%) scale(3.6);opacity:0}}
     .flash{position:fixed;inset:0;opacity:0;pointer-events:none;z-index:9998;mix-blend-mode:screen}
@@ -288,11 +289,11 @@
     const formatEUR=(n)=>n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
     const formatLines=(arr)=>arr.join(' | ');
 
-    /* ===== Spiel ===== */
+    /* ===== Spiel (unverändert) ===== */
     const COLORS=["#e74c3c","#f39c12","#f1c40f","#2ecc71","#3498db","#9b59b6","#e67e22","#1abc9c","#e84393"];
     let board=[],revealed=new Set(),triesLeft=0,won=false;
     let gamesPlayed=0,startLocked=false,startCooldownTimer=null;
-    let revealLock=false; // kurz sperren während Flip
+    let revealLock=false;
 
     function glassSVG(color){const c=color;return `<svg class="glass" viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="18" width="56" height="70" rx="10" ry="10" fill="url(#g1)" stroke="#d0d0d0" stroke-width="2"/><rect x="26" y="48" width="48" height="36" rx="8" ry="8" fill="${c}" opacity="0.9"/><rect x="26" y="22" width="8" height="52" rx="4" fill="#ffffff" opacity="0.35"/><g transform="translate(70,30)"><circle r="10" fill="#2d2d2d"/><circle r="3.2" cx="-3" cy="-3" fill="#d9d9d9"/></g><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfdfd"/><stop offset="1" stop-color="#efefef"/></linearGradient></defs></svg>`}
     function pickUnique(a,k){const c=a.slice().map(x=>({x,r:Math.random()})).sort((p,q)=>p.r-q.r).map(o=>o.x);return c.slice(0,k)}
@@ -330,9 +331,7 @@
         cover.style.transition='opacity .18s ease';
         tile.appendChild(cover);
 
-        // Sofortiger Tap ohne Scroll/Zoom
         tile.addEventListener('pointerdown', (evt)=> onReveal(evt, tile), {passive:false});
-
         grid.appendChild(tile);
       });
     }
@@ -370,7 +369,7 @@
 
     function endGameStartCooldown(){
       gamesPlayed += 1;
-      const delaySec = gamesPlayed * 5; // 5s, 10s, 15s, ...
+      const delaySec = gamesPlayed * 5;
       startLocked = delaySec > 0;
 
       const startBtn = el('startGameBtn');
@@ -548,143 +547,154 @@
     });
   </script>
 
-  <!-- ===== FRED-TICKER (seriell + Retry + Cache) ===== -->
+  <!-- ===== STABILER FRED-TICKER (parallel, Timeout, Retry, Cache; KEIN AllOrigins) ===== -->
   <script>
-    const FRED_API_KEY="66cc415ca598043527786a24b0dad230";
-    // IMF-Serien (monatlich, USD/t). Zucker = Cent/lb (No.11)
-    const SERIES={cocoa:"PCOCOUSDM",sugar:"PSUGAISAUSDM",wheat:"PWHEAMTUSDM",corn:"PMAIZMTUSDM",rice:"PRICENPQUSDM"};
+    // === KONFIG ===
+    const FRED_API_KEY = "66cc415ca598043527786a24b0dad230"; // Dein Key; FRED ist CORS-fähig
+    const SERIES = {
+      cocoa: "PCOCOUSDM",     // USD/t (monatlich)
+      sugar: "PSUGAISAUSDM",  // Cent/lb (monatlich) -> in USD/t wandeln
+      wheat: "PWHEAMTUSDM",   // USD/t
+      corn:  "PMAIZMTUSDM",   // USD/t
+      rice:  "PRICENPQUSDM"   // USD/t
+    };
+    const CACHE_KEY = "tickerCache_v3";
+    const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 Stunden
+    const TIMEOUT_MS = 8000;
+    const MAX_RETRY = 2;
 
-    const CACHE_KEY="tickerCache_v2";
-    const CACHE_TTL_MS=6*60*60*1000;
-    const BETWEEN_CALLS_MS=500;
-    const MAX_RETRY=2;
-    const RETRY_WAIT_MS=1200;
-    const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
-    async function withRetry(fn, max=MAX_RETRY){let err;for(let i=0;i<=max;i++){try{return await fn()}catch(e){err=e;await sleep(RETRY_WAIT_MS*(i+1))}}throw err}
+    // === Hilfsfunktionen ===
+    const euro0 = (n) => new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n);
+    const pct = (cur, base) => (base == null ? null : ((cur - base) / base) * 100);
+    const signPct = (v) => (v == null || !isFinite(v)) ? "n/a" : `${v >= 0 ? "+" : ""}${v.toFixed(2).replace(".", ",")} %`;
 
-    async function j(url){
-      try{
-        const r=await fetch(url,{cache:'no-store'});
-        if(!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
-        return await r.json();
-      }catch(e1){
-        try{
-          const raw='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
-          const r2=await fetch(raw,{cache:'no-store'});
-          if(!r2.ok) throw new Error(`AllOrigins RAW ${r2.status}`);
-          return JSON.parse(await r2.text());
-        }catch(e2){
-          try{
-            const wrap='https://api.allorigins.win/get?url='+encodeURIComponent(url);
-            const r3=await fetch(wrap,{cache:'no-store'});
-            if(!r3.ok) throw new Error(`AllOrigins GET ${r3.status}`);
-            const obj=await r3.json();
-            if(!obj?.contents) throw new Error('AllOrigins GET: no contents');
-            return JSON.parse(obj.contents);
-          }catch(e3){
-            const err=new Error(`Fetch failed: ${e1.message} | ${e2.message} | ${e3.message}`);
-            err._stack={direct:String(e1),raw:String(e2),get:String(e3)};
-            throw err;
-          }
+    function withTimeout(doFetch, ms = TIMEOUT_MS) {
+      const ac = new AbortController();
+      const to = setTimeout(() => ac.abort(), ms);
+      return doFetch(ac.signal)
+        .finally(() => clearTimeout(to));
+    }
+
+    async function getJSON(url, { retry = MAX_RETRY } = {}) {
+      let lastErr;
+      for (let i = 0; i <= retry; i++) {
+        try {
+          return await withTimeout((signal) =>
+            fetch(url, { signal, cache: "no-store" }).then(r => {
+              if (!r.ok) throw new Error(`HTTP ${r.status}`);
+              return r.json();
+            })
+          );
+        } catch (e) {
+          lastErr = e;
+          await new Promise(r => setTimeout(r, 400 * (i + 1)));
         }
       }
+      throw lastErr;
     }
 
-    function pct(cur,base){if(base==null)return null;return (cur-base)/base*100}
-    function signPct(v){if(v==null||!isFinite(v))return "n/a";const s=v>=0?"+":"";return s+v.toFixed(2).replace(".",",")+" %"}
-    function euro0(n){return new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n)}
-
-    async function usdToEur(){
-      return await withRetry(async()=>{
-        try{const fx=await j("https://api.exchangerate.host/latest?base=USD&symbols=EUR");return fx?.rates?.EUR??0.93}
-        catch{return 0.93}
-      }, MAX_RETRY);
-    }
-
-    async function fredMonthly(series_id,start="2024-01-01"){
-      const url=`https://api.stlouisfed.org/fred/series/observations?series_id=${series_id}&api_key=${FRED_API_KEY}&file_type=json&observation_start=${start}`;
-      const d=await withRetry(()=>j(url), MAX_RETRY);
-      return (d.observations||[]).map(o=>({date:o.date,v:(o.value==="."?null:Number(o.value))})).filter(o=>o.v!=null);
-    }
-
-    function calcUSDton(obs, usd2eur){
-      if(!obs.length)return null;
-      const cur=obs.at(-1).v, prev=obs.at(-2)?.v??null;
-      const y24=obs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
-      const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
-      return {curEUR:cur*usd2eur,vsPrev:pct(cur,prev),vsY2024:pct(cur,avg24)};
-    }
-    function calcSugar(obs, usd2eur){
-      if(!obs.length)return null;
-      const F=22.04622; // (cent/lb) -> USD/t
-      const curC=obs.at(-1).v, prevC=obs.at(-2)?.v??null;
-      const y24=obs.filter(o=>o.date.startsWith("2024-")).map(o=>o.v);
-      const avg24=y24.length?(y24.reduce((a,b)=>a+b,0)/y24.length):null;
-      const curEUR=curC*F*usd2eur;
-      return {curEUR,vsPrev:pct(curC,prevC),vsY2024:pct(curC,avg24)};
-    }
-
-    function renderTicker(payload){
-      const mk=(label,d)=> d
+    function renderTicker(payload, fromCache = false) {
+      const mk = (label, d) => d
         ? `<span class="ticker-item">${label}: <strong>${euro0(d.curEUR)}</strong>/t <small>(${signPct(d.vsPrev)} vs VM • ${signPct(d.vsY2024)} vs 2024-Ø)</small></span>`
         : `<span class="ticker-item">${label}: –</span>`;
-      const items=[
+      const items = [
         mk("🍫 Kakao", payload.cocoa),
         mk("🍚 Zucker", payload.sugar),
         mk("🌾 Weizen", payload.wheat),
         mk("🌽 Mais",   payload.corn),
         mk("🍚 Reis",   payload.rice),
-        `<span class="ticker-item">Quelle: IMF über FRED (St. Louis Fed)</span>`
+        `<span class="ticker-item">Quelle: IMF über FRED${fromCache ? " (Cache)" : ""}</span>`
       ];
-      const track=document.getElementById("tickerTrack");
-      if(track){ track.innerHTML = items.concat(items).join(""); }
+      const track = document.getElementById("tickerTrack");
+      if (track) track.innerHTML = items.concat(items).join(""); // doppelt => Endlosschleife
     }
 
-    function tryRenderFromCache(){
-      try{
-        const raw=localStorage.getItem(CACHE_KEY);
-        if(!raw) return false;
-        const {ts,data}=JSON.parse(raw);
-        if(!data || Date.now()-ts > CACHE_TTL_MS) return false;
-        renderTicker(data);
+    function tryRenderFromCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return false;
+        const { ts, data } = JSON.parse(raw);
+        if (!data || (Date.now() - ts) > CACHE_TTL_MS) return false;
+        renderTicker(data, true);
         return true;
-      }catch{ return false; }
+      } catch { return false; }
     }
 
-    async function loadTicker(){
-      const hadCache=tryRenderFromCache();
-      const usd2eur=await usdToEur();
+    function reduceMonthly(observations, usd2eur, kind) {
+      if (!observations?.length) return null;
+      const cur = observations.at(-1).v;
+      const prev = observations.at(-2)?.v ?? null;
+      const y24 = observations.filter(o => o.date.startsWith("2024-")).map(o => o.v);
+      const avg24 = y24.length ? (y24.reduce((a, b) => a + b, 0) / y24.length) : null;
 
-      const cocoaObs=await fredMonthly(SERIES.cocoa,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
-      const sugarObs=await fredMonthly(SERIES.sugar,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
-      const wheatObs=await fredMonthly(SERIES.wheat,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
-      const cornObs =await fredMonthly(SERIES.corn ,"2024-01-01"); await sleep(BETWEEN_CALLS_MS);
-      const riceObs =await fredMonthly(SERIES.rice ,"2024-01-01");
+      if (kind === "sugar") {
+        // Cent/lb -> USD/t
+        const F = 22.04622;
+        return { curEUR: cur * F * usd2eur, vsPrev: pct(cur, prev), vsY2024: pct(cur, avg24) };
+      }
+      return { curEUR: cur * usd2eur, vsPrev: pct(cur, prev), vsY2024: pct(cur, avg24) };
+    }
 
-      const data={
-        cocoa: calcUSDton(cocoaObs, usd2eur),
-        sugar: calcSugar(sugarObs, usd2eur),
-        wheat: calcUSDton(wheatObs, usd2eur),
-        corn : calcUSDton(cornObs , usd2eur),
-        rice : calcUSDton(riceObs , usd2eur)
+    async function loadTicker() {
+      // 1) Cache (wenn frisch) sofort zeigen
+      const hadCache = tryRenderFromCache();
+
+      // 2) Parallel Daten holen (FRED ist CORS-fähig)
+      const fred = (series, start = "2024-01-01") =>
+        getJSON(`https://api.stlouisfed.org/fred/series/observations?series_id=${encodeURIComponent(series)}&api_key=${encodeURIComponent(FRED_API_KEY)}&file_type=json&observation_start=${encodeURIComponent(start)}`);
+
+      const [fx, cocoa, sugar, wheat, corn, rice] = await Promise.all([
+        getJSON("https://api.exchangerate.host/latest?base=USD&symbols=EUR"),
+        fred(SERIES.cocoa),
+        fred(SERIES.sugar),
+        fred(SERIES.wheat),
+        fred(SERIES.corn),
+        fred(SERIES.rice)
+      ]);
+
+      const usd2eur = fx?.rates?.EUR ?? 0.93;
+
+      const mapObs = d => (d?.observations || [])
+        .map(o => ({ date: o.date, v: o.value === "." ? null : Number(o.value) }))
+        .filter(o => o.v != null);
+
+      const payload = {
+        cocoa: reduceMonthly(mapObs(cocoa), usd2eur, "usd"),
+        sugar: reduceMonthly(mapObs(sugar), usd2eur, "sugar"),
+        wheat: reduceMonthly(mapObs(wheat), usd2eur, "usd"),
+        corn:  reduceMonthly(mapObs(corn),  usd2eur, "usd"),
+        rice:  reduceMonthly(mapObs(rice),  usd2eur, "usd"),
       };
 
-      renderTicker(data);
-      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), data})); }catch{}
+      renderTicker(payload);
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: payload })); } catch {}
     }
 
-    loadTicker().catch(err=>{
-      console.error('Ticker-Fehler:', err, err._stack || '');
-      const t=document.getElementById('tickerTrack');
-      if(t && t.textContent.includes('Lade Marktdaten')){
-        const msg=['⚠️ Ticker-Error', navigator.onLine?'(online)':'(offline)', (err && err.message)?'· '+err.message:''].join(' ');
-        t.innerHTML = `
-          <span class="ticker-item">${msg}</span>
-          <span class="ticker-item">Hinweis: Netzwerk/CORS kann blocken. Test via GitHub Pages oder Handy-Hotspot.</span>
-          <span class="ticker-item">Quelle: IMF über FRED</span>
-        `;
+    (async () => {
+      const track = document.getElementById("tickerTrack");
+      if (track) track.textContent = "Lade Marktdaten …";
+      try {
+        await loadTicker();
+      } catch (err) {
+        console.error("Ticker-Fehler:", err);
+        // Fallback: Cache, wenn vorhanden; sonst Fehlermeldung in der Leiste
+        if (!tryRenderFromCache()) {
+          const t = document.getElementById("tickerTrack");
+          if (t) {
+            const msg = ['⚠️ Ticker-Error', navigator.onLine?'(online)':'(offline)', (err && err.message)?'· '+err.message:''].join(' ');
+            t.innerHTML = `
+              <span class="ticker-item">${msg}</span>
+              <span class="ticker-item">Hinweis: Prüfe FRED-Key / Netz.</span>
+              <span class="ticker-item">Quelle: IMF über FRED</span>
+            `;
+          }
+        }
       }
-    });
+      // monatliche Reihen ändern selten – 6h Refresh reicht
+      setInterval(() => {
+        loadTicker().catch(e => console.warn("Ticker-Reload Fehler:", e));
+      }, 6 * 60 * 60 * 1000);
+    })();
   </script>
 </body>
 </html>
