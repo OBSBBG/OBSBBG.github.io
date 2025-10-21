@@ -548,7 +548,7 @@
 
   <!-- ===== LOKALER TICKER: lädt ./ticker.json (24h Cache, Retry, kein CORS, kein Key) ===== -->
   <script>
-    const TICKER_URL = "./ticker.json";
+    const TICKER_URL = "/ticker.json?ts=" + Date.now();
     const CACHE_KEY = "localTickerCache_v1";
     const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
     const TIMEOUT_MS = 8000;
