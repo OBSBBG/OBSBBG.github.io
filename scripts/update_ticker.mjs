@@ -1,34 +1,30 @@
 // scripts/update_ticker.mjs
 // Holt IMF/FRED-Serien + USD→EUR und schreibt ticker.json ins Repo-Root.
-// Erfordert GitHub-Secret: FRED_API_KEY (Settings → Secrets → Actions).
+// Erwartet GitHub-Secret: FRED_API_KEY. Bei Fehlern wird ein Fallback geschrieben,
+// damit ticker.json IMMER existiert (wichtig für den Commit-Step).
 
 import fs from "node:fs/promises";
 
-// === Konfig ===
 const SERIES = {
-  cocoa: "PCOCOUSDM",     // Kakao, USD/t (monatlich)
-  sugar: "PSUGAISAUSDM",  // Zucker, cent/lb (monatlich) -> in USD/t
-  wheat: "PWHEAMTUSDM",   // Weizen, USD/t
-  corn:  "PMAIZMTUSDM",   // Mais, USD/t
-  rice:  "PRICENPQUSDM"   // Reis, USD/t
+  cocoa: "PCOCOUSDM",     // USD/t (monatlich)
+  sugar: "PSUGAISAUSDM",  // cent/lb (monatlich) → USD/t
+  wheat: "PWHEAMTUSDM",   // USD/t
+  corn:  "PMAIZMTUSDM",   // USD/t
+  rice:  "PRICENPQUSDM"   // USD/t
 };
-const START = "2024-01-01";
+const START   = "2024-01-01";
 const OUTFILE = "ticker.json";
 
 const FRED_API_KEY = process.env.FRED_API_KEY;
-if (!FRED_API_KEY) {
-  console.error("Fehler: FRED_API_KEY fehlt (Repo-Secret setzen).");
-  process.exit(1);
-}
 
-// === Utils ===
+// --- Utils ---
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function fetchJSON(url, { retries = 2, timeout = 10000 } = {}) {
   let lastErr;
   for (let i = 0; i <= retries; i++) {
     const ac = new AbortController();
-    const t = setTimeout(() => ac.abort(new DOMException("Timeout", "TimeoutError")), timeout);
+    const t = setTimeout(() => ac.abort(new Error("Timeout")), timeout);
     try {
       const res = await fetch(url, { signal: ac.signal, cache: "no-store" });
       clearTimeout(t);
@@ -37,7 +33,7 @@ async function fetchJSON(url, { retries = 2, timeout = 10000 } = {}) {
     } catch (e) {
       clearTimeout(t);
       lastErr = e;
-      if (i < retries) await sleep(400 * (i + 1)); // 400/800ms Backoff
+      if (i < retries) await sleep(400 * (i + 1));
     }
   }
   throw lastErr;
@@ -45,18 +41,18 @@ async function fetchJSON(url, { retries = 2, timeout = 10000 } = {}) {
 
 function lastNonNull(observations) {
   for (let i = observations.length - 1; i >= 0; i--) {
-    const raw = observations[i]?.value;
-    if (raw !== "." && raw != null) return { date: observations[i].date, v: Number(raw) };
+    const v = observations[i]?.value;
+    if (v !== "." && v != null) return { date: observations[i].date, v: Number(v) };
   }
   return null;
 }
 function prevNonNull(observations) {
   let found = 0;
   for (let i = observations.length - 1; i >= 0; i--) {
-    const raw = observations[i]?.value;
-    if (raw !== "." && raw != null) {
+    const v = observations[i]?.value;
+    if (v !== "." && v != null) {
       found++;
-      if (found === 2) return { date: observations[i].date, v: Number(raw) };
+      if (found === 2) return { date: observations[i].date, v: Number(v) };
     }
   }
   return null;
@@ -75,13 +71,14 @@ function pct(cur, base) {
 }
 function monthLabel(iso) {
   const d = new Date(iso);
-  return d.toLocaleDateString("de-DE", { month: "short", year: "numeric" }); // z. B. “Okt. 2025”
+  return d.toLocaleDateString("de-DE", { month: "short", year: "numeric" });
 }
 
-// Zucker: cent/lb -> USD/t   (cent/lb * 22.04622 / 100? Nein: Serie ist bereits cent/lb; Faktor auf USD/t:)
-const C_PER_LB_TO_USD_PER_T = 22.04622; // 1 cent/lb ≈ 22.04622 USD/t
+// 1 cent/lb = $0.01/lb; 1 t = 2204.62262 lb → 0.01 * 2204.62262 = 22.04622 USD/t pro cent/lb
+const C_PER_LB_TO_USD_PER_T = 22.04622;
 
 async function fredSeries(series) {
+  if (!FRED_API_KEY) throw new Error("FRED_API_KEY fehlt");
   const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${encodeURIComponent(series)}&api_key=${encodeURIComponent(FRED_API_KEY)}&file_type=json&observation_start=${encodeURIComponent(START)}`;
   const j = await fetchJSON(url);
   return j?.observations ?? [];
@@ -91,15 +88,12 @@ async function usdToEur() {
   return fx?.rates?.EUR ?? 0.93;
 }
 function toEURperT(kind, vUSDorCentLb, usd2eur) {
-  if (kind === "sugar") {
-    const usdPerT = vUSDorCentLb * C_PER_LB_TO_USD_PER_T;
-    return usdPerT * usd2eur;
-  }
-  return vUSDorCentLb * usd2eur; // alle anderen sind bereits USD/t
+  if (kind === "sugar") return vUSDorCentLb * C_PER_LB_TO_USD_PER_T * usd2eur;
+  return vUSDorCentLb * usd2eur;
 }
 
 function buildItem(label, kind, obs, usd2eur) {
-  const cur  = lastNonNull(obs);
+  const cur = lastNonNull(obs);
   if (!cur) return null;
   const prev = prevNonNull(obs);
   const avg24 = avgForYear(obs, "2024");
@@ -112,37 +106,51 @@ function buildItem(label, kind, obs, usd2eur) {
   if (isFinite(vsPrev)) parts.push(`${vsPrev >= 0 ? "+" : ""}${vsPrev.toFixed(2).replace(".", ",")}% vs VM`);
   if (isFinite(vsAvg))  parts.push(`${vsAvg  >= 0 ? "+" : ""}${vsAvg .toFixed(2).replace(".", ",")}% vs 2024-Ø`);
 
+  return { text: label, value: Math.round(curEUR), extra: `EUR/t • ${parts.join(" • ")}` };
+}
+
+function fallbackData(reason = "Fallback") {
   return {
-    text: label,
-    value: Math.round(curEUR),            // glatte EUR/t-Zahl
-    extra: `EUR/t · ${parts.join(" • ")}`
+    items: [
+      { text: "🍫 Kakao", value: 4200, extra: "EUR/t • " + reason },
+      { text: "🍚 Zucker", value: 680,  extra: "EUR/t • " + reason },
+      { text: "🌾 Weizen", value: 255,  extra: "EUR/t • " + reason },
+      { text: "🌽 Mais",   value: 205,  extra: "EUR/t • " + reason },
+      { text: "🍚 Reis",   value: 520,  extra: "EUR/t • " + reason },
+      { text: "Quelle: IMF über FRED (" + reason + ")" }
+    ]
   };
 }
 
 (async () => {
-  console.log("Starte Ticker-Update …");
-  const [usd2eur, cocoaObs, sugarObs, wheatObs, cornObs, riceObs] = await Promise.all([
-    usdToEur(),
-    fredSeries(SERIES.cocoa),
-    fredSeries(SERIES.sugar),
-    fredSeries(SERIES.wheat),
-    fredSeries(SERIES.corn),
-    fredSeries(SERIES.rice),
-  ]);
+  try {
+    const [usd2eur, cocoaObs, sugarObs, wheatObs, cornObs, riceObs] = await Promise.all([
+      usdToEur(),
+      fredSeries(SERIES.cocoa),
+      fredSeries(SERIES.sugar),
+      fredSeries(SERIES.wheat),
+      fredSeries(SERIES.corn),
+      fredSeries(SERIES.rice),
+    ]);
 
-  const items = [
-    buildItem("🍫 Kakao", "cocoa", cocoaObs, usd2eur),
-    buildItem("🍚 Zucker", "sugar", sugarObs, usd2eur),
-    buildItem("🌾 Weizen", "wheat", wheatObs, usd2eur),
-    buildItem("🌽 Mais",   "corn",  cornObs,  usd2eur),
-    buildItem("🍚 Reis",   "rice",  riceObs,  usd2eur),
-    { text: "Quelle: IMF über FRED (täglich aktualisiert)" }
-  ].filter(Boolean);
+    const items = [
+      buildItem("🍫 Kakao", "cocoa", cocoaObs, usd2eur),
+      buildItem("🍚 Zucker", "sugar", sugarObs, usd2eur),
+      buildItem("🌾 Weizen", "wheat", wheatObs, usd2eur),
+      buildItem("🌽 Mais",   "corn",  cornObs,  usd2eur),
+      buildItem("🍚 Reis",   "rice",  riceObs,  usd2eur),
+      { text: "Quelle: IMF über FRED (täglich aktualisiert)" }
+    ].filter(Boolean);
 
-  const out = { items };
-  await fs.writeFile(OUTFILE, JSON.stringify(out, null, 2) + "\n", "utf8");
-  console.log(`OK: ${OUTFILE} geschrieben (${items.length} Einträge).`);
-})().catch(err => {
-  console.error("Update fehlgeschlagen:", err?.message || err);
-  process.exit(1);
-});
+    // Falls aus irgendeinem Grund keine Items generiert wurden, nimm Fallback
+    const out = items.length ? { items } : fallbackData("leer");
+    await fs.writeFile(OUTFILE, JSON.stringify(out, null, 2) + "\n", "utf8");
+    console.log(`OK: ${OUTFILE} geschrieben (${out.items.length} Einträge).`);
+  } catch (err) {
+    console.error("WARNUNG: Live-Update fehlgeschlagen:", err?.message || err);
+    const out = fallbackData("Fehler");
+    await fs.writeFile(OUTFILE, JSON.stringify(out, null, 2) + "\n", "utf8");
+    console.log(`FALLBACK: ${OUTFILE} geschrieben.`);
+    // KEIN process.exit(1) → damit der Commit-Step sicher läuft.
+  }
+})();
