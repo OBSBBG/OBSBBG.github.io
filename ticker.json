@@ -1,5 +1,32 @@
 {
   "items": [
-    { "text": "🍫 Kakao", "value": 0, "extra": "Lade Marktdaten …" }
+    {
+      "text": "🍫 Kakao",
+      "value": 4200,
+      "extra": "EUR/t • Fehler"
+    },
+    {
+      "text": "🍚 Zucker",
+      "value": 680,
+      "extra": "EUR/t • Fehler"
+    },
+    {
+      "text": "🌾 Weizen",
+      "value": 255,
+      "extra": "EUR/t • Fehler"
+    },
+    {
+      "text": "🌽 Mais",
+      "value": 205,
+      "extra": "EUR/t • Fehler"
+    },
+    {
+      "text": "🍚 Reis",
+      "value": 520,
+      "extra": "EUR/t • Fehler"
+    },
+    {
+      "text": "Quelle: IMF über FRED (Fehler)"
+    }
   ]
 }
