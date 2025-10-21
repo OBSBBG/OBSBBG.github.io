@@ -8,12 +8,18 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ticker-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0       # wichtig für rebase/merge
 
       - name: Use Node 20
         uses: actions/setup-node@v4
@@ -25,11 +31,18 @@ jobs:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
           node -v
-          test -f scripts/update_ticker.mjs || (echo "scripts/update_ticker.mjs fehlt" && exit 1)
+          test -f scripts/update_ticker.mjs || (echo "FEHLT: scripts/update_ticker.mjs" && exit 1)
           node scripts/update_ticker.mjs
           echo "----- ticker.json (preview) -----"
-          cat ticker.json || true
+          head -n 80 ticker.json || (echo "ticker.json NICHT erzeugt" && exit 1)
           echo "---------------------------------"
+
+      - name: Rebase onto latest main
+        run: |
+          git config user.name  "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git pull --rebase origin main
 
       - name: Commit & push if changed
         uses: EndBug/add-and-commit@v9
@@ -37,4 +50,3 @@ jobs:
           add: "ticker.json"
           message: "chore: daily ticker update"
           default_author: github_actions
-
