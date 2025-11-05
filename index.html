@@ -46,7 +46,6 @@
       background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.35) 12%,rgba(255,255,255,0) 24%);
       transform:translateX(-130%) skewX(-10deg);filter:blur(.5px);mix-blend-mode:screen;animation:shine 6s ease-in-out infinite
     }
-    @keyframes shine{0%{transform:translateX(-130%) skewX(-10deg)}55%,100%{transform:translateX(135%) skewX(-10deg)}}
     .brand-stars{position:absolute;inset:-22% -10% -8% -10%;pointer-events:none}
     .star{position:absolute;font-size:clamp(14px,2.8vw,24px);color:#fff;text-shadow:0 0 6px rgba(52,199,89,.9),0 0 16px rgba(12,138,67,.7),0 0 28px rgba(12,138,67,.4);opacity:0;transform:scale(.6);animation:twinkle 3.2s ease-out infinite}
     .star:nth-child(1){top:6%;left:10%;animation-delay:.4s}.star:nth-child(2){top:18%;right:8%;animation-delay:1.1s}.star:nth-child(3){bottom:10%;left:12%;animation-delay:1.8s}.star:nth-child(4){top:10%;left:50%;transform-origin:-30% -50%;animation-delay:2.3s}.star:nth-child(5){bottom:6%;right:12%;animation-delay:2.9s}
@@ -281,8 +280,10 @@
     /* ===== EmailJS + Preise ===== */
     const EMAILJS_PUBLIC_KEY="xAOygDJhZcJrXGuSb";
     const EMAILJS_SERVICE_ID="service_l642tri";
-    const EMAILJS_TEMPLATE_ID="template_ggtexbv";
+    const EMAILJS_TEMPLATE_ORDER="template_ggtexbv";           // interne Bestellmail (an euch)
+    const EMAILJS_TEMPLATE_CONFIRM="";                          // <-- ID deiner Kunden-Bestätigungs-Vorlage eintragen (leer = aus)
     const PRICES={p1:{single:1.50,pack5:4.95,pack10:9.95},p1PiecesPer:{single:1,pack5:5,pack10:10},p2:5.00};
+
     (function(){emailjs.init(EMAILJS_PUBLIC_KEY)})();
     const el=(id)=>document.getElementById(id);
     const formatEUR=(n)=>n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
@@ -523,30 +524,53 @@
       const coupon=el('coupon').value.trim();
       if(coupon) cartLines.push(`Gewinncode: ${coupon}`);
 
-      const payload={
-        customer_name:  el('name').value.trim(),
-        customer_phone: el('phone').value.trim(),
-        customer_email: el('email').value.trim(),
-        items_text:     cartLines.join(' | '),
-        total:          el('grandTotal').textContent,
-        p1_names:       el('p1Names').value,
-        reply_to:       el('email').value.trim()
+      // ---- Mapping für dein internes Template (template_ggtexbv)
+      const fullName = el('name').value.trim();
+      const nameParts = fullName.split(" ");
+
+      const orderPayload = {
+        vorname: nameParts[0] || fullName,
+        nachname: nameParts.slice(1).join(" ") || "-",
+        kunden_email: el('email').value.trim(),
+        telefon: el('phone').value.trim(),
+        artikel_zeilen: cartLines.join("\n"),
+        gesamtpreis: el('grandTotal').textContent,
+        hinweise: el('p1Names').value.trim() || "-",
+        abholtermin: "Wird per E-Mail abgestimmt.",
+        reply_to: el('email').value.trim()
       };
 
       try{
-        const result=await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload);
-        if(result && result.status>=200 && result.status<300){
+        // 1) Interne Bestellmail an euch
+        const r1 = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ORDER, orderPayload);
+
+        // 2) Optionale Bestätigungsmail an den Kunden
+        if (EMAILJS_TEMPLATE_CONFIRM && EMAILJS_TEMPLATE_CONFIRM.trim() !== "") {
+          const confirmPayload = {
+            to_email: orderPayload.kunden_email,
+            to_name: orderPayload.vorname,
+            vorname: orderPayload.vorname,
+            artikel_zeilen: orderPayload.artikel_zeilen,
+            gesamtpreis: orderPayload.gesamtpreis,
+            abholhinweis: "Wir melden uns mit einem Abholtermin per E-Mail.",
+            firma: "OBS-Die-Firma"
+          };
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_CONFIRM, confirmPayload);
+        }
+
+        if(r1 && r1.status>=200 && r1.status<300){
           el('formOk').classList.remove('hidden');
-        } else { throw new Error('EmailJS: Unerwartete Antwort'); }
+        } else { throw new Error('EmailJS: unerwartete Antwort'); }
+
       }catch(err){
         console.error(err);
-        el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS Keys/IDs und Template.';
+        el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS IDs/Template oder versuche es später erneut.';
         el('formError').classList.remove('hidden');
       }
     });
   </script>
 
-  <!-- ===== LOKALER TICKER: lädt ./ticker.json (24h Cache, Retry, kein CORS, kein Key) ===== -->
+  <!-- ===== LOKALER TICKER ===== -->
   <script>
     const TICKER_URL = "/ticker.json?ts=" + Date.now();
     const CACHE_KEY = "localTickerCache_v1";
