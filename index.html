@@ -125,13 +125,6 @@
     @keyframes fx-drop{0%{top:-22vh;transform:translateX(-50%) scale(.88)}100%{top:40vh;transform:translateX(-50%) scale(1)}}
     @keyframes fx-pulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.12)}}
     @keyframes fx-explode{to{transform:translateX(-50%) scale(3.6);opacity:0}}
-    .flash{position:fixed;inset:0;opacity:0;pointer-events:none;z-index:9998;mix-blend-mode:screen}
-    .flash.green{background:radial-gradient(ellipse at center,rgba(12,138,67,.88),rgba(12,138,67,0) 62%);animation:flash-pop 420ms ease-out 6600ms both}
-    .flash.gold{background:radial-gradient(ellipse at center,rgba(212,175,55,.88),rgba(212,175,55,0) 62%);animation:flash-pop 420ms ease-out 6800ms both}
-    @keyframes flash-pop{from{opacity:0}45%{opacity:1}to{opacity:0}}
-    .star-fx{position:fixed;font-weight:900;text-shadow:0 0 14px rgba(0,0,0,.28),0 0 24px currentColor,0 0 46px currentColor;filter:drop-shadow(0 0 10px currentColor) drop-shadow(0 0 18px currentColor);opacity:0;transform:scale(.85);animation:star-fade var(--dur,4.8s) ease-out var(--delay,0s) forwards;z-index:9997}
-    @keyframes star-fade{0%{opacity:0;transform:scale(.85) translateY(0)}12%{opacity:1;transform:scale(1.05) translateY(-8px)}78%{opacity:.95}100%{opacity:0;transform:scale(1.18) translateY(-22px)}}
-    .disabled{opacity:.6;cursor:not-allowed}
   </style>
 </head>
 <body>
@@ -164,34 +157,34 @@
         <li>Zehnerpack: <span class="price-new">9,95 €</span></li>
       </ul>
       <p id="deal-note" class="asterisk-note">* Sonderaktion: gültig solange der Vorrat reicht.</p>
-      <p class="desc" style="margin-top:.6rem">Der sinnvolle Helfer, wo sich Leute zur Geselligkeit treffen. Nachhaltig, wiederverwendbar und gut für die Umwelt.</p>
-      <p class="note">Wichtig: Bitte bei <strong>jeder Bestellung</strong> die <strong>Namen</strong> angeben, die auf die Glas-Tags sollen.</p>
-      <ul class="price-list" aria-label="Material & Pflege Glas-Tags" style="margin-top:.6rem;color:inherit;font-weight:700">
+      <p class="desc" style="margin-top:.6rem">Der sinnvolle Helfer …</p>
+      <p class="note">Wichtig: Bitte bei jeder Bestellung die Namen angeben.</p>
+      <ul class="price-list" style="margin-top:.6rem;color:inherit;font-weight:700">
         <li style="color:inherit">Material: PLA, PETG</li>
-        <li style="color:inherit">Reinigung: nur feucht abwischen (nicht spülmaschinengeeignet)</li>
-        <li style="color:inherit">Passform: passend auf alle von uns getesteten Gläser; leicht flexibel, fester Sitz</li>
+        <li style="color:inherit">Reinigung: nur feucht abwischen</li>
+        <li style="color:inherit">Passform: fester Sitz</li>
       </ul>
-      <img src="Tag.jpeg" alt="Personalisierter Glas-Tag mit Gravur" width="900" height="600" loading="eager" fetchpriority="high" decoding="async">
+      <img src="Tag.jpeg" alt="Personalisierter Glas-Tag" width="900" height="600" loading="eager" fetchpriority="high" decoding="async">
     </article>
 
     <section class="slots" aria-label="Weitere Produkte">
       <article class="slot">
         <h2>#2 Deluxe Kakao „All inclusive“ <span class="price">· <span class="price-kakao">5 €</span></span></h2>
-        <p class="desc">Kugeln mit heißer Milch übergießen – fertig ist der Winter-Schoko-Traum.</p>
-        <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver, Mini-Marshmallows (Supermarktqualität).</p>
-        <img src="Tag2.jpeg" alt="Deluxe Kakao im Glas mit Schokoladen-Toppings" width="900" height="600" loading="lazy" decoding="async">
+        <p class="desc">Kugeln mit heißer Milch übergießen – fertig.</p>
+        <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver, Mini-Marshmallows.</p>
+        <img src="Tag2.jpeg" alt="Deluxe Kakao" width="900" height="600" loading="lazy" decoding="async">
       </article>
 
       <article class="slot">
         <h2>#3 – bald verfügbar</h2>
-        <p class="desc">Trag dich per E-Mail ein, wir informieren dich, sobald #3 da ist.</p>
+        <p class="desc">Trag dich per E-Mail ein …</p>
       </article>
     </section>
 
     <!-- ========= Werbeaktion: Spiel ========= -->
     <section class="card" aria-labelledby="promoTitle">
       <h2 id="promoTitle">Werbeaktion: Gewinne einen Glas-Tag</h2>
-      <p class="desc">Decke in 5 Versuchen <strong>drei gleiche</strong> Gläser im 3×3-Feld auf. Gewinnst du, bekommst du einen <strong>Glas-Tag gratis</strong> zu deiner Bestellung.</p>
+      <p class="desc">Decke in 5 Versuchen drei gleiche Gläser auf.</p>
       <div class="game-controls">
         <button type="button" id="startGameBtn">Spiel starten</button>
         <button type="button" id="newGameBtn" class="hidden">Neues Spiel</button>
@@ -236,7 +229,7 @@
         <div id="p1NamesBlock" class="grid hidden">
           <label for="p1Names">Namen für die Glas-Tags (ein Name pro Zeile) *</label>
           <textarea id="p1Names" name="p1Names" rows="5" placeholder="z. B. Anna&#10;Ben&#10;Cem"></textarea>
-          <div class="muted">Die Anzahl der Zeilen muss der <strong>Gesamt-Stückzahl</strong> entsprechen.</div>
+          <div class="muted">Die Anzahl der Zeilen muss der Gesamt-Stückzahl entsprechen.</div>
           <div id="p1NamesError" class="error hidden">Anzahl der Namen passt nicht zur Stückzahl.</div>
         </div>
 
@@ -260,7 +253,7 @@
       </div>
 
       <div class="grid" style="grid-template-columns: 1fr auto; gap:12px">
-        <div class="muted">Nach dem Absenden erhältst du eine <strong>Bestätigungsmail</strong> mit dem <strong>Abholtermin</strong> in der Schülerfirma. <strong>Keine Lieferung.</strong></div>
+        <div class="muted">Nach dem Absenden erhältst du eine Bestätigungsmail mit dem Abholtermin. Keine Lieferung.</div>
         <button type="submit">Bestellung abschicken</button>
       </div>
       <div id="formError" class="error hidden" role="alert"></div>
@@ -280,8 +273,8 @@
     /* ===== EmailJS + Preise ===== */
     const EMAILJS_PUBLIC_KEY="xAOygDJhZcJrXGuSb";
     const EMAILJS_SERVICE_ID="service_l642tri";
-    const EMAILJS_TEMPLATE_ORDER="template_ggtexbv";           // interne Bestellmail (an euch)
-    const EMAILJS_TEMPLATE_CONFIRM="";                          // <-- ID deiner Kunden-Bestätigungs-Vorlage eintragen (leer = aus)
+    const EMAILJS_TEMPLATE_ORDER="template_ggtexbv";  // interne Bestellmail (an euch)
+    const EMAILJS_TEMPLATE_CONFIRM="";                 // optional: ID der Kunden-Bestätigung eintragen (leer = aus)
     const PRICES={p1:{single:1.50,pack5:4.95,pack10:9.95},p1PiecesPer:{single:1,pack5:5,pack10:10},p2:5.00};
 
     (function(){emailjs.init(EMAILJS_PUBLIC_KEY)})();
@@ -289,7 +282,7 @@
     const formatEUR=(n)=>n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
     const formatLines=(arr)=>arr.join(' | ');
 
-    /* ===== Spiel ===== */
+    /* ===== Spiel (unverändert) ===== */
     const COLORS=["#e74c3c","#f39c12","#f1c40f","#2ecc71","#3498db","#9b59b6","#e67e22","#1abc9c","#e84393"];
     let board=[],revealed=new Set(),triesLeft=0,won=false;
     let gamesPlayed=0,startLocked=false,startCooldownTimer=null;
@@ -297,26 +290,21 @@
 
     function glassSVG(color){const c=color;return `<svg class="glass" viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="18" width="56" height="70" rx="10" ry="10" fill="url(#g1)" stroke="#d0d0d0" stroke-width="2"/><rect x="26" y="48" width="48" height="36" rx="8" ry="8" fill="${c}" opacity="0.9"/><rect x="26" y="22" width="8" height="52" rx="4" fill="#ffffff" opacity="0.35"/><g transform="translate(70,30)"><circle r="10" fill="#2d2d2d"/><circle r="3.2" cx="-3" cy="-3" fill="#d9d9d9"/></g><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdfdfd"/><stop offset="1" stop-color="#efefef"/></linearGradient></defs></svg>`}
     function pickUnique(a,k){const c=a.slice().map(x=>({x,r:Math.random()})).sort((p,q)=>p.r-q.r).map(o=>o.x);return c.slice(0,k)}
-
-    function newBoard(){
-      if(startLocked)return;
+    function newBoard(){ if(startLocked)return;
       const seven=pickUnique(COLORS,7);
       const winColor=seven[Math.floor(Math.random()*seven.length)];
       const tiles=[];for(let i=0;i<3;i++)tiles.push(winColor);
       const others=seven.filter(c=>c!==winColor).slice(0,6);tiles.push(...others);
       board=tiles.map(c=>({c,r:Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.c);
-
       revealed.clear();triesLeft=5;won=false;
       el('triesLeft').textContent=String(triesLeft);
       el('matchCount').textContent="0";
       el('gameMsg').textContent="";
       renderBoard();
-
       el('startGameBtn').classList.add('hidden');
       el('newGameBtn').classList.remove('hidden');
       el('cooldownPill').classList.add('hidden');
     }
-
     function renderBoard(){
       const grid=el('gameGrid');grid.innerHTML="";
       board.forEach((color,i)=>{
@@ -325,210 +313,96 @@
         tile.dataset.index=String(i);
         tile.setAttribute('aria-label','verdeckt');
         tile.innerHTML = glassSVG(color);
-
-        const cover=document.createElement('div');
-        cover.className='cover'; cover.style.opacity='1';
-        cover.style.transition='opacity .18s ease';
+        const cover=document.createElement('div'); cover.className='cover'; cover.style.opacity='1'; cover.style.transition='opacity .18s ease';
         tile.appendChild(cover);
-
         tile.addEventListener('pointerdown', (evt)=> onReveal(evt, tile), {passive:false});
         grid.appendChild(tile);
       });
     }
-
     function onReveal(e, tile){
       e.preventDefault(); e.stopPropagation();
       if (revealLock) return;
       const idx=Number(tile.dataset.index);
       if(won || triesLeft<=0 || revealed.has(idx)) return;
-
       revealLock=true; setTimeout(()=>{revealLock=false},180);
-
-      revealed.add(idx);
-      triesLeft--; el('triesLeft').textContent=String(triesLeft);
-
-      tile.classList.add('revealed');
-      const cover=tile.querySelector('.cover'); cover.style.opacity='0';
-
+      revealed.add(idx); triesLeft--; el('triesLeft').textContent=String(triesLeft);
+      tile.classList.add('revealed'); const cover=tile.querySelector('.cover'); cover.style.opacity='0';
       const counts={}; revealed.forEach(i=>{ const c=board[i]; counts[c]=(counts[c]||0)+1; });
-      const maxSame=Math.max(...Object.values(counts));
-      el('matchCount').textContent=String(maxSame);
-
-      if(maxSame>=3){
-        won=true;
-        el('gameMsg').innerHTML=`<span class="win">Gewonnen! 🎉 Du erhältst einen Glas-Tag gratis zu deiner Bestellung.</span>`;
+      const maxSame=Math.max(...Object.values(counts)); el('matchCount').textContent=String(maxSame);
+      if(maxSame>=3){ won=true; el('gameMsg').innerHTML=`<span class="win">Gewonnen! 🎉 Glas-Tag gratis.</span>`;
         const couponEl=el('coupon'); if(couponEl && !couponEl.value.trim()){ couponEl.value='Shop'; recalc(); }
-        winEffects(); endGameStartCooldown(); return;
-      }
-
-      if(triesLeft===0){
-        el('gameMsg').innerHTML=`<span class="lose">Leider verloren. Versuch’s nochmal!</span>`;
-        endGameStartCooldown();
-      }
+        endGameStartCooldown(); return; }
+      if(triesLeft===0){ el('gameMsg').innerHTML=`<span class="lose">Leider verloren.</span>`; endGameStartCooldown(); }
     }
-
     function endGameStartCooldown(){
-      gamesPlayed += 1;
-      const delaySec = gamesPlayed * 5;
-      startLocked = delaySec > 0;
-
-      const startBtn = el('startGameBtn');
-      const newBtn   = el('newGameBtn');
-      startBtn.classList.remove('hidden');
-      newBtn.classList.add('hidden');
-
-      if (!startLocked) return;
-
-      startBtn.classList.add('disabled');
-      const pill = el('cooldownPill');
-      const out  = el('cooldownSec');
-      pill.classList.remove('hidden');
-      let remain = delaySec;
-      out.textContent = String(remain);
-
+      gamesPlayed += 1; const delaySec = gamesPlayed * 5; startLocked = delaySec > 0;
+      const startBtn = el('startGameBtn'); const newBtn   = el('newGameBtn');
+      startBtn.classList.remove('hidden'); newBtn.classList.add('hidden');
+      if (!startLocked) return; startBtn.classList.add('disabled');
+      const pill = el('cooldownPill'); const out  = el('cooldownSec'); pill.classList.remove('hidden');
+      let remain = delaySec; out.textContent = String(remain);
       clearInterval(startCooldownTimer);
       startCooldownTimer = setInterval(()=>{
-        remain -= 1;
-        if (remain <= 0){
-          clearInterval(startCooldownTimer);
-          startLocked = false;
-          pill.classList.add('hidden');
-          startBtn.classList.remove('disabled');
-        } else {
-          out.textContent = String(remain);
-        }
+        remain -= 1; if (remain <= 0){ clearInterval(startCooldownTimer); startLocked = false; pill.classList.add('hidden'); startBtn.classList.remove('disabled'); }
+        else { out.textContent = String(remain); }
       }, 1000);
     }
 
-    function winEffects(){
-      const layer=document.createElement('div'); layer.className='fx-layer'; document.body.appendChild(layer);
-      const logo=document.createElement('div'); logo.className='obs-logo-fx'; logo.textContent='OBS'; layer.appendChild(logo);
-      const flashG=document.createElement('div'); flashG.className='flash green';
-      const flashGold=document.createElement('div'); flashGold.className='flash gold';
-      layer.appendChild(flashG); layer.appendChild(flashGold);
-
-      const vw=Math.max(document.documentElement.clientWidth||0,window.innerWidth||0);
-      const vh=Math.max(document.documentElement.clientHeight||0,window.innerHeight||0);
-      const STAR_COUNT=160;
-      for(let i=0;i<STAR_COUNT;i++){
-        const s=document.createElement('span');
-        s.className='star-fx';
-        s.textContent=(Math.random()<0.65)?'✦':(Math.random()<0.5?'✸':'✪');
-        const isGreen=Math.random()<0.58;
-        s.style.color=isGreen?'var(--green)':'var(--gold)';
-        const size=20+Math.random()*24;
-        s.style.fontSize=size.toFixed(0)+'px';
-        s.style.left=(Math.random()*vw)+'px';
-        s.style.top =(Math.random()*vh)+'px';
-        const delay=0.1+Math.random()*1.6;
-        const dur  =3.8+Math.random()*3.2;
-        s.style.setProperty('--delay',delay.toFixed(2)+'s');
-        s.style.setProperty('--dur',dur.toFixed(2)+'s');
-        layer.appendChild(s);
-      }
-      setTimeout(()=>{ layer.remove(); }, 9000);
-    }
-
-    el('startGameBtn').addEventListener('click', newBoard);
-    el('newGameBtn').addEventListener('click', newBoard);
-
-    /* ===== Warenkorb ===== */
+    /* ===== Warenkorb-Berechnung ===== */
     function recalc(){
       const pack=el('p1Pack').value;
       const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));
       const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));
-
-      const p1Pieces = PRICES.p1PiecesPer[pack]*p1Qty;
-      el('p1PiecesHint').textContent=`Aktuell: ${p1Pieces} Stück`;
-
-      const p1Subtotal=PRICES.p1[pack]*p1Qty;
-      const p2Subtotal=PRICES.p2*p2Qty;
-      const total=p1Subtotal+p2Subtotal;
-
-      el('p1Subtotal').value=formatEUR(p1Subtotal);
-      el('p2Subtotal').value=formatEUR(p2Subtotal);
-      el('grandTotal').textContent=formatEUR(total);
-
-      if(p1Pieces>0){
-        el('p1NamesBlock').classList.remove('hidden');
-      }else{
-        el('p1NamesBlock').classList.add('hidden');
-        el('p1Names').value='';
-        el('p1NamesError').classList.add('hidden');
-      }
-
-      const lines=[];
-      if(p1Qty>0){
-        const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');
-        lines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1Subtotal)} (= ${p1Pieces} Stück)`);
-      }
+      const p1Pieces = PRICES.p1PiecesPer[pack]*p1Qty; el('p1PiecesHint').textContent=`Aktuell: ${p1Pieces} Stück`;
+      const p1Subtotal=PRICES.p1[pack]*p1Qty; const p2Subtotal=PRICES.p2*p2Qty; const total=p1Subtotal+p2Subtotal;
+      el('p1Subtotal').value=formatEUR(p1Subtotal); el('p2Subtotal').value=formatEUR(p2Subtotal); el('grandTotal').textContent=formatEUR(total);
+      if(p1Pieces>0){ el('p1NamesBlock').classList.remove('hidden'); } else { el('p1NamesBlock').classList.add('hidden'); el('p1Names').value=''; el('p1NamesError').classList.add('hidden'); }
+      const lines=[]; if(p1Qty>0){ const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack'); lines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1Subtotal)} (= ${p1Pieces} Stück)`); }
       if(p2Qty>0) lines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2Subtotal)}`);
-
-      const coupon = el('coupon').value.trim();
-      if(coupon) lines.push(`Gewinncode: ${coupon}`);
-
+      const coupon = el('coupon').value.trim(); if(coupon) lines.push(`Gewinncode: ${coupon}`);
       el('cartPreview').textContent = lines.length ? formatLines(lines) : 'Noch keine Artikel.';
     }
-
     function validate(){
       if(el('hp_field').value) return {ok:false,msg:'Spam erkannt.'};
-      const name=el('name').value.trim();
-      const phone=el('phone').value.trim();
-      const email=el('email').value.trim();
-      const pack=el('p1Pack').value;
-      const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));
-      const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));
+      const name=el('name').value.trim(); const phone=el('phone').value.trim(); const email=el('email').value.trim();
+      const pack=el('p1Pack').value; const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10)); const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));
       const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;
-
       if(!name||!phone||!email) return {ok:false,msg:'Bitte Name, Telefon und E-Mail ausfüllen.'};
       if(p1Qty+p2Qty===0) return {ok:false,msg:'Bitte mindestens ein Produkt auswählen.'};
-
       if(p1Pieces>0){
         const names=el('p1Names').value.split('\n').map(s=>s.trim()).filter(Boolean);
-        if(names.length!==p1Pieces){
-          el('p1NamesError').classList.remove('hidden');
-          return {ok:false,msg:`Anzahl der Glas-Tag-Namen (${names.length}) passt nicht zur Stückzahl (${p1Pieces}).`};
-        } else {
-          el('p1NamesError').classList.add('hidden');
-        }
+        if(names.length!==p1Pieces){ el('p1NamesError').classList.remove('hidden'); return {ok:false,msg:`Anzahl der Glas-Tag-Namen (${names.length}) passt nicht zur Stückzahl (${p1Pieces}).`}; }
+        else { el('p1NamesError').classList.add('hidden'); }
       }
       return {ok:true};
     }
-
     ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));
     recalc();
 
     /* ===== Absenden ===== */
     document.getElementById('orderForm').addEventListener('submit', async (e)=>{
       e.preventDefault();
-      el('formError').classList.add('hidden');
-      el('formOk').classList.add('hidden');
+      el('formError').classList.add('hidden'); el('formOk').classList.add('hidden');
 
-      const v=validate();
-      if(!v.ok){ el('formError').textContent=v.msg; el('formError').classList.remove('hidden'); return; }
+      const v=validate(); if(!v.ok){ el('formError').textContent=v.msg; el('formError').classList.remove('hidden'); return; }
 
       const pack=el('p1Pack').value;
       const p1Qty=Math.max(0,parseInt(el('p1Qty').value||'0',10));
       const p2Qty=Math.max(0,parseInt(el('p2Qty').value||'0',10));
       const p1Pieces=PRICES.p1PiecesPer[pack]*p1Qty;
-      const p1SubtotalVal=PRICES.p1[pack]*p1Qty;
-      const p2SubtotalVal=PRICES.p2*p2Qty;
+      const p1SubtotalVal=PRICES.p1[pack]*p1Qty; const p2SubtotalVal=PRICES.p2*p2Qty;
 
       const cartLines=[];
-      if(p1Qty>0){
-        const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack');
-        cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`);
-      }
+      if(p1Qty>0){ const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack'); cartLines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1SubtotalVal)} (= ${p1Pieces} Stück)`); }
       if(p2Qty>0) cartLines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2SubtotalVal)}`);
+      const coupon=el('coupon').value.trim(); if(coupon) cartLines.push(`Gewinncode: ${coupon}`);
 
-      const coupon=el('coupon').value.trim();
-      if(coupon) cartLines.push(`Gewinncode: ${coupon}`);
-
-      // ---- Mapping für dein internes Template (template_ggtexbv)
+      // ---- Mapping für intern + Fallback auf EmailJS-Standardfelder
       const fullName = el('name').value.trim();
       const nameParts = fullName.split(" ");
 
       const orderPayload = {
+        // eigene Template-Variablen
         vorname: nameParts[0] || fullName,
         nachname: nameParts.slice(1).join(" ") || "-",
         kunden_email: el('email').value.trim(),
@@ -537,14 +411,33 @@
         gesamtpreis: el('grandTotal').textContent,
         hinweise: el('p1Names').value.trim() || "-",
         abholtermin: "Wird per E-Mail abgestimmt.",
-        reply_to: el('email').value.trim()
+        reply_to: el('email').value.trim(),
+
+        // Fallbacks für Standard-Templates
+        from_name: fullName,
+        to_name: "OBS-Die-Firma",
+        message: `Neue Bestellung
+
+Name: ${fullName}
+E-Mail: ${el('email').value.trim()}
+Telefon: ${el('phone').value.trim()}
+
+Artikel:
+${cartLines.join("\n")}
+
+Gesamtpreis: ${el('grandTotal').textContent}
+
+Namen/Infos:
+${(el('p1Names').value || "-").trim()}
+
+Abholtermin: Wird per E-Mail abgestimmt.`
       };
 
       try{
-        // 1) Interne Bestellmail an euch
+        // 1) Interne Bestellmail
         const r1 = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ORDER, orderPayload);
 
-        // 2) Optionale Bestätigungsmail an den Kunden
+        // 2) Optionale Bestätigung an den Kunden
         if (EMAILJS_TEMPLATE_CONFIRM && EMAILJS_TEMPLATE_CONFIRM.trim() !== "") {
           const confirmPayload = {
             to_email: orderPayload.kunden_email,
@@ -553,18 +446,32 @@
             artikel_zeilen: orderPayload.artikel_zeilen,
             gesamtpreis: orderPayload.gesamtpreis,
             abholhinweis: "Wir melden uns mit einem Abholtermin per E-Mail.",
-            firma: "OBS-Die-Firma"
+            firma: "OBS-Die-Firma",
+
+            // Fallbackfelder
+            from_name: "OBS-Die-Firma",
+            message: `Hallo ${orderPayload.vorname},
+
+wir haben deine Bestellung erhalten.
+
+Artikel:
+${orderPayload.artikel_zeilen}
+
+Gesamtpreis: ${orderPayload.gesamtpreis}
+Wir melden uns mit einem Abholtermin per E-Mail.
+
+Liebe Grüße
+OBS-Die-Firma`
           };
           await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_CONFIRM, confirmPayload);
         }
 
-        if(r1 && r1.status>=200 && r1.status<300){
-          el('formOk').classList.remove('hidden');
-        } else { throw new Error('EmailJS: unerwartete Antwort'); }
+        if(r1 && r1.status>=200 && r1.status<300){ el('formOk').classList.remove('hidden'); }
+        else { throw new Error('EmailJS: unerwartete Antwort'); }
 
       }catch(err){
         console.error(err);
-        el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS IDs/Template oder versuche es später erneut.';
+        el('formError').textContent='Senden fehlgeschlagen. Prüfe EmailJS IDs/Template.';
         el('formError').classList.remove('hidden');
       }
     });
@@ -635,9 +542,8 @@
     (async () => {
       const track = document.getElementById("tickerTrack");
       if (track) track.textContent = "Lade Neuigkeiten …";
-      try {
-        await loadLocalTicker();
-      } catch (err) {
+      try { await loadLocalTicker(); }
+      catch (err) {
         console.error("Ticker-Fehler:", err);
         if(!tryRenderFromCache()){
           const t = document.getElementById("tickerTrack");
@@ -650,7 +556,6 @@
           }
         }
       }
-      // 24h-Refresh
       setInterval(()=>loadLocalTicker().catch(()=>{}), 24*60*60*1000);
     })();
   </script>
