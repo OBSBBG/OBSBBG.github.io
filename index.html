@@ -61,7 +61,7 @@
     .ticker-item small{opacity:.95;font-weight:600}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
-    /* ===== Hero ===== */
+    /* ===== Hero + 🎅 ===== */
     .hero{margin:0 0 1.6rem;text-align:center;perspective:1000px}
     .brand-wrap{position:relative;display:inline-block}
     .brand{
@@ -85,6 +85,31 @@
     .brand-underline{width:min(520px,74%);height:8px;margin:.7rem auto 0;border-radius:999px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 8px 26px rgba(52,199,89,.35)}
     .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.05rem,3.6vw,1.35rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26;opacity:.9}
 
+    /* 🎅 Santa auf dem Logo */
+    .santa{
+      position:absolute; left:50%; top:-12px; transform:translateX(-50%);
+      font-size:clamp(24px,5vw,42px); line-height:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));
+      animation:santaRide 18s linear infinite;
+      user-select:none; pointer-events:none;
+    }
+    @keyframes santaRide{
+      /* sitzt oben */
+      0%   { transform:translateX(-50%) translateY(0) rotate(0deg); opacity:1; }
+      28%  { transform:translateX(-50%) translateY(0) rotate(0deg); }
+      /* rutscht, kippt */
+      35%  { transform:translateX(-50%) translateY(14px) rotate(12deg); }
+      /* fällt runter */
+      50%  { transform:translateX(-50%) translateY(120px) rotate(90deg); opacity:.95; }
+      60%  { transform:translateX(-50%) translateY(120px) rotate(90deg); }
+      /* klettert hoch */
+      75%  { transform:translateX(-50%) translateY(40px) rotate(20deg); }
+      90%  { transform:translateX(-50%) translateY(6px) rotate(4deg); }
+      100% { transform:translateX(-50%) translateY(0) rotate(0deg); opacity:1; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .brand,.brand::before,.star,.santa{animation:none}
+    }
+
     /* ===== Headings/Text ===== */
     h2{margin:0 0 .4rem;font-size:clamp(1.25rem,4.5vw,1.6rem);letter-spacing:.01em}
     p{margin:0;color:var(--ink-2);font-size:clamp(1rem,3.2vw,1.06rem)}
@@ -93,7 +118,7 @@
       outline:3px solid var(--ring);outline-offset:2px;border-radius:8px
     }
 
-    /* ===== Produktkarten – eleganter Look ===== */
+    /* ===== Produktkarten – eleganter Look + exakt gleiche Höhen ===== */
     .slot{
       border:1px solid var(--border);
       border-radius:16px;
@@ -101,11 +126,22 @@
       text-align:left;
       background:var(--surface);
       box-shadow:0 8px 24px rgba(0,0,0,.05);
-      display:flex;flex-direction:column;min-height:100%;
+      display:flex;flex-direction:column;
+      height:100%; /* <- wichtig für gleich hohe Karten */
     }
     .slot+.slot{margin-top:1rem}
-    .slots{margin-top:1.5rem;display:grid;gap:1rem;grid-template-columns:1fr}
+
+    .slots{
+      margin-top:1.5rem;
+      display:grid;
+      gap:1rem;
+      grid-template-columns:1fr;
+      align-items:stretch;           /* <- streckt Grid-Zeilen einheitlich */
+      grid-auto-rows:1fr;            /* <- gleiche Zeilenhöhe */
+    }
+    .slots > .slot{height:100%}       /* <- jede Karte füllt die Zeile */
     @media (min-width:720px){.slots{grid-template-columns:repeat(2,1fr)}}
+
     .slot-body{display:block}
     .slot-footer{margin-top:auto;display:block}
     .price-row{display:flex;justify-content:flex-start;align-items:center;gap:.5rem;font-weight:800;margin-top:.25rem}
@@ -193,6 +229,7 @@
     <header class="hero" aria-label="Markenbereich">
       <div class="brand-wrap">
         <h1 class="brand">OBS-Die-Firma</h1>
+        <div class="santa" aria-hidden="true">🎅</div>
         <div class="brand-stars" aria-hidden="true">
           <span class="star">✦</span><span class="star">✦</span><span class="star">✦</span><span class="star">✦</span><span class="star">✦</span>
         </div>
@@ -231,7 +268,7 @@
       <article class="slot">
         <div class="slot-body">
           <h2>#2 Deluxe Kakao „Chocolate Bomb“ <span class="price">· <span class="price-kakao">5 €</span></span></h2>
-          <p class="desc"><strong>„Chocolate Bomb“ inklusive Glas:</strong> mit heißer Milch aufgießen – die Kugel schmilzt zu cremigem Kakao. Samtig, rund, voller Schoko-Aroma.</p>
+          <p class="desc"><strong>„Chocolate Bomb“ inklusive Glas:</strong> mit heißer Milch aufgießen – die Kugel schmilzt zu cremigem Kakao. Samtig, rund, intensives Schoko-Aroma.</p>
           <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver.</p>
         </div>
         <div class="slot-footer">
@@ -557,10 +594,10 @@ OBS-Die-Firma`
     function renderTicker(items, fromCache=false){
       const mk = (it) => {
         const text = it.text || "";
-        const url  = it.url;
+        the_url  = it.url;
         const val  = (typeof it.value === "number") ? ` <strong>${euro0(it.value)}</strong>` : "";
         const extra= it.extra ? ` <small>${it.extra}</small>` : "";
-        if (url) return `<span class="ticker-item">• <a href="${url}" target="_blank" rel="noreferrer">${text}</a>${val}${extra}</span>`;
+        if (the_url) return `<span class="ticker-item">• <a href="${the_url}" target="_blank" rel="noreferrer">${text}</a>${val}${extra}</span>`;
         return `<span class="ticker-item">• ${text}${val}${extra}</span>`;
       };
       const html = items.map(mk);
