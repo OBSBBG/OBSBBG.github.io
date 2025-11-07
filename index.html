@@ -74,14 +74,21 @@
     footer{margin-top:2rem;font-size:.95rem;opacity:.9}
     footer nav a{text-decoration:underline}
 
-    /* ===== Produktkarten: gleiche Fußhöhe ===== */
+    /* ===== Produktkarten: gleiche Fußhöhe & gleiche Zeilenhöhe ===== */
     .slot{
       border:2px dashed #999;border-radius:12px;padding:1.25rem;text-align:left;background:rgba(255,255,255,.75);backdrop-filter:blur(2px);
-      display:flex;flex-direction:column;min-height:100%;
+      display:flex;flex-direction:column;min-height:100%;height:100%; /* <- wichtig */
     }
     .slot+.slot{margin-top:1rem}
     .slots{margin-top:1.5rem;display:grid;gap:1rem;grid-template-columns:1fr}
-    @media (min-width:720px){.slots{grid-template-columns:repeat(2,1fr)}}
+    @media (min-width:720px){
+      .slots{
+        grid-template-columns:repeat(2,1fr);
+        grid-auto-rows:1fr; /* <- sorgt für gleiche Kartenhöhe je Zeile */
+        align-items:stretch;
+      }
+      .slots>.slot{height:100%} /* <- Child füllt die Zeilenhöhe */
+    }
 
     .slot-body{display:block}
     .slot-footer{margin-top:auto;display:block}
@@ -194,11 +201,11 @@
           <h2>#3 – bald verfügbar</h2>
           <p class="desc">Trag dich per E-Mail ein, dann informieren wir dich, sobald das Produkt startet.</p>
         </div>
-        <!-- Einheitliche Preis-Zone sorgt dafür, dass #2 und #3 unten bündig sind -->
         <div class="slot-footer">
           <div class="price-row muted">Preis: folgt</div>
-          <!-- Optionales Platzhalterbild -->
-          <!-- <img src="placeholder.jpeg" alt="Bald verfügbar" width="900" height="600" loading="lazy" decoding="async"> -->
+          <!-- Optional: Platzhalterbild, falls du absolute Symmetrie willst
+          <img src="placeholder.jpeg" alt="Bald verfügbar" width="900" height="600" loading="lazy" decoding="async">
+          -->
         </div>
       </article>
     </section>
@@ -381,7 +388,7 @@
       el('p1Subtotal').value=formatEUR(p1Subtotal); el('p2Subtotal').value=formatEUR(p2Subtotal); el('grandTotal').textContent=formatEUR(total);
       if(p1Pieces>0){ el('p1NamesBlock').classList.remove('hidden'); } else { el('p1NamesBlock').classList.add('hidden'); el('p1Names').value=''; el('p1NamesError').classList.add('hidden'); }
       const lines=[]; if(p1Qty>0){ const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack'); lines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1Subtotal)} (= ${p1Pieces} Stück)`); }
-      if(p2Qty>0) lines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2Subtotal)}`);
+      if(p2Qty>0) lines.push(`Produkt 2 (Deluxe Kakao) × ${formatEUR(p2Subtotal)} bei Menge ${p2Qty}`.replace(' bei Menge 0',''));
       const coupon = el('coupon').value.trim(); if(coupon) lines.push(`Gewinncode: ${coupon}`);
       el('cartPreview').textContent = lines.length ? formatLines(lines) : 'Noch keine Artikel.';
     }
@@ -402,13 +409,10 @@
 
     // Events
     document.addEventListener('DOMContentLoaded', ()=>{
-      // Gewinnspiel-Buttons aktiv (Fix)
       el('startGameBtn').addEventListener('click', newBoard);
       el('newGameBtn').addEventListener('click', newBoard);
-      // Recalc
       ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));
       recalc();
-      // Submit
       document.getElementById('orderForm').addEventListener('submit', async (e)=>{
         e.preventDefault();
         el('formError').classList.add('hidden'); el('formOk').classList.add('hidden');
@@ -440,7 +444,6 @@
           abholtermin: "Wird per E-Mail abgestimmt.",
           reply_to: el('email').value.trim(),
 
-          // Fallbacks
           from_name: fullName,
           to_name: "OBS-Die-Firma",
           message: `Neue Bestellung
