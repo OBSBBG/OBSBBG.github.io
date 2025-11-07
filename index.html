@@ -6,38 +6,70 @@
   <title>OBS-Die-Firma – Sortiment</title>
   <meta name="description" content="OBS-Die-Firma: Glas-Tags & Deluxe Kakao. Jetzt bestellen und in der Schülerfirma abholen.">
   <meta name="theme-color" content="#003b1f">
+
+  <!-- Moderne, gut lesbare Typo -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
-    :root{color-scheme:light dark;--accent-green:#0c8a43;--green:#34c759;--deep-green:#0b5d2a;--gold:#d4af37;--price:#d40000}
+    :root{
+      color-scheme:light dark;
+      --accent-green:#0c8a43; --green:#34c759; --deep-green:#0b5d2a; --gold:#d4af37; --price:#d40000;
+      --ink:#161817; --ink-2:#2a2f2b; --muted:#5b625e; --border:#e6e9e7; --surface:#ffffff;
+      --ring:#98e1b3;
+    }
     *{box-sizing:border-box}
     html,body{overscroll-behavior-y:contain}
+
     body{
-      margin:0;min-height:100vh;display:grid;place-items:start center;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      text-align:center;padding:2rem;line-height:1.35;
-      background:radial-gradient(1200px 600px at 10% -10%, rgba(0,180,90,.10), transparent 60%),
-                 radial-gradient(800px 400px at 110% -20%, rgba(0,60,30,.10), transparent 60%),
-                 radial-gradient(1200px 600px at 50% 120%, rgba(0,0,0,.06), transparent 60%), #fff
+      margin:0;
+      min-height:100vh;
+      display:grid;place-items:start center;
+      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size:16.5px;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+      color:var(--ink);
+      letter-spacing:.005em;
+      line-height:1.55;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(0,180,90,.08), transparent 60%),
+        radial-gradient(800px 400px at 110% -20%, rgba(0,60,30,.08), transparent 60%),
+        radial-gradient(1200px 600px at 50% 120%, rgba(0,0,0,.04), transparent 60%),
+        #fff;
+      padding:2rem;
     }
     main{width:min(1000px,100%)}
 
     /* ===== TICKER ===== */
-    .ticker{width:100%;overflow:hidden;margin:-1rem 0 1rem 0}
-    .ticker-bar{background:linear-gradient(90deg,#34c759,#0c8a43);color:#fff;font-weight:800;padding:.95rem 0}
-    .ticker-track{display:inline-block;white-space:nowrap;will-change:transform;animation:ticker 120s linear infinite;font-size:1.08rem}
+    .ticker{width:100%;overflow:hidden;margin:-.5rem 0 1.25rem 0}
+    .ticker-bar{
+      background:linear-gradient(90deg,#2fb457,#0c8a43);
+      color:#fff;
+      font-weight:700;
+      padding:.8rem 0;
+      border-radius:12px;
+      box-shadow:0 10px 24px rgba(0,0,0,.07);
+    }
+    .ticker-track{
+      display:inline-block;white-space:nowrap;will-change:transform;
+      animation:ticker 120s linear infinite;
+      font-size:1.02rem; letter-spacing:.01em;
+    }
     .ticker-item{display:inline-flex;align-items:center;gap:.45rem;margin:0 1.6rem}
-    .ticker-item small{opacity:.9;font-weight:700}
+    .ticker-item small{opacity:.95;font-weight:600}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
     /* ===== Hero ===== */
-    .hero{margin:0 0 1.5rem;text-align:center;perspective:1000px}
+    .hero{margin:0 0 1.6rem;text-align:center;perspective:1000px}
     .brand-wrap{position:relative;display:inline-block}
     .brand{
       margin:0;text-transform:uppercase;letter-spacing:.06em;font-weight:900;
-      font-size:clamp(3rem,12vw,7rem);line-height:.95;
+      font-size:clamp(3rem,12vw,6.6rem);line-height:.95;
       background:linear-gradient(180deg,#0b5d2a 0%,#0c8a43 35%,#34c759 65%,#c8ffd8 100%);
       -webkit-background-clip:text;background-clip:text;color:transparent;
-      text-shadow:0 1px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.25),0 8px 30px rgba(0,0,0,.25);
-      filter:saturate(1.08) contrast(1.06);
+      text-shadow:0 1px 0 rgba(0,0,0,.18),0 2px 6px rgba(0,0,0,.18),0 8px 30px rgba(0,0,0,.18);
       transform-style:preserve-3d;transform-origin:center;animation:slowFlip 18s linear infinite;position:relative
     }
     @keyframes slowFlip{0%{transform:rotateX(0)}50%{transform:rotateX(180deg)}100%{transform:rotateX(360deg)}}
@@ -50,33 +82,25 @@
     .star{position:absolute;font-size:clamp(14px,2.8vw,24px);color:#fff;text-shadow:0 0 6px rgba(52,199,89,.9),0 0 16px rgba(12,138,67,.7),0 0 28px rgba(12,138,67,.4);opacity:0;transform:scale(.6);animation:twinkle 3.2s ease-out infinite}
     .star:nth-child(1){top:6%;left:10%;animation-delay:.4s}.star:nth-child(2){top:18%;right:8%;animation-delay:1.1s}.star:nth-child(3){bottom:10%;left:12%;animation-delay:1.8s}.star:nth-child(4){top:10%;left:50%;transform-origin:-30% -50%;animation-delay:2.3s}.star:nth-child(5){bottom:6%;right:12%;animation-delay:2.9s}
     @keyframes twinkle{0%{opacity:0;transform:scale(.6)}35%{opacity:1;transform:scale(1)}60%{opacity:.95;transform:scale(1.05) rotate(6deg)}100%{opacity:0;transform:scale(.7) rotate(12deg)}}
-    .brand-underline{width:min(500px,70%);height:8px;margin:.6rem auto 0;border-radius:6px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 6px 20px rgba(52,199,89,.45)}
-    .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.1rem,3.6vw,1.6rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26}
+    .brand-underline{width:min(520px,74%);height:8px;margin:.7rem auto 0;border-radius:999px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 8px 26px rgba(52,199,89,.35)}
+    .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.05rem,3.6vw,1.35rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26;opacity:.9}
 
-    /* ===== Content ===== */
-    h2{margin:0 0 .25rem;font-size:clamp(1.3rem,4.5vw,1.8rem)}
-    p{margin:0;font-size:clamp(1.05rem,3.4vw,1.15rem)}
-    img{display:block;max-width:100%;height:auto;margin:1rem auto 0;user-select:none;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.08)}
-    .price{font-weight:700}
-    .desc{margin-top:.5rem;font-size:clamp(1rem,3.2vw,1.1rem)}
-    .badge{display:inline-block;margin-left:.5rem;background:var(--accent-green);color:#fff;border-radius:.5rem;padding:.1rem .5rem;font-size:.9em;vertical-align:middle}
+    /* ===== Headings/Text ===== */
+    h2{margin:0 0 .4rem;font-size:clamp(1.25rem,4.5vw,1.6rem);letter-spacing:.01em}
+    p{margin:0;color:var(--ink-2);font-size:clamp(1rem,3.2vw,1.06rem)}
+    a{color:inherit;text-decoration:none}
+    a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+      outline:3px solid var(--ring);outline-offset:2px;border-radius:8px
+    }
 
-    /* Preisfarben */
-    .price-old{color:var(--price);text-decoration:line-through;text-decoration-thickness:.12em;text-decoration-color:var(--price);font-weight:700}
-    .price-new{color:var(--price);font-weight:800}
-    .price-kakao{color:#000!important;font-weight:800}
-    .price-list{margin:.5rem 0 0;padding-left:1.1rem;color:var(--price);font-weight:700}
-    .price-list li{margin:.15rem 0}
-    .note{margin-top:.6rem;font-size:.95em;font-weight:600}
-    .asterisk-note{margin-top:.4rem;font-size:.95em;color:var(--price);font-weight:700}
-    a{color:inherit}
-    a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #666;outline-offset:2px;border-radius:6px}
-    footer{margin-top:2rem;font-size:.95rem;opacity:.9}
-    footer nav a{text-decoration:underline}
-
-    /* ===== Produktkarten: gleiche Fußhöhe ===== */
+    /* ===== Produktkarten – eleganter Look ===== */
     .slot{
-      border:2px dashed #999;border-radius:12px;padding:1.25rem;text-align:left;background:rgba(255,255,255,.75);backdrop-filter:blur(2px);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:1.2rem 1.25rem;
+      text-align:left;
+      background:var(--surface);
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
       display:flex;flex-direction:column;min-height:100%;
     }
     .slot+.slot{margin-top:1rem}
@@ -86,39 +110,70 @@
     .slot-footer{margin-top:auto;display:block}
     .price-row{display:flex;justify-content:flex-start;align-items:center;gap:.5rem;font-weight:800;margin-top:.25rem}
 
+    .badge{
+      display:inline-block;margin-left:.5rem;background:var(--accent-green);
+      color:#fff;border-radius:.6rem;padding:.12rem .55rem;font-size:.86em;vertical-align:middle
+    }
+    .price-old{color:var(--price);text-decoration:line-through;text-decoration-thickness:.12em;text-decoration-color:var(--price);font-weight:700}
+    .price-new{color:var(--price);font-weight:800}
+    .price-kakao{color:#111!important;font-weight:800}
+    .price-list{margin:.55rem 0 0;padding-left:1.1rem;color:var(--price);font-weight:700}
+    .price-list li{margin:.15rem 0}
+    .note{margin-top:.6rem;font-size:.95em;font-weight:600}
+    .asterisk-note{margin-top:.4rem;font-size:.95em;color:var(--price);font-weight:700}
+
+    img{display:block;max-width:100%;height:auto;margin:1rem auto 0;user-select:none;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.07)}
+
     /* ===== Formular / Warenkorb ===== */
-    form.shop{text-align:left;margin-top:1.5rem}
-    .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin-top:16px;background:#fff}
+    form.shop{text-align:left;margin-top:1.6rem}
+    .card{
+      border:1px solid var(--border);border-radius:16px;background:#fff;
+      padding:18px;margin-top:16px;box-shadow:0 8px 24px rgba(0,0,0,.05)
+    }
     .grid{display:grid;gap:12px}
     .row{display:grid;grid-template-columns:1fr 140px 160px;gap:8px;align-items:end}
     .row>div{display:grid;gap:6px}
+
     input,textarea,select,button{font:inherit}
-    input,textarea,select{padding:10px;border:1px solid #ccc;border-radius:8px;width:100%}
-    input[readonly]{background:#f8f8f8}
-    button{padding:12px 16px;border-radius:10px;border:0;background:linear-gradient(180deg,#111,#000);color:#fff;cursor:pointer;font-weight:800;letter-spacing:.04em;box-shadow:0 8px 26px rgba(0,0,0,.25)}
-    button:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(0,0,0,.28)}
-    .muted{color:#444;font-size:.95rem}
+    input,textarea,select{
+      padding:11px 12px;border:1px solid var(--border);border-radius:10px;width:100%;background:#fff;color:var(--ink);
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    input:focus,textarea:focus,select:focus{border-color:#b9e8cc;box-shadow:0 0 0 3px rgba(52,199,89,.15)}
+    input[readonly]{background:#f8f9f8}
+
+    button{
+      padding:12px 16px;border-radius:12px;border:0;
+      background:linear-gradient(180deg,#1b8a46,#0e6b37);
+      color:#fff;cursor:pointer;font-weight:800;letter-spacing:.03em;
+      box-shadow:0 10px 26px rgba(12,138,67,.25);
+      transition:transform .08s ease, box-shadow .12s ease;
+    }
+    button:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(12,138,67,.3)}
+
+    .muted{color:var(--muted);font-size:.96rem}
     .totals{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-weight:800}
     .error{color:#b00020;font-size:.95rem}
     .success{color:#0a7a30;font-size:.95rem}
     .hidden{display:none}
-    hr.sep{border:0;border-top:1px solid #eee;margin:12px 0}
+    hr.sep{border:0;border-top:1px solid var(--border);margin:12px 0}
+
+    footer{margin-top:2rem;font-size:.98rem;opacity:.95}
+    footer nav a{text-decoration:underline}
 
     /* ===== Werbeaktion Spiel ===== */
     .game-grid{display:grid;grid-template-columns:repeat(3,90px);grid-gap:10px;justify-content:center;margin-top:12px;touch-action:manipulation}
     .tile{
-      width:90px;height:90px;border-radius:12px;border:1px solid #ccc;background:#efefef;
-      cursor:pointer;position:relative;overflow:hidden;transition:transform .08s ease-in;
-      display:grid;place-items:center;
-      -webkit-tap-highlight-color:transparent;
-      -webkit-user-select:none;user-select:none;
-      touch-action:manipulation;outline:none;
+      width:90px;height:90px;border-radius:12px;border:1px solid var(--border);background:#f7f8f7;
+      cursor:pointer;position:relative;overflow:hidden;transition:transform .08s ease-in, box-shadow .08s ease-in;
+      display:grid;place-items:center; -webkit-tap-highlight-color:transparent; -webkit-user-select:none;user-select:none; outline:none;
+      box-shadow:0 6px 18px rgba(0,0,0,.06);
     }
     .tile:active{transform:scale(.98)}
-    .cover{position:absolute;inset:0;background:linear-gradient(180deg,#fafafa,#e9e9e9);pointer-events:none}
-    .revealed{border-color:#999}
+    .cover{position:absolute;inset:0;background:linear-gradient(180deg,#fafafa,#eceeec);pointer-events:none}
+    .revealed{border-color:#cfd6d1}
     .game-controls{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:10px;flex-wrap:wrap}
-    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f6f6f6;border:1px solid #e5e5e5;font-weight:600}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#f6f7f6;border:1px solid var(--border);font-weight:600}
     .win{color:#0a7a30;font-weight:800}
     .lose{color:#b00020;font-weight:800}
 
@@ -176,8 +231,8 @@
       <article class="slot">
         <div class="slot-body">
           <h2>#2 Deluxe Kakao „Chocolate Bomb“ <span class="price">· <span class="price-kakao">5 €</span></span></h2>
-          <p class="desc"><strong>Kakao „Chocolate Bomb“ inklusive Glas.</strong> Einfach mit heißer Milch aufgießen – fertig. Die Schoko-Kugel schmilzt, Marshmallows steigen auf, du rührst und genießt.</p>
-          <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver, Mini-Marshmallows.</p>
+          <p class="desc"><strong>„Chocolate Bomb“ inklusive Glas:</strong> mit heißer Milch aufgießen – die Kugel schmilzt zu cremigem Kakao. Samtig, rund, voller Schoko-Aroma.</p>
+          <p class="desc" style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver.</p>
         </div>
         <div class="slot-footer">
           <div class="price-row" aria-hidden="true">Preis: <strong class="price-kakao">5,00 €</strong></div>
