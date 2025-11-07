@@ -74,20 +74,20 @@
     footer{margin-top:2rem;font-size:.95rem;opacity:.9}
     footer nav a{text-decoration:underline}
 
-    /* ===== Produktkarten: gleiche Fußhöhe & gleiche Zeilenhöhe ===== */
+    /* ===== Produktkarten: bündig in der Zeile ===== */
     .slot{
       border:2px dashed #999;border-radius:12px;padding:1.25rem;text-align:left;background:rgba(255,255,255,.75);backdrop-filter:blur(2px);
-      display:flex;flex-direction:column;min-height:100%;height:100%; /* <- wichtig */
+      display:flex;flex-direction:column;min-height:100%;height:100%;
     }
-    .slot+.slot{margin-top:1rem}
+    /* Entfernt: .slot+.slot{margin-top:1rem}  -> macht Versatz im Grid */
     .slots{margin-top:1.5rem;display:grid;gap:1rem;grid-template-columns:1fr}
     @media (min-width:720px){
       .slots{
         grid-template-columns:repeat(2,1fr);
-        grid-auto-rows:1fr; /* <- sorgt für gleiche Kartenhöhe je Zeile */
+        grid-auto-rows:1fr; /* gleiche Zeilenhöhe */
         align-items:stretch;
       }
-      .slots>.slot{height:100%} /* <- Child füllt die Zeilenhöhe */
+      .slots>.slot{height:100%}
     }
 
     .slot-body{display:block}
@@ -203,7 +203,7 @@
         </div>
         <div class="slot-footer">
           <div class="price-row muted">Preis: folgt</div>
-          <!-- Optional: Platzhalterbild, falls du absolute Symmetrie willst
+          <!-- Optionales Platzhalterbild
           <img src="placeholder.jpeg" alt="Bald verfügbar" width="900" height="600" loading="lazy" decoding="async">
           -->
         </div>
@@ -303,8 +303,8 @@
     /* ===== EmailJS + Preise ===== */
     const EMAILJS_PUBLIC_KEY="xAOygDJhZcJrXGuSb";
     const EMAILJS_SERVICE_ID="service_l642tri";
-    const EMAILJS_TEMPLATE_ORDER="template_ggtexbv";  // interne Bestellmail (an euch)
-    const EMAILJS_TEMPLATE_CONFIRM="";                 // optional: ID der Kunden-Bestätigung (leer = aus)
+    const EMAILJS_TEMPLATE_ORDER="template_ggtexbv";
+    const EMAILJS_TEMPLATE_CONFIRM="";
     const PRICES={p1:{single:1.50,pack5:4.95,pack10:9.95},p1PiecesPer:{single:1,pack5:5,pack10:10},p2:5.00};
 
     (function(){emailjs.init(EMAILJS_PUBLIC_KEY)})();
@@ -388,7 +388,7 @@
       el('p1Subtotal').value=formatEUR(p1Subtotal); el('p2Subtotal').value=formatEUR(p2Subtotal); el('grandTotal').textContent=formatEUR(total);
       if(p1Pieces>0){ el('p1NamesBlock').classList.remove('hidden'); } else { el('p1NamesBlock').classList.add('hidden'); el('p1Names').value=''; el('p1NamesError').classList.add('hidden'); }
       const lines=[]; if(p1Qty>0){ const packLabel=pack==='single'?'Einzel':(pack==='pack5'?'5er-Pack':'10er-Pack'); lines.push(`Produkt 1 (Glas-Tag) – ${packLabel} × ${p1Qty} = ${formatEUR(p1Subtotal)} (= ${p1Pieces} Stück)`); }
-      if(p2Qty>0) lines.push(`Produkt 2 (Deluxe Kakao) × ${formatEUR(p2Subtotal)} bei Menge ${p2Qty}`.replace(' bei Menge 0',''));
+      if(p2Qty>0) lines.push(`Produkt 2 (Deluxe Kakao) × ${p2Qty} = ${formatEUR(p2Subtotal)}`);
       const coupon = el('coupon').value.trim(); if(coupon) lines.push(`Gewinncode: ${coupon}`);
       el('cartPreview').textContent = lines.length ? formatLines(lines) : 'Noch keine Artikel.';
     }
@@ -407,7 +407,6 @@
       return {ok:true};
     }
 
-    // Events
     document.addEventListener('DOMContentLoaded', ()=>{
       el('startGameBtn').addEventListener('click', newBoard);
       el('newGameBtn').addEventListener('click', newBoard);
@@ -443,7 +442,6 @@
           hinweise: el('p1Names').value.trim() || "-",
           abholtermin: "Wird per E-Mail abgestimmt.",
           reply_to: el('email').value.trim(),
-
           from_name: fullName,
           to_name: "OBS-Die-Firma",
           message: `Neue Bestellung
@@ -506,7 +504,7 @@ OBS-Die-Firma`
     /* ===== LOKALER TICKER ===== */
     const TICKER_URL = "/ticker.json?ts=" + Date.now();
     const CACHE_KEY = "localTickerCache_v1";
-    const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
+    const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
     const TIMEOUT_MS = 8000;
     const MAX_RETRY = 2;
 
@@ -557,7 +555,7 @@ OBS-Die-Firma`
     }
 
     async function loadLocalTicker(){
-      tryRenderFromCache(); // sofort
+      tryRenderFromCache();
       const data = await fetchJSON(TICKER_URL);
       if(!data || !Array.isArray(data.items) || data.items.length===0) throw new Error("Ungültiges ticker.json Format");
       renderTicker(data.items);
