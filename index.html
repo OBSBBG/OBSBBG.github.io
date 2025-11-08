@@ -18,6 +18,7 @@
       --accent-green:#0c8a43; --green:#34c759; --deep-green:#0b5d2a; --gold:#d4af37; --price:#d40000;
       --ink:#161817; --ink-2:#2a2f2b; --muted:#5b625e; --border:#e6e9e7; --surface:#ffffff;
       --ring:#98e1b3;
+      --leaf-green:#1fa94e; --leaf-brown:#7a5a2b;
     }
     *{box-sizing:border-box}
     html,body{overscroll-behavior-y:contain}
@@ -61,8 +62,8 @@
     .ticker-item small{opacity:.95;font-weight:600}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
-    /* ===== Hero + 🎅 ===== */
-    .hero{margin:0 0 1.6rem;text-align:center;perspective:1000px}
+    /* ===== Hero + Blätter ===== */
+    .hero{margin:0 0 1.6rem;text-align:center;perspective:1000px;position:relative}
     .brand-wrap{position:relative;display:inline-block}
     .brand{
       margin:0;text-transform:uppercase;letter-spacing:.06em;font-weight:900;
@@ -85,29 +86,30 @@
     .brand-underline{width:min(520px,74%);height:8px;margin:.7rem auto 0;border-radius:999px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 8px 26px rgba(52,199,89,.35)}
     .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.05rem,3.6vw,1.35rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26;opacity:.9}
 
-    /* 🎅 Santa auf dem Logo */
-    .santa{
-      position:absolute; left:50%; top:-12px; transform:translateX(-50%);
-      font-size:clamp(24px,5vw,42px); line-height:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));
-      animation:santaRide 18s linear infinite;
-      user-select:none; pointer-events:none;
+    /* Blätter: Container nimmt die vollen Viewport-Koordinaten (fixed), Start in Logo-Mitte */
+    .leaves{position:fixed; left:50%; top:16vh; transform:translateX(-50%); width:0; height:0; pointer-events:none; z-index:10}
+    .leaf{
+      position:absolute; left:0; top:0; transform:translate(0,0);
+      width:auto; height:auto; pointer-events:none; user-select:none;
+      animation:leafFall var(--dur,18s) linear var(--delay,0s) infinite;
+      will-change:transform, opacity, color, filter;
+      color:var(--leaf-green); opacity:1;
     }
-    @keyframes santaRide{
-      /* sitzt oben */
-      0%   { transform:translateX(-50%) translateY(0) rotate(0deg); opacity:1; }
-      28%  { transform:translateX(-50%) translateY(0) rotate(0deg); }
-      /* rutscht, kippt */
-      35%  { transform:translateX(-50%) translateY(14px) rotate(12deg); }
-      /* fällt runter */
-      50%  { transform:translateX(-50%) translateY(120px) rotate(90deg); opacity:.95; }
-      60%  { transform:translateX(-50%) translateY(120px) rotate(90deg); }
-      /* klettert hoch */
-      75%  { transform:translateX(-50%) translateY(40px) rotate(20deg); }
-      90%  { transform:translateX(-50%) translateY(6px) rotate(4deg); }
-      100% { transform:translateX(-50%) translateY(0) rotate(0deg); opacity:1; }
+    .leaf svg{width:clamp(16px,2.6vw,28px); height:auto; display:block; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
+    /* Ein einzelner Zyklus: fällt, verfärbt, zerfällt, respawnt oben */
+    @keyframes leafFall{
+      0%   { transform:translate(0,0) rotate(var(--r0)); color:var(--leaf-green); opacity:1; filter:blur(0) }
+      25%  { transform:translate(calc(var(--xMid)*.35), 26vh) rotate(var(--r1)); color:var(--leaf-green) }
+      55%  { transform:translate(var(--xMid), 48vh) rotate(var(--r2)); color:var(--leaf-brown) }
+      /* Bereich Produkt #1 (Text links oberhalb Bild) */
+      70%  { transform:translate(var(--xEnd), 60vh) rotate(var(--r3)); color:var(--leaf-brown) }
+      82%  { transform:translate(calc(var(--xEnd) + var(--crumbX)), 64vh) rotate(calc(var(--r3) + 12deg)); opacity:.55; filter:blur(1px) }
+      90%  { transform:translate(calc(var(--xEnd) + var(--crumbX)), 66vh) rotate(calc(var(--r3) + 18deg)) scale(.7); opacity:.0; filter:blur(3px) }
+      /* Respawn oben über dem Logo */
+      100% { transform:translate(0,-10vh) rotate(0deg); color:var(--leaf-green); opacity:1; filter:blur(0) }
     }
     @media (prefers-reduced-motion: reduce){
-      .brand,.brand::before,.star,.santa{animation:none}
+      .brand,.brand::before,.star,.leaf{animation:none}
     }
 
     /* ===== Headings/Text ===== */
@@ -127,7 +129,7 @@
       background:var(--surface);
       box-shadow:0 8px 24px rgba(0,0,0,.05);
       display:flex;flex-direction:column;
-      height:100%; /* <- wichtig für gleich hohe Karten */
+      height:100%;
     }
     .slot+.slot{margin-top:1rem}
 
@@ -136,10 +138,10 @@
       display:grid;
       gap:1rem;
       grid-template-columns:1fr;
-      align-items:stretch;           /* <- streckt Grid-Zeilen einheitlich */
-      grid-auto-rows:1fr;            /* <- gleiche Zeilenhöhe */
+      align-items:stretch;
+      grid-auto-rows:1fr;
     }
-    .slots > .slot{height:100%}       /* <- jede Karte füllt die Zeile */
+    .slots > .slot{height:100%}
     @media (min-width:720px){.slots{grid-template-columns:repeat(2,1fr)}}
 
     .slot-body{display:block}
@@ -229,7 +231,10 @@
     <header class="hero" aria-label="Markenbereich">
       <div class="brand-wrap">
         <h1 class="brand">OBS-Die-Firma</h1>
-        <div class="santa" aria-hidden="true">🎅</div>
+
+        <!-- Blätter-Layer -->
+        <div class="leaves" id="leavesLayer" aria-hidden="true"></div>
+
         <div class="brand-stars" aria-hidden="true">
           <span class="star">✦</span><span class="star">✦</span><span class="star">✦</span><span class="star">✦</span><span class="star">✦</span>
         </div>
@@ -580,6 +585,9 @@ OBS-Die-Firma`
           el('formError').classList.remove('hidden');
         }
       });
+
+      /* ===== Blätter initialisieren ===== */
+      initLeaves();
     });
 
     /* ===== LOKALER TICKER ===== */
@@ -594,10 +602,10 @@ OBS-Die-Firma`
     function renderTicker(items, fromCache=false){
       const mk = (it) => {
         const text = it.text || "";
-        the_url  = it.url;
+        const url  = it.url;
         const val  = (typeof it.value === "number") ? ` <strong>${euro0(it.value)}</strong>` : "";
         const extra= it.extra ? ` <small>${it.extra}</small>` : "";
-        if (the_url) return `<span class="ticker-item">• <a href="${the_url}" target="_blank" rel="noreferrer">${text}</a>${val}${extra}</span>`;
+        if (url) return `<span class="ticker-item">• <a href="${url}" target="_blank" rel="noreferrer">${text}</a>${val}${extra}</span>`;
         return `<span class="ticker-item">• ${text}${val}${extra}</span>`;
       };
       const html = items.map(mk);
@@ -662,6 +670,60 @@ OBS-Die-Firma`
       }
       setInterval(()=>loadLocalTicker().catch(()=>{}), 24*60*60*1000);
     })();
+
+    /* ===== Blätter-Logik ===== */
+    function leafSVG(){
+      return `
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="currentColor" d="M32 6c9 0 20 7 24 16 3 7 2 14-3 19-9 8-26 12-33 9-3-1-6-4-7-7-2-6 1-15 7-22C24 10 28 6 32 6z"/>
+          <path fill="currentColor" opacity=".25" d="M18 40c8-3 18-8 28-18-8 12-18 18-28 18z"/>
+        </svg>`;
+    }
+
+    function initLeaves(){
+      const layer = el('leavesLayer');
+      if(!layer) return;
+      layer.innerHTML = '';
+      const COUNT = 5;
+
+      for(let i=0;i<COUNT;i++){
+        const d = document.createElement('div');
+        d.className = 'leaf';
+        d.innerHTML = leafSVG();
+        layer.appendChild(d);
+        seedLeaf(d, i*0.8); // leicht versetzter Start
+        d.addEventListener('animationiteration', ()=> seedLeaf(d));
+      }
+    }
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function seedLeaf(node, delayOverride){
+      // zufällige Drift in den Bereich von Produkt #1 (leicht links der Mitte)
+      const xMid = rand(-180, 160);        // Mid drift
+      const xEnd = xMid + rand(-60, 60);   // End drift in Textbereich
+      const crumbX = rand(-14, 22);        // kleiner „Brösel“-Versatz beim Zerfall
+
+      // Rotationen
+      const r0 = `${rand(-15,15)}deg`;
+      const r1 = `${rand(-30,30)}deg`;
+      const r2 = `${rand(-45,45)}deg`;
+      const r3 = `${rand(-60,60)}deg`;
+
+      // Dauer möglichst nah an Flip (18s)
+      const dur = rand(16,20).toFixed(2)+'s';
+      const delay = (delayOverride!==undefined ? delayOverride : rand(0,5)).toFixed(2)+'s';
+
+      node.style.setProperty('--xMid', xMid+'px');
+      node.style.setProperty('--xEnd', xEnd+'px');
+      node.style.setProperty('--crumbX', crumbX+'px');
+      node.style.setProperty('--r0', r0);
+      node.style.setProperty('--r1', r1);
+      node.style.setProperty('--r2', r2);
+      node.style.setProperty('--r3', r3);
+      node.style.setProperty('--dur', dur);
+      node.style.setProperty('--delay', delay);
+    }
   </script>
 </body>
 </html>
