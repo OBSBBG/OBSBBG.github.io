@@ -18,7 +18,6 @@
       --accent-green:#0c8a43; --green:#34c759; --deep-green:#0b5d2a; --gold:#d4af37; --price:#d40000;
       --ink:#161817; --ink-2:#2a2f2b; --muted:#5b625e; --border:#e6e9e7; --surface:#ffffff;
       --ring:#98e1b3;
-      --leaf-green:#1fa94e; --leaf-brown:#7a5a2b;
     }
     *{box-sizing:border-box}
     html,body{overscroll-behavior-y:contain}
@@ -54,9 +53,39 @@
     .ticker-item small{opacity:.95; font-weight:600}
     @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
-    /* ===== Hero + „bewachsenes“ Logo ===== */
-    .hero{margin:0 0 1.6rem; text-align:center; perspective:1000px; position:relative}
-    .brand-wrap{position:relative; display:inline-block}
+    /* ===== Hero + Nacht-Himmel ===== */
+    .hero{margin:0 0 1.6rem; text-align:center; perspective:1000px; position:relative; overflow:visible}
+    /* Night sky liegt ÜBER dem Logo-Bereich, verblendet nach unten */
+    .night-sky{
+      position:absolute; left:50%; transform:translateX(-50%);
+      top:-26vh; width:120vw; height:56vh; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(100% 80% at 50% 100%, rgba(2,12,20,0) 0%, rgba(2,12,20,.0) 40%, rgba(2,12,20,.7) 70%, rgba(2,12,20,1) 100%),
+        radial-gradient(140% 100% at 50% 10%, #07131c 0%, #030b12 60%, #02070d 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,.92) 60%, rgba(0,0,0,0) 100%);
+    }
+    .stars{position:absolute; inset:0; overflow:hidden}
+    .star{
+      position:absolute; width:2px; height:2px; border-radius:50%;
+      background:#ffffff; opacity:.85; filter:drop-shadow(0 0 3px rgba(255,255,255,.75));
+      animation:twinkle var(--twDur,4s) ease-in-out var(--twDelay,0s) infinite alternate;
+    }
+    @keyframes twinkle{from{opacity:.2; transform:scale(.8)} to{opacity:1; transform:scale(1.15)}}
+
+    /* Shooting star */
+    .shooting{
+      position:absolute; width:140px; height:2px; background:linear-gradient(90deg,#fff, rgba(255,255,255,0));
+      opacity:.0; transform:translateX(0) translateY(0) rotate(var(--rot, -20deg));
+      filter:drop-shadow(0 0 6px rgba(255,255,255,.9));
+      animation:shoot 1.6s ease-in-out forwards;
+    }
+    @keyframes shoot{
+      0%   {opacity:0; transform:translateX(0) translateY(0) rotate(var(--rot))}
+      10%  {opacity:.95}
+      100% {opacity:0; transform:translateX(var(--dx, -520px)) translateY(var(--dy, 160px)) rotate(var(--rot))}
+    }
+
+    .brand-wrap{position:relative; display:inline-block; z-index:1}
     .brand{
       margin:0; text-transform:uppercase; letter-spacing:.06em; font-weight:900;
       font-size:clamp(3rem,12vw,6.6rem); line-height:.95;
@@ -73,49 +102,11 @@
     }
     @keyframes shine{0%{transform:translateX(-130%) skewX(-10deg)}50%{transform:translateX(130%) skewX(-10deg)}100%{transform:translateX(130%) skewX(-10deg)}}
 
-    /* Blattdeko am Logo (bewachsen) */
-    .ivy{position:absolute; inset:-24px -40px auto -40px; height:0; pointer-events:none}
-    .ivy .leaf-small{
-      position:absolute; color:var(--leaf-green); opacity:.9;
-      transform-origin:50% 0;
-      filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));
-    }
-    .ivy .leaf-small svg{width:20px; height:auto}
-    /* ein paar zufällige Plätze */
-    .ivy .l1{left:8%; top:0; transform:rotate(-20deg)}
-    .ivy .l2{left:18%; top:-6px; transform:rotate(8deg)}
-    .ivy .l3{left:32%; top:-10px; transform:rotate(-6deg)}
-    .ivy .l4{right:14%; top:-8px; transform:rotate(16deg)}
-    .ivy .l5{right:26%; top:-12px; transform:rotate(-14deg)}
-    .ivy .l6{left:50%; top:-16px; transform:rotate(4deg)}
-    .ivy .l7{right:34%; top:-18px; transform:rotate(10deg)}
-
     .brand-underline{width:min(520px,74%);height:8px;margin:.7rem auto 0;border-radius:999px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 8px 26px rgba(52,199,89,.35)}
     .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.05rem,3.6vw,1.35rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26;opacity:.9}
 
-    /* ===== Fallende Ahornblätter (ruhig, groß, windig) ===== */
-    .leaves{position:fixed; left:50%; top:14vh; transform:translateX(-50%); width:0; height:0; pointer-events:none; z-index:10}
-    .leaf{
-      position:absolute; left:0; top:0; transform:translate(0,0);
-      width:auto; height:auto; pointer-events:none; user-select:none;
-      animation:leafFall var(--dur,28s) cubic-bezier(.2,.6,.2,1) var(--delay,0s) infinite;
-      will-change:transform, opacity, color, filter;
-      color:var(--leaf-green); opacity:1;
-    }
-    .leaf svg{width:clamp(64px,8vw,120px); height:auto; display:block; transform:scale(var(--scale,1)); filter:drop-shadow(0 3px 8px rgba(0,0,0,.25))}
-    /* Wind-Sway + langsame Verfärbung + Zerfall unten, dann Respawn oberhalb des Logos */
-    @keyframes leafFall{
-      0%   { transform:translate(0,-6vh) rotate(var(--r0)); color:var(--leaf-green); opacity:1; filter:blur(0) }
-      15%  { transform:translate(calc(var(--x1)), 10vh) rotate(var(--r1)); }
-      35%  { transform:translate(calc(var(--x2)), 24vh) rotate(var(--r2)); }
-      55%  { transform:translate(calc(var(--x3)), 38vh) rotate(var(--r3)); color:var(--leaf-green); }
-      75%  { transform:translate(calc(var(--x4)), 54vh) rotate(var(--r4)); color:var(--leaf-brown); }
-      88%  { transform:translate(calc(var(--x5)), 62vh) rotate(var(--r5)) scale(.9); opacity:.55; filter:blur(1px) }
-      94%  { transform:translate(calc(var(--x6)), 66vh) rotate(calc(var(--r5) + 14deg)) scale(.7); opacity:.0; filter:blur(3px) }
-      100% { transform:translate(0,-10vh) rotate(0deg); color:var(--leaf-green); opacity:1; filter:blur(0) }
-    }
     @media (prefers-reduced-motion: reduce){
-      .brand,.brand::before,.leaf{animation:none}
+      .brand,.brand::before,.star,.shooting{animation:none}
     }
 
     /* ===== Headings/Text ===== */
@@ -222,23 +213,15 @@
 
   <main>
     <header class="hero" aria-label="Markenbereich">
+      <!-- Nachthimmel -->
+      <div class="night-sky" aria-hidden="true">
+        <div class="stars" id="starsLayer"></div>
+      </div>
+
       <div class="brand-wrap">
         <h1 class="brand">OBS-Die-Firma</h1>
-
-        <!-- „Bewachsenes“ Logo -->
-        <div class="ivy" aria-hidden="true">
-          <span class="leaf-small l1"></span>
-          <span class="leaf-small l2"></span>
-          <span class="leaf-small l3"></span>
-          <span class="leaf-small l4"></span>
-          <span class="leaf-small l5"></span>
-          <span class="leaf-small l6"></span>
-          <span class="leaf-small l7"></span>
-        </div>
-
-        <!-- Fallende Blätter -->
-        <div class="leaves" id="leavesLayer" aria-hidden="true"></div>
       </div>
+
       <div class="brand-underline" aria-hidden="true"></div>
       <div class="tagline">Sortiment</div>
     </header>
@@ -492,6 +475,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', ()=>{
+      // Spiel
       el('startGameBtn').addEventListener('click', newBoard);
       el('newGameBtn').addEventListener('click', newBoard);
       ['p1Pack','p1Qty','p2Qty','coupon'].forEach(id=>el(id).addEventListener('input',recalc));
@@ -586,9 +570,8 @@ OBS-Die-Firma`
         }
       });
 
-      /* ===== Blätter initialisieren ===== */
-      initIvySmallLeaves();
-      initFallingLeaves();
+      /* ===== Sternenhimmel initialisieren ===== */
+      initStars();
     });
 
     /* ===== LOKALER TICKER ===== */
@@ -603,7 +586,7 @@ OBS-Die-Firma`
     function renderTicker(items, fromCache=false){
       const mk = (it) => {
         const text = it.text || "";
-        const url  = it.url;
+               const url  = it.url;
         const val  = (typeof it.value === "number") ? ` <strong>${euro0(it.value)}</strong>` : "";
         const extra= it.extra ? ` <small>${it.extra}</small>` : "";
         if (url) return `<span class="ticker-item">• <a href="${url}" target="_blank" rel="noreferrer">${text}</a>${val}${extra}</span>`;
@@ -672,81 +655,65 @@ OBS-Die-Firma`
       setInterval(()=>loadLocalTicker().catch(()=>{}), 24*60*60*1000);
     })();
 
-    /* ===== Ahornblatt-SVG ===== */
-    function mapleSVG(){
-      /* vereinfachte Ahornblatt-Form, currentColor steuert Färbung */
-      return `
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path fill="currentColor" d="M28 6l4 8 8-6-2 10 10-2-6 8 10 4-10 4 6 8-10-2 2 10-8-6-4 8-4-8-8 6 2-10-10 2 6-8-10-4 10-4-6-8 10 2-2-10 8 6 4-8z"/>
-          <path fill="currentColor" opacity=".22" d="M32 20c4 6 2 14-4 18 8-2 12-12 4-18z"/>
-        </svg>`;
-    }
-
-    /* ===== Ivy-Miniblätter am Logo aus SVG aufbauen ===== */
-    function initIvySmallLeaves(){
-      const ivy = document.querySelector('.ivy');
-      if(!ivy) return;
-      const spots = ivy.querySelectorAll('.leaf-small');
-      spots.forEach(el=>{
-        el.innerHTML = mapleSVG();
-      });
-    }
-
-    /* ===== Fallende Blätter ruhig/windig ===== */
-    function initFallingLeaves(){
-      const layer = el('leavesLayer');
+    /* ===== Sternenhimmel ===== */
+    function initStars(){
+      const layer = el('starsLayer');
       if(!layer) return;
       layer.innerHTML = '';
 
-      const COUNT = 3;              // 5 -> 3 (ruhiger)
-      const SCALE = 4;              // viermal so groß
+      const W = layer.clientWidth || window.innerWidth;
+      const H = layer.clientHeight || 400; // Höhe der Sky-Box
 
-      for(let i=0;i<COUNT;i++){
-        const d = document.createElement('div');
-        d.className = 'leaf';
-        d.innerHTML = mapleSVG();
-        layer.appendChild(d);
-        seedLeaf(d, i*2.5); // gestaffelter Start
-        d.style.setProperty('--scale', SCALE);
-        d.addEventListener('animationiteration', ()=> seedLeaf(d)); // respawn oben
+      const STAR_COUNT = 120; // angenehm ruhig
+      for(let i=0;i<STAR_COUNT;i++){
+        const s = document.createElement('span');
+        s.className = 'star';
+        const x = Math.random()*W;
+        const y = Math.random()*H;
+        const size = Math.random() < 0.15 ? 3 : 2; // ein paar größere
+        const delay = (Math.random()*6).toFixed(2)+'s';
+        const dur = (3+Math.random()*5).toFixed(2)+'s';
+        s.style.left = x+'px';
+        s.style.top = y+'px';
+        s.style.width = size+'px';
+        s.style.height = size+'px';
+        s.style.setProperty('--twDelay', delay);
+        s.style.setProperty('--twDur', dur);
+        layer.appendChild(s);
       }
-    }
 
-    function rand(min,max){ return Math.random()*(max-min)+min; }
-    function rdeg(a,b){ return rand(a,b).toFixed(1)+'deg'; }
-    function rpx(a,b){ return rand(a,b).toFixed(0)+'px'; }
+      // alle 6–12s gelegentlich eine Sternschnuppe
+      function spawnShootingStar(){
+        const shoot = document.createElement('div');
+        shoot.className = 'shooting';
+        // Start eher rechts oben
+        const startX = (layer.clientWidth || window.innerWidth) * (0.55 + Math.random()*0.35);
+        const startY = 20 + Math.random()*80;
+        const dx = - (400 + Math.random()*420);
+        const dy = 120 + Math.random()*220;
+        const rot = (-12 - Math.random()*18) + 'deg';
 
-    function seedLeaf(node, delayOverride){
-      // Wind-Drift über mehrere Keyframe-Stationen (links/rechts S-Kurven)
-      const sway = 140; // maximale seitliche Drift
-      const x1 = rpx(-sway*0.3, sway*0.3);
-      const x2 = rpx(-sway*0.6, sway*0.6);
-      const x3 = rpx(-sway*0.9, sway*0.9);
-      const x4 = rpx(-sway*1.0, sway*1.0);
-      const x5 = rpx(-sway*1.1, sway*1.1);
-      const x6 = rpx(-sway*1.2, sway*1.2);
+        shoot.style.left = startX+'px';
+        shoot.style.top = startY+'px';
+        shoot.style.setProperty('--dx', dx+'px');
+        shoot.style.setProperty('--dy', dy+'px');
+        shoot.style.setProperty('--rot', rot);
 
-      node.style.setProperty('--x1', x1);
-      node.style.setProperty('--x2', x2);
-      node.style.setProperty('--x3', x3);
-      node.style.setProperty('--x4', x4);
-      node.style.setProperty('--x5', x5);
-      node.style.setProperty('--x6', x6);
+        layer.appendChild(shoot);
+        shoot.addEventListener('animationend', ()=> shoot.remove());
 
-      // Rotation pro Abschnitt
-      node.style.setProperty('--r0', rdeg(-10,10));
-      node.style.setProperty('--r1', rdeg(-30,30));
-      node.style.setProperty('--r2', rdeg(-45,45));
-      node.style.setProperty('--r3', rdeg(-60,60));
-      node.style.setProperty('--r4', rdeg(-80,80));
-      node.style.setProperty('--r5', rdeg(-100,100));
+        const nextIn = 6000 + Math.random()*6000;
+        setTimeout(spawnShootingStar, nextIn);
+      }
+      // Erste Sternschnuppe leicht verzögert
+      setTimeout(spawnShootingStar, 3000 + Math.random()*4000);
 
-      // Dauer langsamer, zufällige Pausen (ruhiger)
-      const dur = rand(26,34).toFixed(2)+'s';
-      const delay = (delayOverride!==undefined ? delayOverride : rand(3,12)).toFixed(2)+'s';
-
-      node.style.setProperty('--dur', dur);
-      node.style.setProperty('--delay', delay);
+      // Reflow bei Resize
+      let resizeTO;
+      window.addEventListener('resize', ()=>{
+        clearTimeout(resizeTO);
+        resizeTO = setTimeout(()=>initStars(), 400);
+      }, {passive:true});
     }
   </script>
 </body>
