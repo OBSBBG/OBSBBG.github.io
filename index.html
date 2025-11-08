@@ -100,7 +100,7 @@
     }
     @keyframes slowFlip{0%{transform:rotateX(0)}50%{transform:rotateX(180deg)}100%{transform:rotateX(360deg)}}
 
-    /* *** NEUE RUHIGE GLANZ-ANIMATION *** */
+    /* *** RUHIGE GLANZ-ANIMATION *** */
     .brand::before{
       content:"";
       position:absolute;
@@ -130,7 +130,7 @@
     p{margin:0;color:var(--ink-2);font-size:clamp(1rem,3.2vw,1.06rem)}
     a{color:inherit;text-decoration:none}
 
-    /* ===== ÜBER-UNS (edel/dekorativ, ohne Layout zu verändern) ===== */
+    /* ===== ÜBER-UNS (edel/dekorativ) ===== */
     .about{
       font-family:"Playfair Display", serif;
       color:var(--deep-green);
@@ -160,12 +160,30 @@
       text-align:left; background:var(--surface); box-shadow:0 8px 24px rgba(0,0,0,.05);
       display:flex; flex-direction:column; height:100%;
     }
+
+    /* Textbereich mit Index-Block (#1/#2/#3) */
+    .slot-body{
+      display:grid;
+      grid-template-columns:64px 1fr;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .idx{
+      width:64px; min-height:72px;
+      background:linear-gradient(180deg,#1b8a46,#0e6b37);
+      color:#fff; font-weight:900; font-size:1.15rem; letter-spacing:.04em;
+      border-radius:14px;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 8px 18px rgba(12,138,67,.25);
+      user-select:none;
+    }
+    .slot-text{min-width:0}
+
     .slots{
       margin-top:1.5rem; display:grid; gap:1rem; grid-template-columns:1fr; grid-auto-rows:1fr;
     }
     @media (min-width:720px){.slots{grid-template-columns:repeat(2,1fr)}}
 
-    .slot-body{display:block}
     .slot-footer{margin-top:auto;}
     .badge{display:inline-block;background:var(--accent-green);color:#fff;border-radius:.6rem;padding:.12rem .55rem;font-size:.86em}
 
@@ -237,7 +255,7 @@
       <div class="tagline">Sortiment</div>
     </header>
 
-    <!-- ===== WER WIR SIND (neu) ===== -->
+    <!-- ===== WER WIR SIND ===== -->
     <section class="about" aria-labelledby="about-title">
       <h2 id="about-title">Wer wir sind</h2>
       <div class="ornament" aria-hidden="true"></div>
@@ -250,20 +268,23 @@
     <!-- Produkt 1 -->
     <article class="slot">
       <div class="slot-body">
-        <h2>#1 Personalisierter Glas-Tag <span class="badge">*</span></h2>
-        <p><strong>Das sinnvolle Gadget für gesellige Runden.</strong> Du planst eine Familienfeier, Geburtstag oder ähnliches? Dann überrasche deine Gäste mit einer besonderen Aufmerksamkeit. So fühlt man sich gleich am richtigen Platz. Und auch für die Kids praktisch, die häufig die Gläser vertauschen. Das spart zudem an Wasser und Strom für die Spülmaschine.</p>
-        <p style="margin-top:.6rem">Vorher: <span class="price-old">3 €</span></p>
-        <ul class="price-list">
-          <li>Einzelpreis: <span class="price-new">1,50 €</span></li>
-          <li>Fünferpack: <span class="price-new">4,95 €</span></li>
-          <li>Zehnerpack: <span class="price-new">9,95 €</span></li>
-        </ul>
-        <p class="price-new" style="margin-top:.4rem">* Sonderaktion solange Vorrat reicht.</p>
-        <ul class="price-list" style="color:inherit;font-weight:700;margin-top:.6rem">
-          <li>Material: PLA oder PETG</li>
-          <li>Reinigung: nur feucht abwischen</li>
-          <li>Passform: fester Sitz</li>
-        </ul>
+        <div class="idx">#1</div>
+        <div class="slot-text">
+          <h2>#1 Personalisierter Glas-Tag <span class="badge">*</span></h2>
+          <p><strong>Das sinnvolle Gadget für gesellige Runden.</strong> Du planst eine Familienfeier, Geburtstag oder ähnliches? Dann überrasche deine Gäste mit einer besonderen Aufmerksamkeit. So fühlt man sich gleich am richtigen Platz. Und auch für die Kids praktisch, die häufig die Gläser vertauschen. Das spart zudem an Wasser und Strom für die Spülmaschine.</p>
+          <p style="margin-top:.6rem">Vorher: <span class="price-old">3 €</span></p>
+          <ul class="price-list">
+            <li>Einzelpreis: <span class="price-new">1,50 €</span></li>
+            <li>Fünferpack: <span class="price-new">4,95 €</span></li>
+            <li>Zehnerpack: <span class="price-new">9,95 €</span></li>
+          </ul>
+          <p class="price-new" style="margin-top:.4rem">* Sonderaktion solange Vorrat reicht.</p>
+          <ul class="price-list" style="color:inherit;font-weight:700;margin-top:.6rem">
+            <li>Material: PLA oder PETG</li>
+            <li>Reinigung: nur feucht abwischen</li>
+            <li>Passform: fester Sitz</li>
+          </ul>
+        </div>
       </div>
       <img src="Tag.jpeg" alt="Personalisierter Glas-Tag">
     </article>
@@ -272,9 +293,12 @@
       <!-- Produkt 2 -->
       <article class="slot">
         <div class="slot-body">
-          <h2>#2 Deluxe Kakao „Chocolate Bomb“ <span class="price-kakao">· 5 €</span></h2>
-          <p><strong>„Chocolate Bomb“ inklusive Glas:</strong> heiß aufgießen → sie zerfällt zu cremigem Kakao. Rund, weich, schokoladig.</p>
-          <p style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver.</p>
+          <div class="idx">#2</div>
+          <div class="slot-text">
+            <h2>#2 Deluxe Kakao „Chocolate Bomb“ <span class="price-kakao">· 5 €</span></h2>
+            <p><strong>„Chocolate Bomb“ inklusive Glas:</strong> heiß aufgießen → sie zerfällt zu cremigem Kakao. Rund, weich, schokoladig.</p>
+            <p style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver.</p>
+          </div>
         </div>
         <img src="Tag2.jpeg" alt="Deluxe Kakao Chocolate Bomb">
       </article>
@@ -282,8 +306,11 @@
       <!-- Produkt 3 -->
       <article class="slot">
         <div class="slot-body">
-          <h2>#3 – bald verfügbar</h2>
-          <p>Trag dich per E-Mail ein – wir informieren dich.</p>
+          <div class="idx">#3</div>
+          <div class="slot-text">
+            <h2>#3 – bald verfügbar</h2>
+            <p>Trag dich per E-Mail ein – wir informieren dich.</p>
+          </div>
         </div>
       </article>
     </section>
