@@ -397,8 +397,21 @@
     </footer>
   </main>
 
-  <!-- EmailJS (optional, wenn ihr es nutzt) -->
+  <!-- EmailJS (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <!-- EmailJS Init: HIER DEIN PUBLIC KEY EINTRAGEN -->
+  <script>
+    const EMAILJS_PUBLIC_KEY   = 'DEIN_PUBLIC_KEY_HIER';      // z.B. 'aBcDeFgH123456'
+    const EMAILJS_SERVICE_ID   = 'DEIN_SERVICE_ID_HIER';      // z.B. 'service_obsfirma'
+    const EMAILJS_TEMPLATE_ID  = 'DEINE_TEMPLATE_ID_HIER';    // z.B. 'template_bestellung';
+
+    (function initEmailJS(){
+      if (window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'DEIN_PUBLIC_KEY_HIER') {
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+      }
+    })();
+  </script>
 
   <script>
     // ========= Hilfsfunktionen =========
@@ -434,7 +447,6 @@
         s.style.setProperty('--twDelay', (Math.random()*4) + 's');
         layer.appendChild(s);
       }
-      // ab und zu eine Sternschnuppe
       setInterval(() => {
         const sh = document.createElement('div');
         sh.className = 'shooting';
@@ -656,7 +668,7 @@
 
       updateTotalsAndCart();
 
-      // ========= Formular-Validierung & (optional) EmailJS =========
+      // ========= Formular-Validierung & EmailJS =========
       const form = document.getElementById('orderForm');
       const formError = document.getElementById('formError');
       const formOk = document.getElementById('formOk');
@@ -741,33 +753,33 @@
             names_list: (p1Names && p1Names.value) || ''
           };
 
-          if(window.emailjs && typeof emailjs.send === 'function'){
-            const SERVICE_ID = 'DEIN_SERVICE_ID';
-            const TEMPLATE_ID = 'DEINE_VORLAGE';
-            try{
-              emailjs.send(SERVICE_ID, TEMPLATE_ID, payload)
-                .then(() => {
-                  formOk && formOk.classList.remove('hidden');
-                  form.reset();
-                  updateTotalsAndCart();
-                  if(p1NamesBlock) p1NamesBlock.classList.add('hidden');
-                  if(p1PiecesHint) p1PiecesHint.textContent = 'Aktuell: 0 Stück';
-                  if(cartPreview) cartPreview.textContent = 'Noch keine Artikel.';
-                })
-                .catch(() => {
-                  if(formError){
-                    formError.textContent = 'Formular konnte nicht gesendet werden. Bitte später erneut versuchen.';
-                    formError.classList.remove('hidden');
-                  }
-                });
-            }catch(err){
-              if(formError){
-                formError.textContent = 'Fehler beim Senden. Bitte später erneut versuchen.';
-                formError.classList.remove('hidden');
-              }
-            }
+          const emailConfigured =
+            EMAILJS_PUBLIC_KEY   && EMAILJS_PUBLIC_KEY   !== 'DEIN_PUBLIC_KEY_HIER' &&
+            EMAILJS_SERVICE_ID   && EMAILJS_SERVICE_ID   !== 'DEIN_SERVICE_ID_HIER' &&
+            EMAILJS_TEMPLATE_ID  && EMAILJS_TEMPLATE_ID  !== 'DEINE_TEMPLATE_ID_HIER';
+
+          if(window.emailjs && typeof emailjs.send === 'function' && emailConfigured){
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, payload)
+              .then(() => {
+                formOk && formOk.classList.remove('hidden');
+                form.reset();
+                updateTotalsAndCart();
+                if(p1NamesBlock) p1NamesBlock.classList.add('hidden');
+                if(p1PiecesHint) p1PiecesHint.textContent = 'Aktuell: 0 Stück';
+                if(cartPreview) cartPreview.textContent = 'Noch keine Artikel.';
+              })
+              .catch(() => {
+                if(formError){
+                  formError.textContent = 'Formular konnte nicht gesendet werden. Bitte später erneut versuchen.';
+                  formError.classList.remove('hidden');
+                }
+              });
           } else {
-            formOk && formOk.classList.remove('hidden');
+            // EmailJS noch nicht richtig konfiguriert → klarer Hinweis statt kryptischer Fehler
+            if(formError){
+              formError.textContent = 'E-Mail-Versand ist noch nicht konfiguriert (EmailJS-Schlüssel einsetzen). Bestellung wurde NICHT per E-Mail verschickt.';
+              formError.classList.remove('hidden');
+            }
           }
         });
       }
