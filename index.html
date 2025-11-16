@@ -181,6 +181,32 @@
     .price-list{margin:.55rem 0 0;padding-left:1.1rem;color:var(--price);font-weight:700}
     img{display:block;max-width:100%;height:auto;margin:1rem auto 0;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.07)}
 
+    /* Spezielles Layout für Produkt 3 Bilder */
+    .product3-images{
+      position:relative;
+      margin:1rem auto 0;
+      max-width:420px;
+    }
+    .product3-images img{
+      display:block;
+      border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.07);
+      margin:0;
+    }
+    .product3-main{
+      width:100%;
+      height:auto;
+    }
+    .product3-overlay{
+      position:absolute;
+      width:60%;
+      height:auto;
+      right:4%;
+      bottom:6%;
+      border-radius:10px;
+      box-shadow:0 8px 22px rgba(0,0,0,.25);
+    }
+
     /* ===== FORMULAR / WARENKORB ===== */
     form.shop{text-align:left;margin-top:1.6rem}
     .card{
@@ -295,7 +321,10 @@
             <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
           </div>
         </div>
-        <img src="Schneemann1.jpeg" alt="Instant Kakao Schneemann">
+        <div class="product3-images">
+          <img src="Schneemann1.jpeg" alt="Instant Kakao Schneemann" class="product3-main">
+          <img src="Schneemann2.jpeg" alt="Instant Kakao Schneemann Detail" class="product3-overlay">
+        </div>
       </article>
     </section>
 
@@ -396,7 +425,7 @@
   <!-- EmailJS (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-  <!-- EmailJS Init: HIER DEIN PUBLIC KEY / SERVICE / TEMPLATE einsetzen -->
+  <!-- EmailJS Init -->
   <script>
     const EMAILJS_PUBLIC_KEY   = 'xAOygDJhZcJrXGuSb';
     const EMAILJS_SERVICE_ID   = 'service_l642tri';
