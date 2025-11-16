@@ -66,7 +66,6 @@
     }
     .stars{position:absolute; inset:0}
 
-    /* Sternpunkte */
     .star{
       position:absolute; width:2px; height:2px; border-radius:50%;
       background:#ffffff; opacity:.85;
@@ -75,7 +74,6 @@
     }
     @keyframes twinkle{from{opacity:.2; transform:scale(.8)} to{opacity:1; transform:scale(1.15)}}
 
-    /* Sternschnuppe */
     .shooting{
       position:absolute; width:140px; height:2px; background:linear-gradient(90deg,#fff, rgba(255,255,255,0));
       opacity:.0; transform:translateX(0) translateY(0) rotate(var(--rot, -20deg));
@@ -100,7 +98,6 @@
     }
     @keyframes slowFlip{0%{transform:rotateX(0)}50%{transform:rotateX(180deg)}100%{transform:rotateX(360deg)}}
 
-    /* *** RUHIGE GLANZ-ANIMATION *** */
     .brand::before{
       content:"";
       position:absolute;
@@ -130,7 +127,7 @@
     p{margin:0;color:var(--ink-2);font-size:clamp(1rem,3.2vw,1.06rem)}
     a{color:inherit;text-decoration:none}
 
-    /* ===== ÜBER-UNS (edel/dekorativ) ===== */
+    /* ===== ÜBER-UNS ===== */
     .about{
       font-family:"Playfair Display", serif;
       color:var(--deep-green);
@@ -161,7 +158,6 @@
       display:flex; flex-direction:column; height:100%;
     }
 
-    /* Textbereich mit Index-Block (#1/#2/#3) */
     .slot-body{
       display:grid;
       grid-template-columns:64px 1fr;
@@ -224,8 +220,9 @@
     footer nav a{text-decoration:underline}
 
     /* ===== SPIEL ===== */
+    .game-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;margin-bottom:8px}
     .game-grid{display:grid;grid-template-columns:repeat(3,90px);grid-gap:10px;justify-content:center;margin-top:12px}
-    .tile{width:90px;height:90px;border-radius:12px;border:1px solid var(--border);background:#f7f8f7;display:grid;place-items:center;cursor:pointer}
+    .tile{width:90px;height:90px;border-radius:12px;border:1px solid var(--border);background:#f7f8f7;display:grid;place-items:center;cursor:pointer;position:relative;overflow:hidden}
     .cover{position:absolute;inset:0;background:linear-gradient(180deg,#fafafa,#eceeec)}
     .revealed{border-color:#cfd6d1}
     .pill{padding:6px 10px;border-radius:999px;background:#f6f7f6;border:1px solid var(--border);font-weight:600}
@@ -400,18 +397,381 @@
     </footer>
   </main>
 
-  <!-- EmailJS -->
+  <!-- EmailJS (optional, wenn ihr es nutzt) -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-  <script>
-    /* Unverändert — deine Spiel- & Bestell-Logik bleibt */
-    /* ... (hier bleibt alles wie im vorherigen Codeblock) ... */
-  </script>
 
-  <!-- Sternenhimmel -->
   <script>
-    /* Unverändert — Sternenhimmel bleibt */
-    /* ... (hier bleibt alles wie im vorherigen Codeblock) ... */
-  </script>
+    // ========= Hilfsfunktionen =========
+    const formatEUR = (n) => n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+    const clampInt = (v,min=0,max=999) => {
+      const n = parseInt(v,10);
+      if (isNaN(n)) return min;
+      return Math.min(max, Math.max(min,n));
+    };
 
+    // ========= Ticker =========
+    (function initTicker(){
+      const track = document.getElementById('tickerTrack');
+      if(!track) return;
+      track.innerHTML = `
+        <span class="ticker-item">Glas-Tags mit Wunschname – handgefertigt an der OBS.</span>
+        <span class="ticker-item">Deluxe Kakao „Chocolate Bomb“ – solange Vorrat reicht.</span>
+        <span class="ticker-item">Alle Erlöse bleiben im Projekt – Danke für eure Unterstützung!</span>
+      `;
+    })();
+
+    // ========= Sternenhimmel =========
+    (function initStars(){
+      const layer = document.getElementById('starsLayer');
+      if(!layer) return;
+      const count = 80;
+      for(let i=0;i<count;i++){
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.left = Math.random()*100 + '%';
+        s.style.top = Math.random()*100 + '%';
+        s.style.setProperty('--twDur', (3 + Math.random()*4) + 's');
+        s.style.setProperty('--twDelay', (Math.random()*4) + 's');
+        layer.appendChild(s);
+      }
+      // ab und zu eine Sternschnuppe
+      setInterval(() => {
+        const sh = document.createElement('div');
+        sh.className = 'shooting';
+        sh.style.top = (10+Math.random()*40) + '%';
+        sh.style.left = (60+Math.random()*20) + '%';
+        sh.style.setProperty('--dx', (-400 - Math.random()*200) + 'px');
+        sh.style.setProperty('--dy', (80 + Math.random()*80) + 'px');
+        layer.appendChild(sh);
+        setTimeout(()=>sh.remove(),1600);
+      }, 6000);
+    })();
+
+    // ========= Spiel =========
+    (function initGame(){
+      const startBtn = document.getElementById('startGameBtn');
+      const newBtn = document.getElementById('newGameBtn');
+      const gridEl = document.getElementById('gameGrid');
+      const msgEl = document.getElementById('gameMsg');
+      const triesEl = document.getElementById('triesLeft');
+      const matchEl = document.getElementById('matchCount');
+      const cooldownPill = document.getElementById('cooldownPill');
+      const cooldownSec = document.getElementById('cooldownSec');
+
+      if(!startBtn || !gridEl) return;
+
+      const COLORS = ['#0c8a43','#ffb300','#1565c0'];
+      let tiles = [];
+      let tries = 5;
+      let matches = 0;
+      let running = false;
+      let cooldownTimer = null;
+
+      function buildTiles(){
+        gridEl.innerHTML = '';
+        tiles = [];
+        const pool = [];
+        COLORS.forEach(c => { for(let i=0;i<3;i++) pool.push(c); });
+        for(let i=pool.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [pool[i],pool[j]] = [pool[j],pool[i]];
+        }
+        pool.forEach(color => {
+          const tile = document.createElement('div');
+          tile.className = 'tile';
+          tile.dataset.color = color;
+          const cover = document.createElement('div');
+          cover.className = 'cover';
+          tile.appendChild(cover);
+          tile.addEventListener('click', () => reveal(tile));
+          gridEl.appendChild(tile);
+          tiles.push(tile);
+        });
+      }
+
+      function reset(){
+        tries = 5;
+        matches = 0;
+        running = true;
+        triesEl.textContent = String(tries);
+        matchEl.textContent = String(matches);
+        msgEl.textContent = '';
+        msgEl.className = '';
+        cooldownPill.classList.add('hidden');
+        if(cooldownTimer){ clearInterval(cooldownTimer); cooldownTimer = null; }
+        buildTiles();
+      }
+
+      function reveal(tile){
+        if(!running) return;
+        const cover = tile.querySelector('.cover');
+        if(!cover) return;
+        if(cover.style.opacity === '0') return;
+        cover.style.opacity = '0';
+        tile.style.background = tile.dataset.color;
+
+        const c = tile.dataset.color;
+        const openOfColor = tiles.filter(t => {
+          const cv = t.querySelector('.cover');
+          return cv && cv.style.opacity === '0' && t.dataset.color === c;
+        }).length;
+
+        if(openOfColor === 3){
+          matches++;
+          matchEl.textContent = String(matches);
+          msgEl.textContent = 'Drei gleiche Gläser gefunden!';
+          msgEl.className = 'win';
+        }
+
+        tries--;
+        triesEl.textContent = String(Math.max(tries,0));
+        if(tries <= 0){
+          running = false;
+          msgEl.textContent = matches >= 1
+            ? 'Aktion geschafft – zeige den Gewinncode bei der Bestellung.'
+            : 'Leider kein Treffer. Versuch es später erneut.';
+          msgEl.className = matches >= 1 ? 'win' : 'lose';
+          let left = 30;
+          cooldownSec.textContent = String(left);
+          cooldownPill.classList.remove('hidden');
+          cooldownTimer = setInterval(()=>{
+            left--;
+            cooldownSec.textContent = String(left);
+            if(left <= 0){
+              clearInterval(cooldownTimer);
+              cooldownTimer = null;
+              cooldownPill.classList.add('hidden');
+            }
+          },1000);
+        }
+      }
+
+      startBtn.addEventListener('click', () => {
+        startBtn.classList.add('hidden');
+        newBtn.classList.remove('hidden');
+        reset();
+      });
+      newBtn.addEventListener('click', () => {
+        reset();
+      });
+    })();
+
+    // ========= Warenkorb / Produktberechnung =========
+    (function initShop(){
+      const p1Pack = document.getElementById('p1Pack');
+      const p1Qty = document.getElementById('p1Qty');
+      const p1Subtotal = document.getElementById('p1Subtotal');
+      const p1PiecesHint = document.getElementById('p1PiecesHint');
+      const p1NamesBlock = document.getElementById('p1NamesBlock');
+      const p1Names = document.getElementById('p1Names');
+      const p1NamesError = document.getElementById('p1NamesError');
+
+      const p2Qty = document.getElementById('p2Qty');
+      const p2Subtotal = document.getElementById('p2Subtotal');
+
+      const grandTotalEl = document.getElementById('grandTotal');
+      const cartPreview = document.getElementById('cartPreview');
+
+      const PACK_PRICES = { single:1.50, pack5:4.95, pack10:9.95 };
+      const PACK_PIECES = { single:1,    pack5:5,    pack10:10   };
+      const P2_PRICE = 5.00;
+
+      function getP1Pack(){
+        const key = (p1Pack && p1Pack.value) || 'single';
+        return PACK_PRICES[key] ? key : 'single';
+      }
+
+      function updateP1(){
+        if(!p1Pack || !p1Qty) return;
+        const pack = getP1Pack();
+        const qty = clampInt(p1Qty.value,0,999);
+        p1Qty.value = qty;
+        const pricePerPack = PACK_PRICES[pack];
+        const piecesPerPack = PACK_PIECES[pack];
+        const totalPieces = qty * piecesPerPack;
+        const totalPrice = pricePerPack * qty;
+
+        if(p1Subtotal){
+          p1Subtotal.value = qty > 0 ? formatEUR(totalPrice) : '';
+        }
+        if(p1PiecesHint){
+          p1PiecesHint.textContent = 'Aktuell: ' + totalPieces + ' Stück';
+        }
+
+        if(totalPieces > 0){
+          p1NamesBlock && p1NamesBlock.classList.remove('hidden');
+        }else{
+          p1NamesBlock && p1NamesBlock.classList.add('hidden');
+          if(p1NamesError) p1NamesError.classList.add('hidden');
+        }
+        return { pack, qty, totalPieces, totalPrice };
+      }
+
+      function updateP2(){
+        if(!p2Qty) return;
+        const qty = clampInt(p2Qty.value,0,999);
+        p2Qty.value = qty;
+        const totalPrice = qty * P2_PRICE;
+        if(p2Subtotal){
+          p2Subtotal.value = qty > 0 ? formatEUR(totalPrice) : '';
+        }
+        return { qty, totalPrice };
+      }
+
+      function updateTotalsAndCart(){
+        const p1 = updateP1() || { totalPrice:0, totalPieces:0, qty:0, pack:'single' };
+        const p2 = updateP2() || { totalPrice:0, qty:0 };
+
+        const grand = p1.totalPrice + p2.totalPrice;
+        if(grandTotalEl) grandTotalEl.textContent = formatEUR(grand);
+
+        if(cartPreview){
+          const lines = [];
+          if(p1.totalPieces > 0){
+            const packLabel =
+              p1.pack === 'single' ? 'Einzelpreis'
+              : p1.pack === 'pack5' ? '5er-Pack'
+              : '10er-Pack';
+            lines.push(
+              `Glas-Tag: ${p1.totalPieces} Stück (${packLabel}, ${p1.qty}×) – ${formatEUR(p1.totalPrice)}`
+            );
+          }
+          if(p2.qty > 0){
+            lines.push(
+              `Deluxe Kakao „Chocolate Bomb“: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`
+            );
+          }
+          cartPreview.innerHTML = lines.length
+            ? lines.map(l => `<div>${l}</div>`).join('')
+            : 'Noch keine Artikel.';
+        }
+      }
+
+      if(p1Pack) p1Pack.addEventListener('change', () => updateTotalsAndCart());
+      if(p1Qty) p1Qty.addEventListener('input', () => updateTotalsAndCart());
+      if(p2Qty) p2Qty.addEventListener('input', () => updateTotalsAndCart());
+      if(p1Names) p1Names.addEventListener('input', () => {
+        if(p1NamesError) p1NamesError.classList.add('hidden');
+      });
+
+      updateTotalsAndCart();
+
+      // ========= Formular-Validierung & (optional) EmailJS =========
+      const form = document.getElementById('orderForm');
+      const formError = document.getElementById('formError');
+      const formOk = document.getElementById('formOk');
+
+      function countNonEmptyLines(text){
+        return String(text || '')
+          .split(/\r?\n/)
+          .map(l => l.trim())
+          .filter(Boolean)
+          .length;
+      }
+
+      if(form){
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          formError && formError.classList.add('hidden');
+          formOk && formOk.classList.add('hidden');
+
+          const hp = document.getElementById('hp_field');
+          if(hp && hp.value.trim() !== ''){
+            return;
+          }
+
+          const name = document.getElementById('name')?.value.trim() || '';
+          const phone = document.getElementById('phone')?.value.trim() || '';
+          const email = document.getElementById('email')?.value.trim() || '';
+          const coupon = document.getElementById('coupon')?.value.trim() || '';
+
+          const p1 = updateP1() || { totalPrice:0, totalPieces:0, qty:0 };
+          const p2 = updateP2() || { totalPrice:0, qty:0 };
+          const grand = p1.totalPrice + p2.totalPrice;
+
+          if(!name || !phone || !email){
+            if(formError){
+              formError.textContent = 'Bitte Name, Telefon und E-Mail ausfüllen.';
+              formError.classList.remove('hidden');
+            }
+            return;
+          }
+
+          if(p1.totalPieces === 0 && p2.qty === 0){
+            if(formError){
+              formError.textContent = 'Bitte mindestens ein Produkt auswählen.';
+              formError.classList.remove('hidden');
+            }
+            return;
+          }
+
+          if(p1.totalPieces > 0){
+            const given = countNonEmptyLines(p1Names?.value);
+            if(given !== p1.totalPieces){
+              if(p1NamesError) p1NamesError.classList.remove('hidden');
+              if(formError){
+                formError.textContent = 'Die Anzahl der eingetragenen Namen passt nicht zur Stückzahl.';
+                formError.classList.remove('hidden');
+              }
+              return;
+            }else{
+              p1NamesError && p1NamesError.classList.add('hidden');
+            }
+          }
+
+          const summaryLines = [];
+          if(p1.totalPieces > 0){
+            summaryLines.push(
+              `Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`
+            );
+          }
+          if(p2.qty > 0){
+            summaryLines.push(
+              `Deluxe Kakao: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`
+            );
+          }
+
+          const payload = {
+            name,
+            phone,
+            email,
+            coupon,
+            products: summaryLines.join(' | '),
+            total: formatEUR(grand),
+            names_list: (p1Names && p1Names.value) || ''
+          };
+
+          if(window.emailjs && typeof emailjs.send === 'function'){
+            const SERVICE_ID = 'DEIN_SERVICE_ID';
+            const TEMPLATE_ID = 'DEINE_VORLAGE';
+            try{
+              emailjs.send(SERVICE_ID, TEMPLATE_ID, payload)
+                .then(() => {
+                  formOk && formOk.classList.remove('hidden');
+                  form.reset();
+                  updateTotalsAndCart();
+                  if(p1NamesBlock) p1NamesBlock.classList.add('hidden');
+                  if(p1PiecesHint) p1PiecesHint.textContent = 'Aktuell: 0 Stück';
+                  if(cartPreview) cartPreview.textContent = 'Noch keine Artikel.';
+                })
+                .catch(() => {
+                  if(formError){
+                    formError.textContent = 'Formular konnte nicht gesendet werden. Bitte später erneut versuchen.';
+                    formError.classList.remove('hidden');
+                  }
+                });
+            }catch(err){
+              if(formError){
+                formError.textContent = 'Fehler beim Senden. Bitte später erneut versuchen.';
+                formError.classList.remove('hidden');
+              }
+            }
+          } else {
+            formOk && formOk.classList.remove('hidden');
+          }
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
