@@ -72,6 +72,7 @@
       animation:twinkle var(--twDur,4s) ease-in-out var(--twDelay,0s) infinite alternate;
     }
     @keyframes twinkle{from{opacity:.2; transform:scale(.8)} to{opacity:1; transform:scale(1.15)}}
+
     .shooting{
       position:absolute; width:140px; height:2px; background:linear-gradient(90deg,#fff, rgba(255,255,255,0));
       opacity:.0; transform:translateX(0) translateY(0) rotate(var(--rot, -20deg));
@@ -94,7 +95,12 @@
       transform-style:preserve-3d; transform-origin:center; animation:slowFlip 18s linear infinite;
       position:relative;
     }
-    @keyframes slowFlip{0%{transform:rotateX(0)}50%{transform:rotateX(180deg)}100%{transform:rotateX(360deg)}}
+    @keyframes slowFlip{
+      0%{transform:rotateX(0)}
+      50%{transform:rotateX(180deg)}
+      100%{transform:rotateX(360deg)}
+    }
+
     .brand::before{
       content:"";
       position:absolute;
@@ -112,11 +118,21 @@
       100%{transform:translateX(-160%) skewX(-10deg)}
     }
 
-    .brand-underline{width:min(520px,74%);height:8px;margin:.7rem auto 0;border-radius:999px;background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);box-shadow:0 8px 26px rgba(52,199,89,.35)}
-    .tagline{margin:.9rem 0 0;font-weight:800;font-size:clamp(1.05rem,3.6vw,1.35rem);letter-spacing:.08em;text-transform:uppercase;color:#183c26;opacity:.9}
+    .brand-underline{
+      width:min(520px,74%);height:8px;margin:.7rem auto 0;
+      border-radius:999px;
+      background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);
+      box-shadow:0 8px 26px rgba(52,199,89,.35)
+    }
 
-    @media (prefers-reduced-motion: reduce){
-      .brand,.brand::before,.star,.shooting{animation:none}
+    .tagline{
+      margin:.9rem 0 0;
+      font-weight:800;
+      font-size:clamp(1.05rem,3.6vw,1.35rem);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#183c26;
+      opacity:.9
     }
 
     /* ===== TYPO ===== */
@@ -133,33 +149,40 @@
       padding:0 1rem 1.1rem;
       text-align:center;
     }
+
     .about h2{
       font-family:"Playfair Display", serif;
       font-weight:600;
       letter-spacing:.02em;
-      color:var(--deep-green);
       margin-bottom:.35rem;
     }
+
     .about .ornament{
       width:140px;height:3px;margin:.25rem auto .9rem;border-radius:999px;
       background:linear-gradient(90deg,var(--gold),#f3e6b6,var(--gold));
       box-shadow:0 4px 14px rgba(212,175,55,.35);
     }
-    .about p{line-height:1.65}
-    .about strong{color:var(--gold)}
 
     /* ===== PRODUKTKARTEN ===== */
     .slot{
-      border:1px solid var(--border); border-radius:16px; padding:1.2rem 1.25rem;
-      text-align:left; background:var(--surface); box-shadow:0 8px 24px rgba(0,0,0,.05);
-      display:flex; flex-direction:column; height:100%;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:1.2rem 1.25rem;
+      text-align:left;
+      background:var(--surface);
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
+      display:flex;
+      flex-direction:column;
+      height:100%;
     }
+
     .slot-body{
       display:grid;
       grid-template-columns:64px 1fr;
       gap:12px;
       align-items:flex-start;
     }
+
     .idx{
       width:64px; min-height:72px;
       background:linear-gradient(180deg,#1b8a46,#0e6b37);
@@ -169,82 +192,68 @@
       box-shadow:0 8px 18px rgba(12,138,67,.25);
       user-select:none;
     }
+
     .slot-text{min-width:0}
     .slots{
-      margin-top:1.5rem; display:grid; gap:1rem; grid-template-columns:1fr; grid-auto-rows:1fr;
+      margin-top:1.5rem;
+      display:grid; gap:1rem;
+      grid-template-columns:1fr; grid-auto-rows:1fr;
     }
     @media (min-width:720px){.slots{grid-template-columns:repeat(2,1fr)}}
+
     .slot-footer{margin-top:auto;}
-    .badge{display:inline-block;background:var(--accent-green);color:#fff;border-radius:.6rem;padding:.12rem .55rem;font-size:.86em}
     .price-old{color:var(--price);text-decoration:line-through;font-weight:700}
     .price-new{color:var(--price);font-weight:800}
     .price-list{margin:.55rem 0 0;padding-left:1.1rem;color:var(--price);font-weight:700}
-    img{display:block;max-width:100%;height:auto;margin:1rem auto 0;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.07)}
 
-    /* Spezielles Layout für Produkt 3 Bilder */
+    img{
+      display:block;max-width:100%;height:auto;
+      margin:1rem auto 0;border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.07)
+    }
+
+    /* ===== NEUES LAYOUT PRODUKT 3 ===== */
     .product3-images{
       position:relative;
-      margin:1rem auto 0;
+      margin:1rem auto 2.5rem;
       max-width:420px;
     }
-    .product3-images img{
-      display:block;
-      border-radius:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,.07);
-      margin:0;
-    }
-    /* Großes Basisbild */
     .product3-main{
       width:100%;
-      height:auto;
+      border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.07);
     }
-    /* Kleines Bild, unten rechts, etwa halb draußen */
+
+    /* Original kleines Bild rechts unten raus */
     .product3-overlay{
       position:absolute;
-      width:60%;
-      height:auto;
-      right:-25%;
-      bottom:-25%;
-      border-radius:10px;
+      width:42%;
+      right:-18%;
+      bottom:-22%;
+      border-radius:12px;
       box-shadow:0 8px 22px rgba(0,0,0,.35);
     }
 
-    /* ===== FORMULAR / WARENKORB ===== */
-    form.shop{text-align:left;margin-top:1.6rem}
-    .card{
-      border:1px solid var(--border);border-radius:16px;background:#fff;
-      padding:18px;margin-top:16px;box-shadow:0 8px 24px rgba(0,0,0,.05)
+    /* Neues TAG5 links daneben */
+    .product3-tag5{
+      position:absolute;
+      width:42%;
+      left:-18%;
+      bottom:-22%;
+      border-radius:12px;
+      box-shadow:0 8px 22px rgba(0,0,0,.35);
     }
-    .grid{display:grid;gap:12px}
-    .row{display:grid;grid-template-columns:1fr 140px 160px;gap:8px;align-items:end}
-    input,textarea,select,button{font:inherit}
-    input,textarea,select{
-      padding:11px 12px;border:1px solid var(--border);border-radius:10px;width:100%;background:#fff;color:var(--ink);
-    }
-    button{
-      padding:12px 16px;border-radius:12px;border:0;
-      background:linear-gradient(180deg,#1b8a46,#0e6b37);
-      color:#fff;font-weight:800;cursor:pointer;
-      box-shadow:0 10px 26px rgba(12,138,67,.25);
-    }
-    .muted{color:var(--muted)}
-    .totals{display:flex;justify-content:space-between;margin-top:12px;font-weight:800}
-    .error{color:#b00020}
-    .success{color:#0a7a30}
-    .hidden{display:none}
-    footer{margin-top:2rem;font-size:.98rem;opacity:.95}
-    footer nav a{text-decoration:underline}
 
-    /* ===== SPIEL ===== */
-    .game-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;margin-bottom:8px}
-    .game-grid{display:grid;grid-template-columns:repeat(3,90px);grid-gap:10px;justify-content:center;margin-top:12px}
-    .tile{width:90px;height:90px;border-radius:12px;border:1px solid var(--border);background:#f7f8f7;display:grid;place-items:center;cursor:pointer;position:relative;overflow:hidden}
-    .cover{position:absolute;inset:0;background:linear-gradient(180deg,#fafafa,#eceeec)}
-    .revealed{border-color:#cfd6d1}
-    .pill{padding:6px 10px;border-radius:999px;background:#f6f7f6;border:1px solid var(--border);font-weight:600}
-    .win{color:#0a7a30;font-weight:800}
-    .lose{color:#b00020;font-weight:800}
-    .glass{width:72px;height:72px}
+    /* Neues TAG6 mittig darunter */
+    .product3-tag6{
+      position:absolute;
+      width:42%;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:-50%;
+      border-radius:12px;
+      box-shadow:0 8px 22px rgba(0,0,0,.35);
+    }
   </style>
 </head>
 
@@ -268,7 +277,7 @@
     <section class="about" aria-labelledby="about-title">
       <h2 id="about-title">Wer wir sind</h2>
       <div class="ornament" aria-hidden="true"></div>
-      <p>Unsere Schülerfirma ist ein Projekt des Wahlpflichtkurses Jahrgang&nbsp;10 – ergänzt durch freiwillig Mitgestaltende.</p>
+      <p>Unsere Schülerfirma ist ein Projekt des Wahlpflichtkurses Jahrgang 10 – ergänzt durch freiwillig Mitgestaltende.</p>
       <p style="margin-top:.6rem">Alle Artikel entstehen in eigener Herstellung und werden aus finanziellen Mitteln der Schülerinnen und Schüler realisiert.</p>
       <p style="margin-top:.6rem">Etwaige Gewinne fließen nicht an Einzelpersonen, sondern <strong>zurück in das Projekt</strong> und stärken das <strong>Eigenkapital</strong>.</p>
       <p style="margin-top:.6rem"><strong>Ziel:</strong> unternehmerischen Geist fördern und echte Erfahrungsräume schaffen.</p>
@@ -280,7 +289,7 @@
         <div class="idx">#1</div>
         <div class="slot-text">
           <h2>Personalisierter Glas-Tag <span class="badge">*</span></h2>
-          <p><strong>Das sinnvolle Gadget für gesellige Runden.</strong> Du planst eine Familienfeier, Geburtstag oder ähnliches? Dann überrasche deine Gäste mit einer besonderen Aufmerksamkeit. So fühlt man sich gleich am richtigen Platz. Und auch für die Kids praktisch, die häufig die Gläser vertauschen. Das spart zudem an Wasser und Strom für die Spülmaschine.</p>
+          <p><strong>Das sinnvolle Gadget für gesellige Runden.</strong> Du planst eine Familienfeier? Dann überrasche deine Gäste mit einer besonderen Aufmerksamkeit.</p>
           <p style="margin-top:.6rem">Vorher: <span class="price-old">3 €</span></p>
           <ul class="price-list">
             <li>Einzelpreis: <span class="price-new">1,50 €</span></li>
@@ -305,7 +314,7 @@
           <div class="idx">#2</div>
           <div class="slot-text">
             <h2>Deluxe Kakao „Chocolate Bomb“</h2>
-            <p><strong>„Chocolate Bomb“ inklusive Glas:</strong> heiß aufgießen → sie zerfällt zu cremigem Kakao. Rund, weich, schokoladig.</p>
+            <p><strong>„Chocolate Bomb“ inklusive Glas:</strong> heiß aufgießen → cremiger Kakao.</p>
             <p style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver.</p>
             <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
           </div>
@@ -313,21 +322,26 @@
         <img src="Tag2.jpeg" alt="Deluxe Kakao Chocolate Bomb">
       </article>
 
-      <!-- Produkt 3 -->
+      <!-- Produkt 3 MIT TAG5 & TAG6 -->
       <article class="slot">
         <div class="slot-body">
           <div class="idx">#3</div>
           <div class="slot-text">
             <h2>Instant Kakao „Schneemann“</h2>
-            <p><strong>Mit heißer Milch übergießen.</strong> Die Schneemann-Version unserer Kakao-Bomben: karamelliger Schoko-Geschmack mit Marshmallows. Eine Geschenk-Idee mit praktischem Schild zum Beschriften.</p>
+            <p><strong>Mit heißer Milch übergießen.</strong> Süß, cremig, mit Marshmallows. Beliebt als Geschenk.</p>
             <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
           </div>
         </div>
+
+        <!-- ALLE 4 BILDER FÜR PRODUKT 3 -->
         <div class="product3-images">
-          <!-- Großes Bild -->
           <img src="Schneemann2.jpeg" alt="Instant Kakao Schneemann" class="product3-main">
-          <!-- Kleines Bild, unten rechts halb draußen -->
-          <img src="Schneemann1.jpeg" alt="Instant Kakao Schneemann Detail" class="product3-overlay">
+
+          <img src="Schneemann1.jpeg" alt="Detailbild Schneemann" class="product3-overlay">
+
+          <img src="TAG5.jpeg" alt="Zusatzbild Tag 5" class="product3-tag5">
+
+          <img src="TAG6.jpeg" alt="Zusatzbild Tag 6" class="product3-tag6">
         </div>
       </article>
     </section>
@@ -364,7 +378,7 @@
       <div class="card">
         <h2>Produkte</h2>
 
-        <!-- Formular Produkt 1 -->
+        <!-- Produkt 1 -->
         <div class="row">
           <div>
             <label for="p1Pack">Produkt 1</label>
@@ -388,14 +402,14 @@
 
         <hr class="sep">
 
-        <!-- Formular Produkt 2 -->
+        <!-- Produkt 2 -->
         <div class="row">
           <div><label>Produkt 2</label><div class="muted">Stück: 5,00 €</div></div>
           <div><label for="p2Qty">Menge</label><input id="p2Qty" type="number" min="0" value="0"></div>
           <div><label>Summe</label><input id="p2Subtotal" readonly></div>
         </div>
 
-        <!-- Formular Produkt 3 -->
+        <!-- Produkt 3 -->
         <div class="row" style="margin-top:8px;">
           <div><label>Produkt 3</label><div class="muted">Stück: 5,00 €</div></div>
           <div><label for="p3Qty">Menge</label><input id="p3Qty" type="number" min="0" value="0"></div>
@@ -442,15 +456,17 @@
     })();
   </script>
 
+  <!-- Haupt-JavaScript -->
   <script>
+    /* Preisformatierung */
     const formatEUR = (n) => n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
-    const clampInt = (v,min=0,max=999) => {
+    const clampInt = (v,min=0,max=999)=>{
       const n = parseInt(v,10);
-      if (isNaN(n)) return min;
+      if(isNaN(n)) return min;
       return Math.min(max, Math.max(min,n));
     };
 
-    /* ===== Ticker ===== */
+    /* ===== TICKER ===== */
     (function initTicker(){
       const track = document.getElementById('tickerTrack');
       if(!track) return;
@@ -462,349 +478,331 @@
       `;
     })();
 
-    /* ===== Sternenhimmel ===== */
+    /* ===== Sterne + Sternschnuppen ===== */
     (function initStars(){
       const layer = document.getElementById('starsLayer');
       if(!layer) return;
       const count = 80;
+
       for(let i=0;i<count;i++){
         const s = document.createElement('div');
-        s.className = 'star';
-        s.style.left = Math.random()*100 + '%';
-        s.style.top = Math.random()*100 + '%';
-        s.style.setProperty('--twDur', (3 + Math.random()*4) + 's');
-        s.style.setProperty('--twDelay', (Math.random()*4) + 's');
+        s.className='star';
+        s.style.left=Math.random()*100+'%';
+        s.style.top=Math.random()*100+'%';
+        s.style.setProperty('--twDur',(3+Math.random()*4)+'s');
+        s.style.setProperty('--twDelay',(Math.random()*4)+'s');
         layer.appendChild(s);
       }
-      setInterval(() => {
-        const sh = document.createElement('div');
-        sh.className = 'shooting';
-        sh.style.top = (10+Math.random()*40) + '%';
-        sh.style.left = (60+Math.random()*20) + '%';
-        sh.style.setProperty('--dx', (-400 - Math.random()*200) + 'px');
-        sh.style.setProperty('--dy', (80 + Math.random()*80) + 'px');
+
+      setInterval(()=>{
+        const sh=document.createElement('div');
+        sh.className='shooting';
+        sh.style.top=(10+Math.random()*40)+'%';
+        sh.style.left=(60+Math.random()*20)+'%';
+        sh.style.setProperty('--dx',(-400-Math.random()*200)+'px');
+        sh.style.setProperty('--dy',(80+Math.random()*80)+'px');
         layer.appendChild(sh);
         setTimeout(()=>sh.remove(),1600);
-      }, 6000);
+      },6000);
     })();
 
-    /* ===== Spiel ===== */
+    /* ===== Spiel (Memory) ===== */
     (function initGame(){
-      const startBtn = document.getElementById('startGameBtn');
-      const newBtn = document.getElementById('newGameBtn');
-      const gridEl = document.getElementById('gameGrid');
-      const msgEl = document.getElementById('gameMsg');
-      const triesEl = document.getElementById('triesLeft');
-      const matchEl = document.getElementById('matchCount');
-      const cooldownPill = document.getElementById('cooldownPill');
-      const cooldownSec = document.getElementById('cooldownSec');
+      const startBtn=document.getElementById('startGameBtn');
+      const newBtn=document.getElementById('newGameBtn');
+      const gridEl=document.getElementById('gameGrid');
+      const msgEl=document.getElementById('gameMsg');
+      const triesEl=document.getElementById('triesLeft');
+      const matchEl=document.getElementById('matchCount');
+      const cooldownPill=document.getElementById('cooldownPill');
+      const cooldownSec=document.getElementById('cooldownSec');
 
       if(!startBtn || !gridEl) return;
 
-      const COLORS = ['#0c8a43','#ffb300','#1565c0'];
-      let tiles = [];
-      let tries = 5;
-      let matches = 0;
-      let running = false;
-      let cooldownTimer = null;
+      const COLORS=['#0c8a43','#ffb300','#1565c0'];
+      let tiles=[];
+      let tries=5;
+      let matches=0;
+      let running=false;
+      let cooldownTimer=null;
 
       function buildTiles(){
-        gridEl.innerHTML = '';
-        tiles = [];
-        const pool = [];
-        COLORS.forEach(c => { for(let i=0;i<3;i++) pool.push(c); });
+        gridEl.innerHTML='';
+        tiles=[];
+        const pool=[];
+
+        COLORS.forEach(c=>{
+          for(let i=0;i<3;i++) pool.push(c);
+        });
+
         for(let i=pool.length-1;i>0;i--){
-          const j = Math.floor(Math.random()*(i+1));
-          [pool[i],pool[j]] = [pool[j],pool[i]];
+          const j=Math.floor(Math.random()*(i+1));
+          [pool[i],pool[j]]=[pool[j],pool[i]];
         }
-        pool.forEach(color => {
-          const tile = document.createElement('div');
-          tile.className = 'tile';
-          tile.dataset.color = color;
-          const cover = document.createElement('div');
-          cover.className = 'cover';
+
+        pool.forEach(color=>{
+          const tile=document.createElement('div');
+          tile.className='tile';
+          tile.dataset.color=color;
+
+          const cover=document.createElement('div');
+          cover.className='cover';
           tile.appendChild(cover);
-          tile.addEventListener('click', () => reveal(tile));
+
+          tile.addEventListener('click',()=>reveal(tile));
           gridEl.appendChild(tile);
           tiles.push(tile);
         });
       }
 
       function reset(){
-        tries = 5;
-        matches = 0;
-        running = true;
-        triesEl.textContent = String(tries);
-        matchEl.textContent = String(matches);
-        msgEl.textContent = '';
-        msgEl.className = '';
+        tries=5;
+        matches=0;
+        running=true;
+        triesEl.textContent=tries;
+        matchEl.textContent=matches;
+        msgEl.textContent='';
+        msgEl.className='';
         cooldownPill.classList.add('hidden');
-        if(cooldownTimer){ clearInterval(cooldownTimer); cooldownTimer = null; }
+        if(cooldownTimer){clearInterval(cooldownTimer); cooldownTimer=null;}
         buildTiles();
       }
 
       function reveal(tile){
         if(!running) return;
-        const cover = tile.querySelector('.cover');
-        if(!cover) return;
-        if(cover.style.opacity === '0') return;
-        cover.style.opacity = '0';
-        tile.style.background = tile.dataset.color;
+        const cover=tile.querySelector('.cover');
+        if(!cover || cover.style.opacity==='0') return;
 
-        const c = tile.dataset.color;
-        const openOfColor = tiles.filter(t => {
-          const cv = t.querySelector('.cover');
-          return cv && cv.style.opacity === '0' && t.dataset.color === c;
+        cover.style.opacity='0';
+        tile.style.background=tile.dataset.color;
+
+        const c=tile.dataset.color;
+        const open=tiles.filter(t=>{
+          const cv=t.querySelector('.cover');
+          return cv && cv.style.opacity==='0' && t.dataset.color===c;
         }).length;
 
-        if(openOfColor === 3){
+        if(open===3){
           matches++;
-          matchEl.textContent = String(matches);
-          msgEl.textContent = 'Drei gleiche Gläser gefunden!';
-          msgEl.className = 'win';
+          matchEl.textContent=matches;
+          msgEl.textContent='Drei gleiche Gläser gefunden!';
+          msgEl.className='win';
         }
 
         tries--;
-        triesEl.textContent = String(Math.max(tries,0));
-        if(tries <= 0){
-          running = false;
-          msgEl.textContent = matches >= 1
+        triesEl.textContent=Math.max(tries,0);
+
+        if(tries<=0){
+          running=false;
+
+          msgEl.textContent=matches>=1
             ? 'Aktion geschafft – zeige den Gewinncode bei der Bestellung.'
             : 'Leider kein Treffer. Versuch es später erneut.';
-          msgEl.className = matches >= 1 ? 'win' : 'lose';
-          let left = 30;
-          cooldownSec.textContent = String(left);
+          msgEl.className=matches>=1?'win':'lose';
+
+          let left=30;
+          cooldownSec.textContent=left;
           cooldownPill.classList.remove('hidden');
-          cooldownTimer = setInterval(()=>{
+
+          cooldownTimer=setInterval(()=>{
             left--;
-            cooldownSec.textContent = String(left);
-            if(left <= 0){
+            cooldownSec.textContent=left;
+            if(left<=0){
               clearInterval(cooldownTimer);
-              cooldownTimer = null;
+              cooldownTimer=null;
               cooldownPill.classList.add('hidden');
             }
           },1000);
         }
       }
 
-      startBtn.addEventListener('click', () => {
+      startBtn.addEventListener('click',()=>{
         startBtn.classList.add('hidden');
         newBtn.classList.remove('hidden');
         reset();
       });
-      newBtn.addEventListener('click', () => { reset(); });
+
+      newBtn.addEventListener('click',()=>reset());
     })();
 
-    /* ===== Shop / Warenkorb ===== */
+    /* ===== SHOP ===== */
     (function initShop(){
-      const p1Pack = document.getElementById('p1Pack');
-      const p1Qty = document.getElementById('p1Qty');
-      const p1Subtotal = document.getElementById('p1Subtotal');
-      const p1PiecesHint = document.getElementById('p1PiecesHint');
-      const p1NamesBlock = document.getElementById('p1NamesBlock');
-      const p1Names = document.getElementById('p1Names');
-      const p1NamesError = document.getElementById('p1NamesError');
 
-      const p2Qty = document.getElementById('p2Qty');
-      const p2Subtotal = document.getElementById('p2Subtotal');
+      const p1Pack=document.getElementById('p1Pack');
+      const p1Qty=document.getElementById('p1Qty');
+      const p1Subtotal=document.getElementById('p1Subtotal');
+      const p1PiecesHint=document.getElementById('p1PiecesHint');
+      const p1NamesBlock=document.getElementById('p1NamesBlock');
+      const p1Names=document.getElementById('p1Names');
+      const p1NamesError=document.getElementById('p1NamesError');
 
-      const p3Qty = document.getElementById('p3Qty');
-      const p3Subtotal = document.getElementById('p3Subtotal');
+      const p2Qty=document.getElementById('p2Qty');
+      const p2Subtotal=document.getElementById('p2Subtotal');
 
-      const grandTotalEl = document.getElementById('grandTotal');
-      const cartPreview = document.getElementById('cartPreview');
+      const p3Qty=document.getElementById('p3Qty');
+      const p3Subtotal=document.getElementById('p3Subtotal');
 
-      const PACK_PRICES = { single:1.50, pack5:4.95, pack10:9.95 };
-      const PACK_PIECES = { single:1,    pack5:5,    pack10:10   };
-      const P2_PRICE = 5.00;
-      const P3_PRICE = 5.00;
+      const grandTotalEl=document.getElementById('grandTotal');
+      const cartPreview=document.getElementById('cartPreview');
+
+      const PACK_PRICES={ single:1.50, pack5:4.95, pack10:9.95 };
+      const PACK_PIECES={ single:1,    pack5:5,    pack10:10   };
+      const P2_PRICE=5.00;
+      const P3_PRICE=5.00;
 
       function getP1Pack(){
-        const key = (p1Pack && p1Pack.value) || 'single';
-        return PACK_PRICES[key] ? key : 'single';
+        const key=p1Pack?.value || 'single';
+        return PACK_PRICES[key]? key:'single';
       }
 
       function updateP1(){
         if(!p1Pack || !p1Qty) return;
-        const pack = getP1Pack();
-        const qty = clampInt(p1Qty.value,0,999);
-        p1Qty.value = qty;
-        const pricePerPack = PACK_PRICES[pack];
-        const piecesPerPack = PACK_PIECES[pack];
-        const totalPieces = qty * piecesPerPack;
-        const totalPrice = pricePerPack * qty;
+        const pack=getP1Pack();
+        const qty=clampInt(p1Qty.value,0,999);
+        p1Qty.value=qty;
 
-        if(p1Subtotal){
-          p1Subtotal.value = qty > 0 ? formatEUR(totalPrice) : '';
-        }
-        if(p1PiecesHint){
-          p1PiecesHint.textContent = 'Aktuell: ' + totalPieces + ' Stück';
+        const pricePerPack=PACK_PRICES[pack];
+        const piecesPerPack=PACK_PIECES[pack];
+        const totalPieces=qty*piecesPerPack;
+        const totalPrice=qty*pricePerPack;
+
+        p1Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
+        p1PiecesHint.textContent='Aktuell: '+totalPieces+' Stück';
+
+        if(totalPieces>0){
+          p1NamesBlock.classList.remove('hidden');
+        } else {
+          p1NamesBlock.classList.add('hidden');
+          p1NamesError.classList.add('hidden');
         }
 
-        if(totalPieces > 0){
-          p1NamesBlock && p1NamesBlock.classList.remove('hidden');
-        }else{
-          p1NamesBlock && p1NamesBlock.classList.add('hidden');
-          if(p1NamesError) p1NamesError.classList.add('hidden');
-        }
         return { pack, qty, totalPieces, totalPrice };
       }
 
       function updateP2(){
-        if(!p2Qty) return;
-        const qty = clampInt(p2Qty.value,0,999);
-        p2Qty.value = qty;
-        const totalPrice = qty * P2_PRICE;
-        if(p2Subtotal){
-          p2Subtotal.value = qty > 0 ? formatEUR(totalPrice) : '';
-        }
+        const qty=clampInt(p2Qty.value,0,999);
+        p2Qty.value=qty;
+        const totalPrice=qty*P2_PRICE;
+        p2Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
         return { qty, totalPrice };
       }
 
       function updateP3(){
-        if(!p3Qty) return;
-        const qty = clampInt(p3Qty.value,0,999);
-        p3Qty.value = qty;
-        const totalPrice = qty * P3_PRICE;
-        if(p3Subtotal){
-          p3Subtotal.value = qty > 0 ? formatEUR(totalPrice) : '';
-        }
+        const qty=clampInt(p3Qty.value,0,999);
+        p3Qty.value=qty;
+        const totalPrice=qty*P3_PRICE;
+        p3Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
         return { qty, totalPrice };
       }
 
       function updateTotalsAndCart(){
-        const p1 = updateP1() || { totalPrice:0, totalPieces:0, qty:0, pack:'single' };
-        const p2 = updateP2() || { totalPrice:0, qty:0 };
-        const p3 = updateP3() || { totalPrice:0, qty:0 };
+        const p1=updateP1() || { totalPrice:0, totalPieces:0, qty:0, pack:'single' };
+        const p2=updateP2() || { totalPrice:0, qty:0 };
+        const p3=updateP3() || { totalPrice:0, qty:0 };
 
-        const grand = p1.totalPrice + p2.totalPrice + p3.totalPrice;
-        if(grandTotalEl) grandTotalEl.textContent = formatEUR(grand);
+        const grand=p1.totalPrice+p2.totalPrice+p3.totalPrice;
+        grandTotalEl.textContent=formatEUR(grand);
 
-        if(cartPreview){
-          const lines = [];
-          if(p1.totalPieces > 0){
-            const packLabel =
-              p1.pack === 'single' ? 'Einzelpreis'
-              : p1.pack === 'pack5' ? '5er-Pack'
-              : '10er-Pack';
-            lines.push(
-              `Glas-Tag: ${p1.totalPieces} Stück (${packLabel}, ${p1.qty}×) – ${formatEUR(p1.totalPrice)}`
-            );
-          }
-          if(p2.qty > 0){
-            lines.push(
-              `Deluxe Kakao „Chocolate Bomb“: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`
-            );
-          }
-          if(p3.qty > 0){
-            lines.push(
-              `Instant Kakao „Schneemann“: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`
-            );
-          }
-          cartPreview.innerHTML = lines.length
-            ? lines.map(l => `<div>${l}</div>`).join('')
-            : 'Noch keine Artikel.';
+        const lines=[];
+        if(p1.totalPieces>0){
+          const packLabel=
+            p1.pack==='single' ? 'Einzelpreis'
+           :p1.pack==='pack5'  ? '5er-Pack'
+           :                     '10er-Pack';
+          lines.push(`Glas-Tag: ${p1.totalPieces} Stück (${packLabel}, ${p1.qty}×) – ${formatEUR(p1.totalPrice)}`);
         }
+        if(p2.qty>0){
+          lines.push(`Deluxe Kakao „Chocolate Bomb“: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
+        }
+        if(p3.qty>0){
+          lines.push(`Instant Kakao „Schneemann“: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
+        }
+
+        cartPreview.innerHTML=lines.length ? lines.map(l=>`<div>${l}</div>`).join('') : 'Noch keine Artikel.';
       }
 
-      if(p1Pack) p1Pack.addEventListener('change', () => updateTotalsAndCart());
-      if(p1Qty)  p1Qty.addEventListener('input', () => updateTotalsAndCart());
-      if(p2Qty)  p2Qty.addEventListener('input', () => updateTotalsAndCart());
-      if(p3Qty)  p3Qty.addEventListener('input', () => updateTotalsAndCart());
-      if(p1Names) p1Names.addEventListener('input', () => {
-        if(p1NamesError) p1NamesError.classList.add('hidden');
-      });
+      p1Pack?.addEventListener('change',updateTotalsAndCart);
+      p1Qty?.addEventListener('input',updateTotalsAndCart);
+      p2Qty?.addEventListener('input',updateTotalsAndCart);
+      p3Qty?.addEventListener('input',updateTotalsAndCart);
+
+      p1Names?.addEventListener('input',()=>p1NamesError.classList.add('hidden'));
 
       updateTotalsAndCart();
 
-      const form = document.getElementById('orderForm');
-      const formError = document.getElementById('formError');
-      const formOk = document.getElementById('formOk');
+      const form=document.getElementById('orderForm');
+      const formError=document.getElementById('formError');
+      const formOk=document.getElementById('formOk');
 
       function countNonEmptyLines(text){
-        return String(text || '')
+        return String(text||'')
           .split(/\r?\n/)
-          .map(l => l.trim())
+          .map(l=>l.trim())
           .filter(Boolean)
           .length;
       }
 
       if(form){
-        form.addEventListener('submit', function(e){
+        form.addEventListener('submit',function(e){
           e.preventDefault();
-          formError && formError.classList.add('hidden');
-          formOk && formOk.classList.add('hidden');
 
-          const hp = document.getElementById('hp_field');
-          if(hp && hp.value.trim() !== ''){
-            return;
-          }
+          formError.classList.add('hidden');
+          formOk.classList.add('hidden');
 
-          const name = document.getElementById('name')?.value.trim() || '';
-          const phone = document.getElementById('phone')?.value.trim() || '';
-          const email = document.getElementById('email')?.value.trim() || '';
-          const coupon = document.getElementById('coupon')?.value.trim() || '';
+          const hp=document.getElementById('hp_field');
+          if(hp && hp.value.trim()!==''){ return; }
 
-          const p1 = updateP1() || { totalPrice:0, totalPieces:0, qty:0 };
-          const p2 = updateP2() || { totalPrice:0, qty:0 };
-          const p3 = updateP3() || { totalPrice:0, qty:0 };
-          const grand = p1.totalPrice + p2.totalPrice + p3.totalPrice;
+          const name=document.getElementById('name')?.value.trim() || '';
+          const phone=document.getElementById('phone')?.value.trim() || '';
+          const email=document.getElementById('email')?.value.trim() || '';
+          const coupon=document.getElementById('coupon')?.value.trim() || '';
+
+          const p1=updateP1() || { totalPrice:0, totalPieces:0, qty:0 };
+          const p2=updateP2() || { totalPrice:0, qty:0 };
+          const p3=updateP3() || { totalPrice:0, qty:0 };
+          const grand=p1.totalPrice+p2.totalPrice+p3.totalPrice;
 
           if(!name || !phone || !email){
-            if(formError){
-              formError.textContent = 'Bitte Name, Telefon und E-Mail ausfüllen.';
-              formError.classList.remove('hidden');
-            }
+            formError.textContent='Bitte Name, Telefon und E-Mail ausfüllen.';
+            formError.classList.remove('hidden');
             return;
           }
 
-          if(p1.totalPieces === 0 && p2.qty === 0 && p3.qty === 0){
-            if(formError){
-              formError.textContent = 'Bitte mindestens ein Produkt auswählen.';
-              formError.classList.remove('hidden');
-            }
+          if(p1.totalPieces===0 && p2.qty===0 && p3.qty===0){
+            formError.textContent='Bitte mindestens ein Produkt auswählen.';
+            formError.classList.remove('hidden');
             return;
           }
 
-          if(p1.totalPieces > 0){
-            const given = countNonEmptyLines(p1Names?.value);
-            if(given !== p1.totalPieces){
-              if(p1NamesError) p1NamesError.classList.remove('hidden');
-              if(formError){
-                formError.textContent = 'Die Anzahl der eingetragenen Namen passt nicht zur Stückzahl.';
-                formError.classList.remove('hidden');
-              }
+          if(p1.totalPieces>0){
+            const given=countNonEmptyLines(p1Names.value);
+            if(given!==p1.totalPieces){
+              p1NamesError.classList.remove('hidden');
+              formError.textContent='Die Anzahl der Namen passt nicht zur Stückzahl.';
+              formError.classList.remove('hidden');
               return;
-            }else{
-              p1NamesError && p1NamesError.classList.add('hidden');
             }
           }
 
-          const summaryLines = [];
-          if(p1.totalPieces > 0){
-            summaryLines.push(
-              `Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`
-            );
+          const summaryLines=[];
+          if(p1.totalPieces>0){
+            summaryLines.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
           }
-          if(p2.qty > 0){
-            summaryLines.push(
-              `Deluxe Kakao „Chocolate Bomb“: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`
-            );
+          if(p2.qty>0){
+            summaryLines.push(`Deluxe Kakao „Chocolate Bomb“: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
           }
-          if(p3.qty > 0){
-            summaryLines.push(
-              `Instant Kakao „Schneemann“: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`
-            );
+          if(p3.qty>0){
+            summaryLines.push(`Instant Kakao „Schneemann“: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
           }
 
-          const payload = {
+          const payload={
             name,
             phone,
             email,
             coupon,
-            products: summaryLines.join('<br>'),
-            total: formatEUR(grand),
-            names_list: (p1Names && p1Names.value) || ''
+            products:summaryLines.join('<br>'),
+            total:formatEUR(grand),
+            names_list:p1Names?.value || ''
           };
 
           const emailConfigured =
@@ -812,31 +810,29 @@
             EMAILJS_SERVICE_ID   && EMAILJS_SERVICE_ID   !== 'DEIN_SERVICE_ID_HIER' &&
             EMAILJS_TEMPLATE_ID  && EMAILJS_TEMPLATE_ID  !== 'DEINE_TEMPLATE_ID_HIER';
 
-          if(window.emailjs && typeof emailjs.send === 'function' && emailConfigured){
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, payload)
-              .then(() => {
-                formOk && formOk.classList.remove('hidden');
+          if(window.emailjs && typeof emailjs.send==='function' && emailConfigured){
+            emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload)
+              .then(()=>{
+                formOk.classList.remove('hidden');
                 form.reset();
                 updateTotalsAndCart();
-                if(p1NamesBlock) p1NamesBlock.classList.add('hidden');
-                if(p1PiecesHint) p1PiecesHint.textContent = 'Aktuell: 0 Stück';
-                if(cartPreview) cartPreview.textContent = 'Noch keine Artikel.';
+                p1NamesBlock.classList.add('hidden');
+                p1PiecesHint.textContent='Aktuell: 0 Stück';
+                cartPreview.textContent='Noch keine Artikel.';
               })
-              .catch(() => {
-                if(formError){
-                  formError.textContent = 'Formular konnte nicht gesendet werden. Bitte später erneut versuchen.';
-                  formError.classList.remove('hidden');
-                }
+              .catch(()=>{
+                formError.textContent='Formular konnte nicht gesendet werden.';
+                formError.classList.remove('hidden');
               });
           } else {
-            if(formError){
-              formError.textContent = 'E-Mail-Versand ist noch nicht konfiguriert (EmailJS-Schlüssel einsetzen). Bestellung wurde NICHT per E-Mail verschickt.';
-              formError.classList.remove('hidden');
-            }
+            formError.textContent='E-Mail-Versand nicht konfiguriert (EmailJS). Bestellung NICHT gesendet.';
+            formError.classList.remove('hidden');
           }
         });
       }
+
     })();
   </script>
+
 </body>
 </html>
