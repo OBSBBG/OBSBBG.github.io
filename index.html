@@ -11,828 +11,816 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- Edel/Dekorativ für „Wer wir sind“ -->
+
+  <!-- Edel/Dekorativ -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 
   <style>
+
+    /* ------------------------------------------ */
+    /* FIX FÜR FALSCHE ANZEIGE VON „Gesendet…“   */
+    /* ------------------------------------------ */
+    .hidden {
+      display: none !important;
+    }
+
     :root{
       color-scheme:light dark;
-      --accent-green:#0c8a43; --green:#34c759; --deep-green:#0b5d2a; --gold:#d4af37; --price:#d40000;
-      --ink:#161817; --ink-2:#2a2f2b; --muted:#5b625e; --border:#e6e9e7; --surface:#ffffff;
+      --accent-green:#0c8a43;
+      --green:#34c759;
+      --deep-green:#0b5d2a;
+      --gold:#d4af37;
+      --price:#d40000;
+      --ink:#161817;
+      --ink-2:#2a2f2b;
+      --muted:#5b625e;
+      --border:#e6e9e7;
+      --surface:#ffffff;
       --ring:#98e1b3;
     }
     *{box-sizing:border-box}
     html,body{overscroll-behavior-y:contain}
 
     body{
-      margin:0; min-height:100vh;
-      display:grid; place-items:start center;
-      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size:16.5px; text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased;
-      color:var(--ink); letter-spacing:.005em; line-height:1.55;
-      background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(0,180,90,.08), transparent 60%),
-        radial-gradient(800px 400px at 110% -20%, rgba(0,60,30,.08), transparent 60%),
-        radial-gradient(1200px 600px at 50% 120%, rgba(0,0,0,.04), transparent 60%),
-        #fff;
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:start center;
+      font-family:"Inter",system-ui,Arial,sans-serif;
+      font-size:16.5px;
+      -webkit-font-smoothing:antialiased;
+      color:var(--ink);
+      letter-spacing:.005em;
+      line-height:1.55;
+      background:#fff;
       padding:2rem;
     }
+
     main{width:min(1000px,100%)}
 
-    /* ===== TICKER ===== */
+
+    /* ----------------------------- */
+    /* TICKER */
+    /* ----------------------------- */
+
     .ticker{width:100%;overflow:hidden;margin:-.5rem 0 1.25rem 0}
     .ticker-bar{
       background:linear-gradient(90deg,#2fb457,#0c8a43);
-      color:#fff; font-weight:700; padding:.8rem 0; border-radius:12px;
-      box-shadow:0 10px 24px rgba(0,0,0,.07);
+      color:#fff;font-weight:700;
+      padding:.8rem 0;
+      border-radius:12px;
     }
     .ticker-track{
-      display:inline-block; white-space:nowrap; will-change:transform;
+      display:inline-block;white-space:nowrap;
       animation:ticker 120s linear infinite;
-      font-size:1.02rem; letter-spacing:.01em;
     }
-    .ticker-item{display:inline-flex; align-items:center; gap:.45rem; margin:0 1.6rem}
-    @keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+    .ticker-item{display:inline-flex;gap:.45rem;margin:0 1.6rem}
+    @keyframes ticker{
+      0%{transform:translateX(100%)}
+      100%{transform:translateX(-100%)}
+    }
 
-    /* ===== HERO + NACHTHIMMEL ===== */
-    .hero{margin:0 0 1.6rem; text-align:center; perspective:1000px; position:relative;}
+    /* ----------------------------- */
+    /* HERO / NACHT */
+    /* ----------------------------- */
+
+    .hero{margin:0 0 1.6rem;text-align:center;position:relative;}
+
     .night-sky{
-      position:absolute; left:50%; transform:translateX(-50%);
-      top:-26vh; width:120vw; height:56vh; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(100% 80% at 50% 100%, rgba(2,12,20,0) 0%, rgba(2,12,20,.0) 40%, rgba(2,12,20,.7) 70%, rgba(2,12,20,1) 100%),
-        radial-gradient(140% 100% at 50% 10%, #07131c 0%, #030b12 60%, #02070d 100%);
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,.92) 60%, rgba(0,0,0,0) 100%);
-    }
-    .stars{position:absolute; inset:0}
-    .star{
-      position:absolute; width:2px; height:2px; border-radius:50%;
-      background:#ffffff; opacity:.85;
-      filter:drop-shadow(0 0 3px rgba(255,255,255,.75));
-      animation:twinkle var(--twDur,4s) ease-in-out var(--twDelay,0s) infinite alternate;
-    }
-    @keyframes twinkle{from{opacity:.2; transform:scale(.8)} to{opacity:1; transform:scale(1.15)}}
-
-    .shooting{
-      position:absolute; width:140px; height:2px; background:linear-gradient(90deg,#fff, rgba(255,255,255,0));
-      opacity:.0; transform:translateX(0) translateY(0) rotate(var(--rot, -20deg));
-      filter:drop-shadow(0 0 6px rgba(255,255,255,.9));
-      animation:shoot 1.6s ease-in-out forwards;
-    }
-    @keyframes shoot{
-      0%{opacity:0}
-      10%{opacity:.95}
-      100%{opacity:0; transform:translateX(var(--dx, -520px)) translateY(var(--dy, 160px)) rotate(var(--rot))}
-    }
-
-    .brand-wrap{position:relative; display:inline-block; z-index:1}
-    .brand{
-      margin:0; text-transform:uppercase; letter-spacing:.06em; font-weight:900;
-      font-size:clamp(3rem,12vw,6.6rem); line-height:.95;
-      background:linear-gradient(180deg,#0b5d2a 0%,#0c8a43 35%,#34c759 65%,#c8ffd8 100%);
-      -webkit-background-clip:text; background-clip:text; color:transparent;
-      text-shadow:0 1px 0 rgba(0,0,0,.18),0 2px 6px rgba(0,0,0,.18),0 8px 30px rgba(0,0,0,.18);
-      transform-style:preserve-3d; transform-origin:center; animation:slowFlip 18s linear infinite;
-      position:relative;
-    }
-    @keyframes slowFlip{
-      0%{transform:rotateX(0)}
-      50%{transform:rotateX(180deg)}
-      100%{transform:rotateX(360deg)}
-    }
-
-    .brand::before{
-      content:"";
       position:absolute;
-      inset:-6% -10%;
+      left:50%;transform:translateX(-50%);
+      top:-26vh;width:120vw;height:56vh;
       pointer-events:none;
-      background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.38) 15%,rgba(255,255,255,0) 30%);
-      transform:translateX(-160%) skewX(-10deg);
-      filter:blur(.7px);
-      mix-blend-mode:screen;
-      animation:shine 12s ease-in-out infinite;
+      background:#02070d;
     }
-    @keyframes shine{
-      0%{transform:translateX(-160%) skewX(-10deg)}
-      50%{transform:translateX(160%) skewX(-10deg)}
-      100%{transform:translateX(-160%) skewX(-10deg)}
+    .stars{position:absolute;inset:0}
+    .star{
+      position:absolute;width:2px;height:2px;border-radius:50%;
+      background:white;opacity:.9;
+      animation:twinkle 4s ease-in-out infinite alternate;
+    }
+    @keyframes twinkle{
+      0%{opacity:.25;transform:scale(.9)}
+      100%{opacity:1;transform:scale(1.2)}
     }
 
+    .brand-wrap{position:relative;display:inline-block;z-index:1}
+    .brand{
+      margin:0;font-weight:900;
+      text-transform:uppercase;
+      font-size:clamp(3rem,12vw,6.6rem);
+      background:linear-gradient(180deg,#0b5d2a,#0c8a43 40%,#34c759 80%);
+      -webkit-background-clip:text;
+      color:transparent;
+    }
     .brand-underline{
-      width:min(520px,74%);height:8px;margin:.7rem auto 0;
-      border-radius:999px;
+      width:min(520px,74%);
+      height:8px;margin:.7rem auto 0;
       background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);
-      box-shadow:0 8px 26px rgba(52,199,89,.35)
+      border-radius:999px;
     }
-
     .tagline{
       margin:.9rem 0 0;
       font-weight:800;
-      font-size:clamp(1.05rem,3.6vw,1.35rem);
-      letter-spacing:.08em;
       text-transform:uppercase;
       color:#183c26;
-      opacity:.9
+      opacity:.9;
     }
 
-    /* ===== TYPO ===== */
-    h2{margin:0 0 .4rem;font-size:clamp(1.25rem,4.5vw,1.6rem)}
-    p{margin:0;color:var(--ink-2);font-size:clamp(1rem,3.2vw,1.06rem)}
-    a{color:inherit;text-decoration:none}
+    /* ----------------------------- */
+    /* ÜBER UNS */
+    /* ----------------------------- */
 
-    /* ===== ÜBER-UNS ===== */
     .about{
-      font-family:"Playfair Display", serif;
-      color:var(--deep-green);
-      max-width:820px;
-      margin:1.2rem auto 1.6rem;
-      padding:0 1rem 1.1rem;
       text-align:center;
+      margin:1.4rem auto 2rem;
+      font-family:"Playfair Display";
+      color:var(--deep-green);
     }
-
-    .about h2{
-      font-family:"Playfair Display", serif;
-      font-weight:600;
-      letter-spacing:.02em;
-      margin-bottom:.35rem;
-    }
-
     .about .ornament{
-      width:140px;height:3px;margin:.25rem auto .9rem;border-radius:999px;
-      background:linear-gradient(90deg,var(--gold),#f3e6b6,var(--gold));
-      box-shadow:0 4px 14px rgba(212,175,55,.35);
+      width:140px;height:3px;margin:.6rem auto;
+      background:linear-gradient(90deg,var(--gold),#fff8d0,var(--gold));
+      border-radius:999px;
     }
 
-    /* ===== PRODUKTKARTEN ===== */
+    /* ----------------------------- */
+    /* PRODUKTE */
+    /* ----------------------------- */
+
     .slot{
       border:1px solid var(--border);
       border-radius:16px;
-      padding:1.2rem 1.25rem;
-      text-align:left;
-      background:var(--surface);
-      box-shadow:0 8px 24px rgba(0,0,0,.05);
+      padding:1.2rem;
+      background:#fff;
+      box-shadow:0 8px 20px rgba(0,0,0,.05);
       display:flex;
       flex-direction:column;
-      height:100%;
     }
-
     .slot-body{
       display:grid;
       grid-template-columns:64px 1fr;
       gap:12px;
-      align-items:flex-start;
     }
-
     .idx{
-      width:64px; min-height:72px;
-      background:linear-gradient(180deg,#1b8a46,#0e6b37);
-      color:#fff; font-weight:900; font-size:1.15rem; letter-spacing:.04em;
+      width:64px;min-height:72px;
+      background:#0c8a43;
+      color:#fff;font-weight:900;
+      display:flex;align-items:center;justify-content:center;
       border-radius:14px;
-      display:flex; align-items:center; justify-content:center;
-      box-shadow:0 8px 18px rgba(12,138,67,.25);
-      user-select:none;
     }
 
-    .slot-text{min-width:0}
     .slots{
       margin-top:1.5rem;
-      display:grid; gap:1rem;
-      grid-template-columns:1fr; grid-auto-rows:1fr;
+      display:grid;
+      gap:1rem;
     }
-    @media (min-width:720px){.slots{grid-template-columns:repeat(2,1fr)}}
-
-    .slot-footer{margin-top:auto;}
-    .price-old{color:var(--price);text-decoration:line-through;font-weight:700}
-    .price-new{color:var(--price);font-weight:800}
-    .price-list{margin:.55rem 0 0;padding-left:1.1rem;color:var(--price);font-weight:700}
-
-    img{
-      display:block;max-width:100%;height:auto;
-      margin:1rem auto 0;border-radius:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,.07)
+    @media(min-width:720px){
+      .slots{grid-template-columns:1fr 1fr;}
     }
 
-    /* ===== NEUES LAYOUT PRODUKT 3 ===== */
+    /* ----------------------------- */
+    /* PRODUKT 3 – FIXED VERSION     */
+    /* ----------------------------- */
+
     .product3-images{
       position:relative;
-      margin:1rem auto 2.5rem;
+      margin:1rem auto 0;
       max-width:420px;
+      padding-bottom:160px; /* Platz für TAG6 */
     }
+
     .product3-main{
-      width:100%;
-      border-radius:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,.07);
+      width:100%;border-radius:12px;
+      box-shadow:0 8px 22px rgba(0,0,0,.15);
     }
 
-    /* Original kleines Bild rechts unten raus */
-    .product3-overlay{
-      position:absolute;
-      width:42%;
-      right:-18%;
-      bottom:-22%;
-      border-radius:12px;
-      box-shadow:0 8px 22px rgba(0,0,0,.35);
-    }
-
-    /* Neues TAG5 links daneben */
-    .product3-tag5{
-      position:absolute;
-      width:42%;
-      left:-18%;
-      bottom:-22%;
-      border-radius:12px;
-      box-shadow:0 8px 22px rgba(0,0,0,.35);
-    }
-
-    /* Neues TAG6 mittig darunter */
+    .product3-overlay,
+    .product3-tag5,
     .product3-tag6{
-      position:absolute;
       width:42%;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:-50%;
       border-radius:12px;
-      box-shadow:0 8px 22px rgba(0,0,0,.35);
+      box-shadow:0 8px 22px rgba(0,0,0,.25);
+      position:absolute;
     }
+
+    .product3-overlay{
+      right:-18%;bottom:-22%;
+    }
+
+    .product3-tag5{
+      left:-18%;bottom:-22%;
+    }
+
+    .product3-tag6{
+      left:50%;transform:translateX(-50%);
+      bottom:-55%;
+    }
+
+    img{
+      display:block;
+      max-width:100%;
+      border-radius:12px;
+      box-shadow:0 8px 20px rgba(0,0,0,.1);
+      margin-top:1rem;
+    }
+
+    /* ----------------------------- */
+    /* FORM / BESTELLUNG (Fix Version) */
+    /* ----------------------------- */
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      margin-top:16px;
+      background:#fff;
+      box-shadow:0 6px 16px rgba(0,0,0,.05);
+      position:relative;
+      z-index:5;
+    }
+
+    .grid{display:grid;gap:12px}
+    .row{
+      display:grid;
+      grid-template-columns:1fr 140px 160px;
+      gap:10px;
+    }
+
+    label{font-weight:600}
+    input,textarea,select{
+      width:100%;
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:10px;
+    }
+
+    button{
+      padding:12px 18px;
+      border:0;
+      border-radius:12px;
+      background:#0c8a43;
+      color:#fff;font-weight:800;
+      cursor:pointer;
+    }
+
+    .muted{color:var(--muted)}
+    .error{color:#b00020;font-weight:700}
+    .success{color:#0a7a30;font-weight:800}
+
   </style>
 </head>
 
+
 <body>
-  <!-- ===== TICKER ===== -->
-  <div class="ticker">
-    <div class="ticker-bar">
-      <div id="tickerTrack" class="ticker-track">Lade Neuigkeiten …</div>
-    </div>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker">
+  <div class="ticker-bar">
+    <div id="tickerTrack" class="ticker-track">Lade Neuigkeiten …</div>
   </div>
+</div>
 
-  <main>
-    <header class="hero">
-      <div class="night-sky"><div class="stars" id="starsLayer"></div></div>
-      <div class="brand-wrap"><h1 class="brand">OBS-Die-Firma</h1></div>
-      <div class="brand-underline"></div>
-      <div class="tagline">Sortiment</div>
-    </header>
+<main>
+  <header class="hero">
+    <div class="night-sky"><div class="stars" id="starsLayer"></div></div>
+    <div class="brand-wrap"><h1 class="brand">OBS-Die-Firma</h1></div>
+    <div class="brand-underline"></div>
+    <div class="tagline">Sortiment</div>
+  </header>
 
-    <!-- ===== WER WIR SIND ===== -->
-    <section class="about" aria-labelledby="about-title">
-      <h2 id="about-title">Wer wir sind</h2>
-      <div class="ornament" aria-hidden="true"></div>
-      <p>Unsere Schülerfirma ist ein Projekt des Wahlpflichtkurses Jahrgang 10 – ergänzt durch freiwillig Mitgestaltende.</p>
-      <p style="margin-top:.6rem">Alle Artikel entstehen in eigener Herstellung und werden aus finanziellen Mitteln der Schülerinnen und Schüler realisiert.</p>
-      <p style="margin-top:.6rem">Etwaige Gewinne fließen nicht an Einzelpersonen, sondern <strong>zurück in das Projekt</strong> und stärken das <strong>Eigenkapital</strong>.</p>
-      <p style="margin-top:.6rem"><strong>Ziel:</strong> unternehmerischen Geist fördern und echte Erfahrungsräume schaffen.</p>
-    </section>
+  <section class="about">
+    <h2>Wer wir sind</h2>
+    <div class="ornament"></div>
+    <p>Unsere Schülerfirma ist ein Projekt des WPK Jahrgang 10 – ergänzt durch freiwillige Mitgestaltende.</p>
+    <p>Gewinne fließen vollständig zurück ins Projekt.</p>
+  </section>
 
-    <!-- Produkt 1 -->
+  <!-- PRODUKT 1 -->
+  <article class="slot">
+    <div class="slot-body">
+      <div class="idx">#1</div>
+      <div>
+        <h2>Personalisierter Glas-Tag <span class="badge">*</span></h2>
+        <p><strong>Das praktische Gadget</strong> für Feiern und gesellige Runden.</p>
+        <p style="margin-top:.6rem">Vorher: <span class="price-old">3 €</span></p>
+        <ul class="price-list">
+          <li>Einzel: <span class="price-new">1,50 €</span></li>
+          <li>5er-Pack: <span class="price-new">4,95 €</span></li>
+          <li>10er-Pack: <span class="price-new">9,95 €</span></li>
+        </ul>
+      </div>
+    </div>
+    <img src="Tag.jpeg" alt="Glas-Tag">
+  </article>
+
+  <section class="slots">
+
+    <!-- PRODUKT 2 -->
     <article class="slot">
       <div class="slot-body">
-        <div class="idx">#1</div>
-        <div class="slot-text">
-          <h2>Personalisierter Glas-Tag <span class="badge">*</span></h2>
-          <p><strong>Das sinnvolle Gadget für gesellige Runden.</strong> Du planst eine Familienfeier? Dann überrasche deine Gäste mit einer besonderen Aufmerksamkeit.</p>
-          <p style="margin-top:.6rem">Vorher: <span class="price-old">3 €</span></p>
-          <ul class="price-list">
-            <li>Einzelpreis: <span class="price-new">1,50 €</span></li>
-            <li>Fünferpack: <span class="price-new">4,95 €</span></li>
-            <li>Zehnerpack: <span class="price-new">9,95 €</span></li>
-          </ul>
-          <p class="price-new" style="margin-top:.4rem">* Sonderaktion solange Vorrat reicht.</p>
-          <ul class="price-list" style="color:inherit;font-weight:700;margin-top:.6rem">
-            <li>Material: PLA oder PETG</li>
-            <li>Reinigung: nur feucht abwischen</li>
-            <li>Passform: fester Sitz</li>
-          </ul>
+        <div class="idx">#2</div>
+        <div>
+          <h2>Deluxe Kakao „Chocolate Bomb“</h2>
+          <p><strong>Mit Glas:</strong> heiß aufgießen → cremiger Kakao.</p>
+          <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
         </div>
       </div>
-      <img src="Tag.jpeg" alt="Personalisierter Glas-Tag">
+      <img src="Tag2.jpeg" alt="Chocolate Bomb">
     </article>
 
-    <section class="slots">
+    <!-- PRODUKT 3 (mit TAG5 & TAG6) -->
+    <article class="slot">
+      <div class="slot-body">
+        <div class="idx">#3</div>
+        <div>
+          <h2>Instant Kakao „Schneemann“</h2>
+          <p>Mit heißer Milch übergießen – süß & cremig.</p>
+          <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
+        </div>
+      </div>
+
+      <div class="product3-images">
+        <img src="Schneemann2.jpeg" class="product3-main">
+        <img src="Schneemann1.jpeg" class="product3-overlay">
+        <img src="TAG5.jpeg" class="product3-tag5">
+        <img src="TAG6.jpeg" class="product3-tag6">
+      </div>
+    </article>
+
+  </section>
+  <!-- ===== Gewinnspiel ===== -->
+  <section class="card">
+    <h2>Werbeaktion: Gewinne einen Glas-Tag</h2>
+    <p>Decke in 5 Versuchen drei gleichfarbige Gläser auf.</p>
+
+    <div class="game-controls">
+      <button type="button" id="startGameBtn">Spiel starten</button>
+      <button type="button" id="newGameBtn" class="hidden">Neues Spiel</button>
+      <span class="pill">Versuche: <span id="triesLeft">–</span></span>
+      <span class="pill">Treffer: <span id="matchCount">0</span></span>
+      <span class="pill hidden" id="cooldownPill">Warte <span id="cooldownSec">0</span>s</span>
+    </div>
+
+    <div id="gameGrid" class="game-grid"></div>
+    <div id="gameMsg" style="margin-top:8px;"></div>
+  </section>
+
+
+  <!-- ===== BESTELLFORMULAR ===== -->
+  <form id="orderForm" class="shop" novalidate>
+
+    <input type="text" id="hp_field" name="company" style="position:absolute;left:-9999px">
+
+    <!-- Kundendaten -->
+    <div class="card">
+      <h2>Kundendaten</h2>
+
+      <div class="grid" style="grid-template-columns:1fr 1fr">
+        <div>
+          <label for="name">Name*</label>
+          <input id="name" required>
+        </div>
+        <div>
+          <label for="phone">Telefon*</label>
+          <input id="phone" required>
+        </div>
+        <div style="grid-column:1/-1">
+          <label for="email">E-Mail*</label>
+          <input id="email" type="email" required>
+        </div>
+        <div style="grid-column:1/-1">
+          <label for="coupon">Gewinncode (optional)</label>
+          <input id="coupon">
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Produkte -->
+    <div class="card">
+      <h2>Produkte</h2>
+
+      <!-- Produkt 1 -->
+      <div class="row">
+        <div>
+          <label for="p1Pack">Produkt 1</label>
+          <select id="p1Pack">
+            <option value="single">Einzel (1,50 €)</option>
+            <option value="pack5">5er-Pack (4,95 €)</option>
+            <option value="pack10">10er-Pack (9,95 €)</option>
+          </select>
+          <div class="muted" id="p1PiecesHint">Aktuell: 0 Stück</div>
+        </div>
+        <div>
+          <label for="p1Qty">Menge</label>
+          <input id="p1Qty" type="number" min="0" value="0">
+        </div>
+        <div>
+          <label>Summe</label>
+          <input id="p1Subtotal" readonly>
+        </div>
+      </div>
+
+      <div id="p1NamesBlock" class="grid hidden">
+        <label for="p1Names">Namen (ein Name pro Zeile)</label>
+        <textarea id="p1Names" rows="5"></textarea>
+        <div class="muted">Muss zur Stückzahl passen.</div>
+        <div id="p1NamesError" class="error hidden">Anzahl stimmt nicht.</div>
+      </div>
+
+      <hr>
+
       <!-- Produkt 2 -->
-      <article class="slot">
-        <div class="slot-body">
-          <div class="idx">#2</div>
-          <div class="slot-text">
-            <h2>Deluxe Kakao „Chocolate Bomb“</h2>
-            <p><strong>„Chocolate Bomb“ inklusive Glas:</strong> heiß aufgießen → cremiger Kakao.</p>
-            <p style="margin-top:.5rem"><strong>Inhaltsstoffe:</strong> Kuvertüre, Kakaopulver.</p>
-            <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
-          </div>
+      <div class="row">
+        <div>
+          <label>Produkt 2</label>
+          <div class="muted">Stück: 5,00 €</div>
         </div>
-        <img src="Tag2.jpeg" alt="Deluxe Kakao Chocolate Bomb">
-      </article>
-
-      <!-- Produkt 3 MIT TAG5 & TAG6 -->
-      <article class="slot">
-        <div class="slot-body">
-          <div class="idx">#3</div>
-          <div class="slot-text">
-            <h2>Instant Kakao „Schneemann“</h2>
-            <p><strong>Mit heißer Milch übergießen.</strong> Süß, cremig, mit Marshmallows. Beliebt als Geschenk.</p>
-            <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
-          </div>
+        <div>
+          <label for="p2Qty">Menge</label>
+          <input id="p2Qty" type="number" min="0" value="0">
         </div>
-
-        <!-- ALLE 4 BILDER FÜR PRODUKT 3 -->
-        <div class="product3-images">
-          <img src="Schneemann2.jpeg" alt="Instant Kakao Schneemann" class="product3-main">
-
-          <img src="Schneemann1.jpeg" alt="Detailbild Schneemann" class="product3-overlay">
-
-          <img src="TAG5.jpeg" alt="Zusatzbild Tag 5" class="product3-tag5">
-
-          <img src="TAG6.jpeg" alt="Zusatzbild Tag 6" class="product3-tag6">
-        </div>
-      </article>
-    </section>
-
-    <!-- ===== Spiel ===== -->
-    <section class="card">
-      <h2>Werbeaktion: Gewinne einen Glas-Tag</h2>
-      <p>Decke in 5 Versuchen drei gleichfarbige Gläser auf.</p>
-      <div class="game-controls">
-        <button type="button" id="startGameBtn">Spiel starten</button>
-        <button type="button" id="newGameBtn" class="hidden">Neues Spiel</button>
-        <span class="pill">Versuche: <span id="triesLeft">–</span></span>
-        <span class="pill">Treffer: <span id="matchCount">0</span></span>
-        <span class="pill hidden" id="cooldownPill">Warte <span id="cooldownSec">0</span>s</span>
-      </div>
-      <div id="gameGrid" class="game-grid"></div>
-      <div id="gameMsg" style="margin-top:8px;"></div>
-    </section>
-
-    <!-- ===== Bestellung ===== -->
-    <form id="orderForm" class="shop" novalidate>
-      <input type="text" id="hp_field" name="company" style="position:absolute;left:-9999px">
-
-      <div class="card">
-        <h2>Kundendaten</h2>
-        <div class="grid" style="grid-template-columns:1fr 1fr">
-          <div><label for="name">Name*</label><input id="name" required></div>
-          <div><label for="phone">Telefon*</label><input id="phone" required></div>
-          <div style="grid-column:1/-1"><label for="email">E-Mail*</label><input id="email" type="email" required></div>
-          <div style="grid-column:1/-1"><label for="coupon">Gewinncode (optional)</label><input id="coupon"></div>
+        <div>
+          <label>Summe</label>
+          <input id="p2Subtotal" readonly>
         </div>
       </div>
 
-      <div class="card">
-        <h2>Produkte</h2>
-
-        <!-- Produkt 1 -->
-        <div class="row">
-          <div>
-            <label for="p1Pack">Produkt 1</label>
-            <select id="p1Pack">
-              <option value="single">Einzel (1,50 €)</option>
-              <option value="pack5">5er (4,95 €)</option>
-              <option value="pack10">10er (9,95 €)</option>
-            </select>
-            <div class="muted" id="p1PiecesHint">Aktuell: 0 Stück</div>
-          </div>
-          <div><label for="p1Qty">Menge</label><input id="p1Qty" type="number" min="0" value="0"></div>
-          <div><label>Summe</label><input id="p1Subtotal" readonly></div>
+      <!-- Produkt 3 -->
+      <div class="row">
+        <div>
+          <label>Produkt 3</label>
+          <div class="muted">Stück: 5,00 €</div>
         </div>
-
-        <div id="p1NamesBlock" class="grid hidden">
-          <label for="p1Names">Namen (ein Name pro Zeile)</label>
-          <textarea id="p1Names" rows="5"></textarea>
-          <div class="muted">Muss zur Stückzahl passen.</div>
-          <div id="p1NamesError" class="error hidden">Anzahl stimmt nicht.</div>
+        <div>
+          <label for="p3Qty">Menge</label>
+          <input id="p3Qty" type="number" min="0" value="0">
         </div>
-
-        <hr class="sep">
-
-        <!-- Produkt 2 -->
-        <div class="row">
-          <div><label>Produkt 2</label><div class="muted">Stück: 5,00 €</div></div>
-          <div><label for="p2Qty">Menge</label><input id="p2Qty" type="number" min="0" value="0"></div>
-          <div><label>Summe</label><input id="p2Subtotal" readonly></div>
+        <div>
+          <label>Summe</label>
+          <input id="p3Subtotal" readonly>
         </div>
-
-        <!-- Produkt 3 -->
-        <div class="row" style="margin-top:8px;">
-          <div><label>Produkt 3</label><div class="muted">Stück: 5,00 €</div></div>
-          <div><label for="p3Qty">Menge</label><input id="p3Qty" type="number" min="0" value="0"></div>
-          <div><label>Summe</label><input id="p3Subtotal" readonly></div>
-        </div>
-
-        <div class="totals"><span>Gesamt</span><span id="grandTotal">0,00 €</span></div>
       </div>
 
-      <div class="card">
-        <h2>Warenkorb</h2>
-        <div id="cartPreview" class="muted">Noch keine Artikel.</div>
+      <div class="totals">
+        <span>Gesamt</span>
+        <span id="grandTotal">0,00 €</span>
       </div>
+    </div>
 
-      <div class="grid" style="grid-template-columns:1fr auto">
-        <div class="muted">Abholung in der Schule · Keine Lieferung.</div>
-        <button type="submit">Absenden</button>
-      </div>
 
-      <div id="formError" class="error hidden"></div>
-      <div id="formOk" class="success hidden">Gesendet – wir melden uns!</div>
-    </form>
+    <!-- Warenkorb -->
+    <div class="card">
+      <h2>Warenkorb</h2>
+      <div id="cartPreview" class="muted">Noch keine Artikel.</div>
+    </div>
 
-    <footer>
-      <nav>
-        <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a>
-      </nav>
-    </footer>
-  </main>
+    <div class="grid" style="grid-template-columns:1fr auto">
+      <div class="muted">Abholung in der Schule · Keine Lieferung.</div>
+      <button type="submit">Absenden</button>
+    </div>
 
-  <!-- EmailJS (CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <div id="formError" class="error hidden"></div>
+    <div id="formOk" class="success hidden">Gesendet – wir melden uns!</div>
 
-  <!-- EmailJS Init -->
-  <script>
-    const EMAILJS_PUBLIC_KEY   = 'xAOygDJhZcJrXGuSb';
-    const EMAILJS_SERVICE_ID   = 'service_l642tri';
-    const EMAILJS_TEMPLATE_ID  = 'template_ggtexbv';
+  </form>
 
-    (function initEmailJS(){
-      if (window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'DEIN_PUBLIC_KEY_HIER') {
-        emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  <footer style="margin-top:2rem;text-align:center;font-size:.95rem;">
+    <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a>
+  </footer>
+
+</main>
+
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+  /* Dein Key – unverändert */
+  const EMAILJS_PUBLIC_KEY   = 'xAOygDJhZcJrXGuSb';
+  const EMAILJS_SERVICE_ID   = 'service_l642tri';
+  const EMAILJS_TEMPLATE_ID  = 'template_ggtexbv';
+
+  (function() {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  })();
+</script>
+
+
+<script>
+/* ======================================================
+   FORMAT HILFSFUNKTIONEN
+====================================================== */
+
+const formatEUR = n => n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+const clampInt = (v,min=0,max=999)=>{
+  const n=parseInt(v,10);
+  if(isNaN(n)) return min;
+  return Math.min(max,Math.max(min,n));
+};
+
+/* ======================================================
+   TICKER
+====================================================== */
+(function initTicker(){
+  const t=document.getElementById('tickerTrack');
+  t.innerHTML = `
+    <span class="ticker-item">Glas-Tags mit Wunschname – handgefertigt.</span>
+    <span class="ticker-item">Deluxe Kakao „Chocolate Bomb“ – solange Vorrat reicht.</span>
+    <span class="ticker-item">Instant Kakao „Schneemann“ – saisonale Aktion.</span>
+    <span class="ticker-item">Alle Erlöse bleiben im Projekt – Danke!</span>
+  `;
+})();
+
+/* ======================================================
+   STERNE
+====================================================== */
+(function initStars(){
+  const layer=document.getElementById('starsLayer');
+  for(let i=0;i<60;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    layer.appendChild(s);
+  }
+})();
+
+/* ======================================================
+   GEWINNSPIEL
+====================================================== */
+(function initGame(){
+
+  const startBtn=document.getElementById('startGameBtn');
+  const newBtn=document.getElementById('newGameBtn');
+  const grid=document.getElementById('gameGrid');
+  const msg=document.getElementById('gameMsg');
+  const triesLeft=document.getElementById('triesLeft');
+  const matchCount=document.getElementById('matchCount');
+  const cooldown=document.getElementById('cooldownPill');
+  const coolSec=document.getElementById('cooldownSec');
+
+  const COLORS=['#0c8a43','#ffb300','#1565c0'];
+  let tiles=[],tries=5,matches=0,running=false,timer=null;
+
+  function build(){
+    grid.innerHTML='';
+    tiles=[];
+    const pool=[];
+    COLORS.forEach(c=>{for(let i=0;i<3;i++) pool.push(c);});
+    pool.sort(()=>Math.random()-0.5);
+
+    pool.forEach(color=>{
+      const t=document.createElement('div');
+      t.className='tile';
+      t.dataset.color=color;
+      const cover=document.createElement('div');
+      cover.className='cover';
+      t.appendChild(cover);
+      t.onclick=()=>reveal(t);
+      grid.appendChild(t);
+      tiles.push(t);
+    });
+  }
+
+  function reset(){
+    tries=5; matches=0; running=true;
+    triesLeft.textContent=tries;
+    matchCount.textContent=matches;
+    msg.textContent='';
+    msg.className='';
+    cooldown.classList.add('hidden');
+    build();
+  }
+
+  function reveal(tile){
+    if(!running) return;
+    const cover=tile.querySelector('.cover');
+    if(!cover || cover.style.opacity==='0') return;
+    cover.style.opacity='0';
+    tile.style.background=tile.dataset.color;
+
+    const same=tiles.filter(t=>{
+      const c=t.dataset.color;
+      const oc=t.querySelector('.cover');
+      return oc && oc.style.opacity==='0' && c===tile.dataset.color;
+    }).length;
+
+    if(same===3){
+      matches++;
+      matchCount.textContent=matches;
+      msg.textContent='Drei gleiche Gläser!';
+      msg.className='win';
+    }
+
+    tries--;
+    triesLeft.textContent=tries;
+
+    if(tries<=0){
+      running=false;
+      msg.textContent = matches>0
+        ? 'Aktion geschafft – Code im Formular eintragen.'
+        : 'Leider kein Treffer.';
+      msg.className = matches>0 ? 'win' : 'lose';
+
+      let left=30;
+      coolSec.textContent=left;
+      cooldown.classList.remove('hidden');
+
+      timer=setInterval(()=>{
+        left--;
+        coolSec.textContent=left;
+        if(left<=0){
+          clearInterval(timer);
+          cooldown.classList.add('hidden');
+        }
+      },1000);
+    }
+  }
+
+  startBtn.onclick=()=>{
+    startBtn.classList.add('hidden');
+    newBtn.classList.remove('hidden');
+    reset();
+  };
+
+  newBtn.onclick=()=>reset();
+
+})();
+
+/* ======================================================
+   SHOP / FORMULAR
+====================================================== */
+
+(function initShop(){
+
+  const p1Pack=document.getElementById('p1Pack');
+  const p1Qty=document.getElementById('p1Qty');
+  const p1Subtotal=document.getElementById('p1Subtotal');
+  const p1PiecesHint=document.getElementById('p1PiecesHint');
+  const p1NamesBlock=document.getElementById('p1NamesBlock');
+  const p1Names=document.getElementById('p1Names');
+  const p1NamesError=document.getElementById('p1NamesError');
+
+  const p2Qty=document.getElementById('p2Qty');
+  const p2Subtotal=document.getElementById('p2Subtotal');
+
+  const p3Qty=document.getElementById('p3Qty');
+  const p3Subtotal=document.getElementById('p3Subtotal');
+
+  const grandTotal=document.getElementById('grandTotal');
+  const cartPreview=document.getElementById('cartPreview');
+
+  const PACK_PRICES={single:1.50,pack5:4.95,pack10:9.95};
+  const PACK_PIECES={single:1,pack5:5,pack10:10};
+  const P2_PRICE=5.00;
+  const P3_PRICE=5.00;
+
+  function updateP1(){
+    const pack=p1Pack.value;
+    const qty=clampInt(p1Qty.value);
+    p1Qty.value=qty;
+
+    const totalPrice=qty*PACK_PRICES[pack];
+    const totalPieces=qty*PACK_PIECES[pack];
+
+    p1Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
+    p1PiecesHint.textContent="Aktuell: "+totalPieces+" Stück";
+
+    if(totalPieces>0){
+      p1NamesBlock.classList.remove('hidden');
+    } else {
+      p1NamesBlock.classList.add('hidden');
+      p1NamesError.classList.add('hidden');
+    }
+
+    return {totalPrice,totalPieces,qty,pack};
+  }
+
+  function updateP2(){
+    const qty=clampInt(p2Qty.value);
+    p2Qty.value=qty;
+    const tp=qty*P2_PRICE;
+    p2Subtotal.value = qty>0 ? formatEUR(tp) : '';
+    return {qty,totalPrice:tp};
+  }
+
+  function updateP3(){
+    const qty=clampInt(p3Qty.value);
+    p3Qty.value=qty;
+    const tp=qty*P3_PRICE;
+    p3Subtotal.value = qty>0 ? formatEUR(tp) : '';
+    return {qty,totalPrice:tp};
+  }
+
+  function updateAll(){
+    const p1=updateP1();
+    const p2=updateP2();
+    const p3=updateP3();
+
+    const sum=p1.totalPrice+p2.totalPrice+p3.totalPrice;
+    grandTotal.textContent=formatEUR(sum);
+
+    const out=[];
+    if(p1.totalPieces>0){
+      out.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
+    }
+    if(p2.qty>0){
+      out.push(`Chocolate Bomb: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
+    }
+    if(p3.qty>0){
+      out.push(`Schneemann: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
+    }
+
+    cartPreview.innerHTML = out.length? out.join('<br>') : 'Noch keine Artikel.';
+  }
+
+  p1Pack.onchange=updateAll;
+  p1Qty.oninput=updateAll;
+  p2Qty.oninput=updateAll;
+  p3Qty.oninput=updateAll;
+
+  if(p1Names) p1Names.oninput=()=>p1NamesError.classList.add('hidden');
+
+  updateAll();
+
+  const form=document.getElementById('orderForm');
+  const formErr=document.getElementById('formError');
+  const formOk=document.getElementById('formOk');
+
+  function countLines(s){
+    return String(s).split(/\n/).map(l=>l.trim()).filter(Boolean).length;
+  }
+
+  form.onsubmit=function(e){
+    e.preventDefault();
+    formErr.classList.add('hidden');
+    formOk.classList.add('hidden');
+
+    if(document.getElementById('hp_field').value.trim()!==''){return;}
+
+    const name=document.getElementById('name').value.trim();
+    const phone=document.getElementById('phone').value.trim();
+    const email=document.getElementById('email').value.trim();
+    const coupon=document.getElementById('coupon').value.trim();
+
+    if(!name||!phone||!email){
+      formErr.textContent="Bitte Name, Telefon und E-Mail ausfüllen.";
+      formErr.classList.remove('hidden');
+      return;
+    }
+
+    const p1=updateP1();
+    const p2=updateP2();
+    const p3=updateP3();
+
+    if(p1.totalPieces===0 && p2.qty===0 && p3.qty===0){
+      formErr.textContent="Bitte mindestens ein Produkt auswählen.";
+      formErr.classList.remove('hidden');
+      return;
+    }
+
+    if(p1.totalPieces>0){
+      const given=countLines(p1Names.value);
+      if(given!==p1.totalPieces){
+        p1NamesError.classList.remove('hidden');
+        formErr.textContent="Die Anzahl der Namen passt nicht.";
+        formErr.classList.remove('hidden');
+        return;
       }
-    })();
-  </script>
+    }
 
-  <!-- Haupt-JavaScript -->
-  <script>
-    /* Preisformatierung */
-    const formatEUR = (n) => n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
-    const clampInt = (v,min=0,max=999)=>{
-      const n = parseInt(v,10);
-      if(isNaN(n)) return min;
-      return Math.min(max, Math.max(min,n));
+    const summary=[];
+    if(p1.totalPieces>0) summary.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
+    if(p2.qty>0) summary.push(`Chocolate Bomb: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
+    if(p3.qty>0) summary.push(`Schneemann: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
+
+    const payload={
+      name,
+      phone,
+      email,
+      coupon,
+      products: summary.join('<br>'),
+      total: formatEUR(p1.totalPrice+p2.totalPrice+p3.totalPrice),
+      names_list: p1Names.value
     };
 
-    /* ===== TICKER ===== */
-    (function initTicker(){
-      const track = document.getElementById('tickerTrack');
-      if(!track) return;
-      track.innerHTML = `
-        <span class="ticker-item">Glas-Tags mit Wunschname – handgefertigt an der OBS.</span>
-        <span class="ticker-item">Deluxe Kakao „Chocolate Bomb“ – solange Vorrat reicht.</span>
-        <span class="ticker-item">Instant Kakao „Schneemann“ – nur für kurze Zeit im Sortiment.</span>
-        <span class="ticker-item">Alle Erlöse bleiben im Projekt – Danke für eure Unterstützung!</span>
-      `;
-    })();
-
-    /* ===== Sterne + Sternschnuppen ===== */
-    (function initStars(){
-      const layer = document.getElementById('starsLayer');
-      if(!layer) return;
-      const count = 80;
-
-      for(let i=0;i<count;i++){
-        const s = document.createElement('div');
-        s.className='star';
-        s.style.left=Math.random()*100+'%';
-        s.style.top=Math.random()*100+'%';
-        s.style.setProperty('--twDur',(3+Math.random()*4)+'s');
-        s.style.setProperty('--twDelay',(Math.random()*4)+'s');
-        layer.appendChild(s);
-      }
-
-      setInterval(()=>{
-        const sh=document.createElement('div');
-        sh.className='shooting';
-        sh.style.top=(10+Math.random()*40)+'%';
-        sh.style.left=(60+Math.random()*20)+'%';
-        sh.style.setProperty('--dx',(-400-Math.random()*200)+'px');
-        sh.style.setProperty('--dy',(80+Math.random()*80)+'px');
-        layer.appendChild(sh);
-        setTimeout(()=>sh.remove(),1600);
-      },6000);
-    })();
-
-    /* ===== Spiel (Memory) ===== */
-    (function initGame(){
-      const startBtn=document.getElementById('startGameBtn');
-      const newBtn=document.getElementById('newGameBtn');
-      const gridEl=document.getElementById('gameGrid');
-      const msgEl=document.getElementById('gameMsg');
-      const triesEl=document.getElementById('triesLeft');
-      const matchEl=document.getElementById('matchCount');
-      const cooldownPill=document.getElementById('cooldownPill');
-      const cooldownSec=document.getElementById('cooldownSec');
-
-      if(!startBtn || !gridEl) return;
-
-      const COLORS=['#0c8a43','#ffb300','#1565c0'];
-      let tiles=[];
-      let tries=5;
-      let matches=0;
-      let running=false;
-      let cooldownTimer=null;
-
-      function buildTiles(){
-        gridEl.innerHTML='';
-        tiles=[];
-        const pool=[];
-
-        COLORS.forEach(c=>{
-          for(let i=0;i<3;i++) pool.push(c);
-        });
-
-        for(let i=pool.length-1;i>0;i--){
-          const j=Math.floor(Math.random()*(i+1));
-          [pool[i],pool[j]]=[pool[j],pool[i]];
-        }
-
-        pool.forEach(color=>{
-          const tile=document.createElement('div');
-          tile.className='tile';
-          tile.dataset.color=color;
-
-          const cover=document.createElement('div');
-          cover.className='cover';
-          tile.appendChild(cover);
-
-          tile.addEventListener('click',()=>reveal(tile));
-          gridEl.appendChild(tile);
-          tiles.push(tile);
-        });
-      }
-
-      function reset(){
-        tries=5;
-        matches=0;
-        running=true;
-        triesEl.textContent=tries;
-        matchEl.textContent=matches;
-        msgEl.textContent='';
-        msgEl.className='';
-        cooldownPill.classList.add('hidden');
-        if(cooldownTimer){clearInterval(cooldownTimer); cooldownTimer=null;}
-        buildTiles();
-      }
-
-      function reveal(tile){
-        if(!running) return;
-        const cover=tile.querySelector('.cover');
-        if(!cover || cover.style.opacity==='0') return;
-
-        cover.style.opacity='0';
-        tile.style.background=tile.dataset.color;
-
-        const c=tile.dataset.color;
-        const open=tiles.filter(t=>{
-          const cv=t.querySelector('.cover');
-          return cv && cv.style.opacity==='0' && t.dataset.color===c;
-        }).length;
-
-        if(open===3){
-          matches++;
-          matchEl.textContent=matches;
-          msgEl.textContent='Drei gleiche Gläser gefunden!';
-          msgEl.className='win';
-        }
-
-        tries--;
-        triesEl.textContent=Math.max(tries,0);
-
-        if(tries<=0){
-          running=false;
-
-          msgEl.textContent=matches>=1
-            ? 'Aktion geschafft – zeige den Gewinncode bei der Bestellung.'
-            : 'Leider kein Treffer. Versuch es später erneut.';
-          msgEl.className=matches>=1?'win':'lose';
-
-          let left=30;
-          cooldownSec.textContent=left;
-          cooldownPill.classList.remove('hidden');
-
-          cooldownTimer=setInterval(()=>{
-            left--;
-            cooldownSec.textContent=left;
-            if(left<=0){
-              clearInterval(cooldownTimer);
-              cooldownTimer=null;
-              cooldownPill.classList.add('hidden');
-            }
-          },1000);
-        }
-      }
-
-      startBtn.addEventListener('click',()=>{
-        startBtn.classList.add('hidden');
-        newBtn.classList.remove('hidden');
-        reset();
+    emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload)
+      .then(()=>{
+        formOk.classList.remove('hidden');
+        form.reset();
+        updateAll();
+        p1NamesBlock.classList.add('hidden');
+      })
+      .catch(()=>{
+        formErr.textContent="Formular konnte nicht gesendet werden.";
+        formErr.classList.remove('hidden');
       });
+  };
 
-      newBtn.addEventListener('click',()=>reset());
-    })();
-
-    /* ===== SHOP ===== */
-    (function initShop(){
-
-      const p1Pack=document.getElementById('p1Pack');
-      const p1Qty=document.getElementById('p1Qty');
-      const p1Subtotal=document.getElementById('p1Subtotal');
-      const p1PiecesHint=document.getElementById('p1PiecesHint');
-      const p1NamesBlock=document.getElementById('p1NamesBlock');
-      const p1Names=document.getElementById('p1Names');
-      const p1NamesError=document.getElementById('p1NamesError');
-
-      const p2Qty=document.getElementById('p2Qty');
-      const p2Subtotal=document.getElementById('p2Subtotal');
-
-      const p3Qty=document.getElementById('p3Qty');
-      const p3Subtotal=document.getElementById('p3Subtotal');
-
-      const grandTotalEl=document.getElementById('grandTotal');
-      const cartPreview=document.getElementById('cartPreview');
-
-      const PACK_PRICES={ single:1.50, pack5:4.95, pack10:9.95 };
-      const PACK_PIECES={ single:1,    pack5:5,    pack10:10   };
-      const P2_PRICE=5.00;
-      const P3_PRICE=5.00;
-
-      function getP1Pack(){
-        const key=p1Pack?.value || 'single';
-        return PACK_PRICES[key]? key:'single';
-      }
-
-      function updateP1(){
-        if(!p1Pack || !p1Qty) return;
-        const pack=getP1Pack();
-        const qty=clampInt(p1Qty.value,0,999);
-        p1Qty.value=qty;
-
-        const pricePerPack=PACK_PRICES[pack];
-        const piecesPerPack=PACK_PIECES[pack];
-        const totalPieces=qty*piecesPerPack;
-        const totalPrice=qty*pricePerPack;
-
-        p1Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
-        p1PiecesHint.textContent='Aktuell: '+totalPieces+' Stück';
-
-        if(totalPieces>0){
-          p1NamesBlock.classList.remove('hidden');
-        } else {
-          p1NamesBlock.classList.add('hidden');
-          p1NamesError.classList.add('hidden');
-        }
-
-        return { pack, qty, totalPieces, totalPrice };
-      }
-
-      function updateP2(){
-        const qty=clampInt(p2Qty.value,0,999);
-        p2Qty.value=qty;
-        const totalPrice=qty*P2_PRICE;
-        p2Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
-        return { qty, totalPrice };
-      }
-
-      function updateP3(){
-        const qty=clampInt(p3Qty.value,0,999);
-        p3Qty.value=qty;
-        const totalPrice=qty*P3_PRICE;
-        p3Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
-        return { qty, totalPrice };
-      }
-
-      function updateTotalsAndCart(){
-        const p1=updateP1() || { totalPrice:0, totalPieces:0, qty:0, pack:'single' };
-        const p2=updateP2() || { totalPrice:0, qty:0 };
-        const p3=updateP3() || { totalPrice:0, qty:0 };
-
-        const grand=p1.totalPrice+p2.totalPrice+p3.totalPrice;
-        grandTotalEl.textContent=formatEUR(grand);
-
-        const lines=[];
-        if(p1.totalPieces>0){
-          const packLabel=
-            p1.pack==='single' ? 'Einzelpreis'
-           :p1.pack==='pack5'  ? '5er-Pack'
-           :                     '10er-Pack';
-          lines.push(`Glas-Tag: ${p1.totalPieces} Stück (${packLabel}, ${p1.qty}×) – ${formatEUR(p1.totalPrice)}`);
-        }
-        if(p2.qty>0){
-          lines.push(`Deluxe Kakao „Chocolate Bomb“: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
-        }
-        if(p3.qty>0){
-          lines.push(`Instant Kakao „Schneemann“: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
-        }
-
-        cartPreview.innerHTML=lines.length ? lines.map(l=>`<div>${l}</div>`).join('') : 'Noch keine Artikel.';
-      }
-
-      p1Pack?.addEventListener('change',updateTotalsAndCart);
-      p1Qty?.addEventListener('input',updateTotalsAndCart);
-      p2Qty?.addEventListener('input',updateTotalsAndCart);
-      p3Qty?.addEventListener('input',updateTotalsAndCart);
-
-      p1Names?.addEventListener('input',()=>p1NamesError.classList.add('hidden'));
-
-      updateTotalsAndCart();
-
-      const form=document.getElementById('orderForm');
-      const formError=document.getElementById('formError');
-      const formOk=document.getElementById('formOk');
-
-      function countNonEmptyLines(text){
-        return String(text||'')
-          .split(/\r?\n/)
-          .map(l=>l.trim())
-          .filter(Boolean)
-          .length;
-      }
-
-      if(form){
-        form.addEventListener('submit',function(e){
-          e.preventDefault();
-
-          formError.classList.add('hidden');
-          formOk.classList.add('hidden');
-
-          const hp=document.getElementById('hp_field');
-          if(hp && hp.value.trim()!==''){ return; }
-
-          const name=document.getElementById('name')?.value.trim() || '';
-          const phone=document.getElementById('phone')?.value.trim() || '';
-          const email=document.getElementById('email')?.value.trim() || '';
-          const coupon=document.getElementById('coupon')?.value.trim() || '';
-
-          const p1=updateP1() || { totalPrice:0, totalPieces:0, qty:0 };
-          const p2=updateP2() || { totalPrice:0, qty:0 };
-          const p3=updateP3() || { totalPrice:0, qty:0 };
-          const grand=p1.totalPrice+p2.totalPrice+p3.totalPrice;
-
-          if(!name || !phone || !email){
-            formError.textContent='Bitte Name, Telefon und E-Mail ausfüllen.';
-            formError.classList.remove('hidden');
-            return;
-          }
-
-          if(p1.totalPieces===0 && p2.qty===0 && p3.qty===0){
-            formError.textContent='Bitte mindestens ein Produkt auswählen.';
-            formError.classList.remove('hidden');
-            return;
-          }
-
-          if(p1.totalPieces>0){
-            const given=countNonEmptyLines(p1Names.value);
-            if(given!==p1.totalPieces){
-              p1NamesError.classList.remove('hidden');
-              formError.textContent='Die Anzahl der Namen passt nicht zur Stückzahl.';
-              formError.classList.remove('hidden');
-              return;
-            }
-          }
-
-          const summaryLines=[];
-          if(p1.totalPieces>0){
-            summaryLines.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
-          }
-          if(p2.qty>0){
-            summaryLines.push(`Deluxe Kakao „Chocolate Bomb“: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
-          }
-          if(p3.qty>0){
-            summaryLines.push(`Instant Kakao „Schneemann“: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
-          }
-
-          const payload={
-            name,
-            phone,
-            email,
-            coupon,
-            products:summaryLines.join('<br>'),
-            total:formatEUR(grand),
-            names_list:p1Names?.value || ''
-          };
-
-          const emailConfigured =
-            EMAILJS_PUBLIC_KEY   && EMAILJS_PUBLIC_KEY   !== 'DEIN_PUBLIC_KEY_HIER' &&
-            EMAILJS_SERVICE_ID   && EMAILJS_SERVICE_ID   !== 'DEIN_SERVICE_ID_HIER' &&
-            EMAILJS_TEMPLATE_ID  && EMAILJS_TEMPLATE_ID  !== 'DEINE_TEMPLATE_ID_HIER';
-
-          if(window.emailjs && typeof emailjs.send==='function' && emailConfigured){
-            emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload)
-              .then(()=>{
-                formOk.classList.remove('hidden');
-                form.reset();
-                updateTotalsAndCart();
-                p1NamesBlock.classList.add('hidden');
-                p1PiecesHint.textContent='Aktuell: 0 Stück';
-                cartPreview.textContent='Noch keine Artikel.';
-              })
-              .catch(()=>{
-                formError.textContent='Formular konnte nicht gesendet werden.';
-                formError.classList.remove('hidden');
-              });
-          } else {
-            formError.textContent='E-Mail-Versand nicht konfiguriert (EmailJS). Bestellung NICHT gesendet.';
-            formError.classList.remove('hidden');
-          }
-        });
-      }
-
-    })();
-  </script>
+})();
+</script>
 
 </body>
 </html>
