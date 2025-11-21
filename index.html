@@ -11,15 +11,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- Edel/Dekorativ -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 
   <style>
 
-    /* ------------------------------------------ */
-    /* FIX FÜR FALSCHE ANZEIGE VON „Gesendet…“   */
-    /* ------------------------------------------ */
+    /* FIX gegen früh sichtbare Erfolgsmeldung */
     .hidden {
       display: none !important;
     }
@@ -36,141 +32,96 @@
       --muted:#5b625e;
       --border:#e6e9e7;
       --surface:#ffffff;
-      --ring:#98e1b3;
     }
+
     *{box-sizing:border-box}
-    html,body{overscroll-behavior-y:contain}
 
     body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:start center;
+      margin:0; 
       font-family:"Inter",system-ui,Arial,sans-serif;
-      font-size:16.5px;
-      -webkit-font-smoothing:antialiased;
-      color:var(--ink);
-      letter-spacing:.005em;
-      line-height:1.55;
       background:#fff;
       padding:2rem;
+      display:grid;
+      place-items:start center;
     }
 
     main{width:min(1000px,100%)}
 
-
-    /* ----------------------------- */
-    /* TICKER */
-    /* ----------------------------- */
-
-    .ticker{width:100%;overflow:hidden;margin:-.5rem 0 1.25rem 0}
+    /* --- Ticker --- */
+    .ticker{width:100%;overflow:hidden;margin-bottom:1.5rem}
     .ticker-bar{
-      background:linear-gradient(90deg,#2fb457,#0c8a43);
-      color:#fff;font-weight:700;
+      background:#0c8a43;
+      color:#fff;
       padding:.8rem 0;
       border-radius:12px;
+      font-weight:700;
     }
     .ticker-track{
-      display:inline-block;white-space:nowrap;
-      animation:ticker 120s linear infinite;
+      white-space:nowrap;
+      display:inline-block;
+      animation:ticker 100s linear infinite;
     }
-    .ticker-item{display:inline-flex;gap:.45rem;margin:0 1.6rem}
     @keyframes ticker{
       0%{transform:translateX(100%)}
       100%{transform:translateX(-100%)}
     }
 
-    /* ----------------------------- */
-    /* HERO / NACHT */
-    /* ----------------------------- */
+    /* --- Hero --- */
+    .hero{text-align:center;margin-bottom:2rem}
 
-    .hero{margin:0 0 1.6rem;text-align:center;position:relative;}
-
-    .night-sky{
-      position:absolute;
-      left:50%;transform:translateX(-50%);
-      top:-26vh;width:120vw;height:56vh;
-      pointer-events:none;
-      background:#02070d;
-    }
-    .stars{position:absolute;inset:0}
-    .star{
-      position:absolute;width:2px;height:2px;border-radius:50%;
-      background:white;opacity:.9;
-      animation:twinkle 4s ease-in-out infinite alternate;
-    }
-    @keyframes twinkle{
-      0%{opacity:.25;transform:scale(.9)}
-      100%{opacity:1;transform:scale(1.2)}
-    }
-
-    .brand-wrap{position:relative;display:inline-block;z-index:1}
     .brand{
-      margin:0;font-weight:900;
-      text-transform:uppercase;
-      font-size:clamp(3rem,12vw,6.6rem);
-      background:linear-gradient(180deg,#0b5d2a,#0c8a43 40%,#34c759 80%);
+      font-size:clamp(3rem,12vw,6.5rem);
+      font-weight:900;
+      background:linear-gradient(#0b5d2a,#34c759);
       -webkit-background-clip:text;
       color:transparent;
     }
+
     .brand-underline{
-      width:min(520px,74%);
-      height:8px;margin:.7rem auto 0;
-      background:linear-gradient(90deg,#34c759,#0c8a43,#34c759);
+      width:60%;height:8px;margin:.7rem auto 0;
+      background:linear-gradient(#0c8a43,#34c759);
       border-radius:999px;
     }
+
     .tagline{
-      margin:.9rem 0 0;
+      margin-top:.8rem;
       font-weight:800;
-      text-transform:uppercase;
       color:#183c26;
-      opacity:.9;
     }
 
-    /* ----------------------------- */
-    /* ÜBER UNS */
-    /* ----------------------------- */
-
-    .about{
-      text-align:center;
-      margin:1.4rem auto 2rem;
-      font-family:"Playfair Display";
-      color:var(--deep-green);
-    }
+    /* --- Über uns --- */
+    .about{text-align:center;margin-bottom:2rem;color:#0b5d2a;font-family:"Playfair Display";}
     .about .ornament{
-      width:140px;height:3px;margin:.6rem auto;
+      width:140px;height:3px;margin:.5rem auto 1rem;
       background:linear-gradient(90deg,var(--gold),#fff8d0,var(--gold));
       border-radius:999px;
     }
 
-    /* ----------------------------- */
-    /* PRODUKTE */
-    /* ----------------------------- */
-
+    /* --- Produktkarten --- */
     .slot{
       border:1px solid var(--border);
       border-radius:16px;
       padding:1.2rem;
+      margin-bottom:1rem;
       background:#fff;
-      box-shadow:0 8px 20px rgba(0,0,0,.05);
-      display:flex;
-      flex-direction:column;
+      box-shadow:0 6px 16px rgba(0,0,0,.05);
     }
+
     .slot-body{
       display:grid;
-      grid-template-columns:64px 1fr;
+      grid-template-columns:70px 1fr;
       gap:12px;
     }
+
     .idx{
-      width:64px;min-height:72px;
+      width:70px;height:70px;
       background:#0c8a43;
-      color:#fff;font-weight:900;
+      color:#fff;font-weight:900;font-size:1.3rem;
+      border-radius:12px;
       display:flex;align-items:center;justify-content:center;
-      border-radius:14px;
     }
 
     .slots{
-      margin-top:1.5rem;
       display:grid;
       gap:1rem;
     }
@@ -178,55 +129,53 @@
       .slots{grid-template-columns:1fr 1fr;}
     }
 
-    /* ----------------------------- */
-    /* PRODUKT 3 – FIXED VERSION     */
-    /* ----------------------------- */
+    img{
+      max-width:100%;
+      border-radius:12px;
+      margin-top:1rem;
+      box-shadow:0 6px 16px rgba(0,0,0,.1);
+    }
 
+    /* --- Produkt 3 – Bilderblock mit 3 kleinen Bildern --- */
     .product3-images{
       position:relative;
-      margin:1rem auto 0;
       max-width:420px;
+      margin:1rem auto 0;
       padding-bottom:160px; /* Platz für TAG6 */
     }
 
     .product3-main{
-      width:100%;border-radius:12px;
-      box-shadow:0 8px 22px rgba(0,0,0,.15);
+      width:100%;
+      border-radius:12px;
+      box-shadow:0 6px 16px rgba(0,0,0,.1);
     }
 
     .product3-overlay,
     .product3-tag5,
     .product3-tag6{
       width:42%;
+      position:absolute;
       border-radius:12px;
       box-shadow:0 8px 22px rgba(0,0,0,.25);
-      position:absolute;
     }
 
     .product3-overlay{
-      right:-18%;bottom:-22%;
+      right:-18%;
+      bottom:-22%;
     }
 
     .product3-tag5{
-      left:-18%;bottom:-22%;
+      left:-18%;
+      bottom:-22%;
     }
 
     .product3-tag6{
-      left:50%;transform:translateX(-50%);
-      bottom:-55%;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:-38%; /* korrigiert, nicht mehr abgeschnitten */
     }
 
-    img{
-      display:block;
-      max-width:100%;
-      border-radius:12px;
-      box-shadow:0 8px 20px rgba(0,0,0,.1);
-      margin-top:1rem;
-    }
-
-    /* ----------------------------- */
-    /* FORM / BESTELLUNG (Fix Version) */
-    /* ----------------------------- */
+    /* --- Formulare --- */
 
     .card{
       border:1px solid var(--border);
@@ -235,8 +184,6 @@
       margin-top:16px;
       background:#fff;
       box-shadow:0 6px 16px rgba(0,0,0,.05);
-      position:relative;
-      z-index:5;
     }
 
     .grid{display:grid;gap:12px}
@@ -267,9 +214,34 @@
     .error{color:#b00020;font-weight:700}
     .success{color:#0a7a30;font-weight:800}
 
+    /* --- Spiel Grid --- */
+
+    .game-grid{
+      display:grid;
+      grid-template-columns:repeat(3,90px);
+      gap:10px;
+      justify-content:center;
+      margin-top:12px;
+    }
+
+    .tile{
+      width:90px;height:90px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#f7f7f7;
+      position:relative;
+      cursor:pointer;
+    }
+
+    .cover{
+      position:absolute;
+      inset:0;
+      background:#e9ece9;
+      border-radius:12px;
+    }
+
   </style>
 </head>
-
 
 <body>
 
@@ -281,38 +253,42 @@
 </div>
 
 <main>
+
+  <!-- ===== HERO ===== -->
   <header class="hero">
-    <div class="night-sky"><div class="stars" id="starsLayer"></div></div>
-    <div class="brand-wrap"><h1 class="brand">OBS-Die-Firma</h1></div>
+    <h1 class="brand">OBS-Die-Firma</h1>
     <div class="brand-underline"></div>
     <div class="tagline">Sortiment</div>
   </header>
 
+  <!-- ===== WER WIR SIND ===== -->
   <section class="about">
     <h2>Wer wir sind</h2>
     <div class="ornament"></div>
-    <p>Unsere Schülerfirma ist ein Projekt des WPK Jahrgang 10 – ergänzt durch freiwillige Mitgestaltende.</p>
-    <p>Gewinne fließen vollständig zurück ins Projekt.</p>
+    <p>Unsere Schülerfirma wird von Jahrgang 10 geführt und reinvestiert jeden Euro direkt ins Projekt.</p>
   </section>
 
-  <!-- PRODUKT 1 -->
+  <!-- ===== PRODUKT 1 ===== -->
   <article class="slot">
     <div class="slot-body">
       <div class="idx">#1</div>
       <div>
-        <h2>Personalisierter Glas-Tag <span class="badge">*</span></h2>
-        <p><strong>Das praktische Gadget</strong> für Feiern und gesellige Runden.</p>
-        <p style="margin-top:.6rem">Vorher: <span class="price-old">3 €</span></p>
-        <ul class="price-list">
-          <li>Einzel: <span class="price-new">1,50 €</span></li>
-          <li>5er-Pack: <span class="price-new">4,95 €</span></li>
-          <li>10er-Pack: <span class="price-new">9,95 €</span></li>
+        <h2>Personalisierter Glas-Tag</h2>
+        <p><strong>Praktisch für Feiern und gesellige Runden.</strong></p>
+
+        <!-- „Vorher: 3 €“ wurde entfernt -->
+
+        <ul class="price-list" style="margin-top:.6rem;color:#d40000;font-weight:700">
+          <li>Einzel: 1,50 €</li>
+          <li>5er-Pack: 4,95 €</li>
+          <li>10er-Pack: 9,95 €</li>
         </ul>
       </div>
     </div>
     <img src="Tag.jpeg" alt="Glas-Tag">
   </article>
 
+  <!-- ===== PRODUKT 2 + 3 ===== -->
   <section class="slots">
 
     <!-- PRODUKT 2 -->
@@ -321,21 +297,21 @@
         <div class="idx">#2</div>
         <div>
           <h2>Deluxe Kakao „Chocolate Bomb“</h2>
-          <p><strong>Mit Glas:</strong> heiß aufgießen → cremiger Kakao.</p>
-          <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
+          <p><strong>Heiß aufgießen → cremiger Kakao.</strong></p>
+          <p class="price-new" style="margin-top:.6rem;color:#d40000;font-weight:800">Preis: 5,00 €</p>
         </div>
       </div>
       <img src="Tag2.jpeg" alt="Chocolate Bomb">
     </article>
 
-    <!-- PRODUKT 3 (mit TAG5 & TAG6) -->
+    <!-- PRODUKT 3 -->
     <article class="slot">
       <div class="slot-body">
         <div class="idx">#3</div>
         <div>
           <h2>Instant Kakao „Schneemann“</h2>
-          <p>Mit heißer Milch übergießen – süß & cremig.</p>
-          <p class="price-new" style="margin-top:.6rem">Preis: 5,00 €</p>
+          <p>Cremiger Winterkakao mit Marshmallows.</p>
+          <p class="price-new" style="margin-top:.6rem;color:#d40000;font-weight:800">Preis: 5,00 €</p>
         </div>
       </div>
 
@@ -345,15 +321,16 @@
         <img src="TAG5.jpeg" class="product3-tag5">
         <img src="TAG6.jpeg" class="product3-tag6">
       </div>
+
     </article>
 
   </section>
-  <!-- ===== Gewinnspiel ===== -->
+  <!-- ===== GEWINNSPIEL ===== -->
   <section class="card">
     <h2>Werbeaktion: Gewinne einen Glas-Tag</h2>
     <p>Decke in 5 Versuchen drei gleichfarbige Gläser auf.</p>
 
-    <div class="game-controls">
+    <div class="game-controls" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
       <button type="button" id="startGameBtn">Spiel starten</button>
       <button type="button" id="newGameBtn" class="hidden">Neues Spiel</button>
       <span class="pill">Versuche: <span id="triesLeft">–</span></span>
@@ -369,9 +346,9 @@
   <!-- ===== BESTELLFORMULAR ===== -->
   <form id="orderForm" class="shop" novalidate>
 
+    <!-- Honeypot -->
     <input type="text" id="hp_field" name="company" style="position:absolute;left:-9999px">
 
-    <!-- Kundendaten -->
     <div class="card">
       <h2>Kundendaten</h2>
 
@@ -396,7 +373,7 @@
     </div>
 
 
-    <!-- Produkte -->
+    <!-- PRODUKTE -->
     <div class="card">
       <h2>Produkte</h2>
 
@@ -411,16 +388,19 @@
           </select>
           <div class="muted" id="p1PiecesHint">Aktuell: 0 Stück</div>
         </div>
+
         <div>
           <label for="p1Qty">Menge</label>
           <input id="p1Qty" type="number" min="0" value="0">
         </div>
+
         <div>
           <label>Summe</label>
           <input id="p1Subtotal" readonly>
         </div>
       </div>
 
+      <!-- Namensliste -->
       <div id="p1NamesBlock" class="grid hidden">
         <label for="p1Names">Namen (ein Name pro Zeile)</label>
         <textarea id="p1Names" rows="5"></textarea>
@@ -462,7 +442,7 @@
         </div>
       </div>
 
-      <div class="totals">
+      <div class="totals" style="display:flex;justify-content:space-between;margin-top:12px;font-weight:800">
         <span>Gesamt</span>
         <span id="grandTotal">0,00 €</span>
       </div>
@@ -486,18 +466,17 @@
   </form>
 
 
-  <footer style="margin-top:2rem;text-align:center;font-size:.95rem;">
-    <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a>
+  <footer style="margin-top:2rem;text-align:center;font-size:.9rem;">
+    <a href="/impressum.html">Impressum</a> · 
+    <a href="/datenschutz.html">Datenschutz</a>
   </footer>
 
 </main>
-
-
 <!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <script>
-  /* Dein Key – unverändert */
+  /* EmailJS – unveränderte Werte */
   const EMAILJS_PUBLIC_KEY   = 'xAOygDJhZcJrXGuSb';
   const EMAILJS_SERVICE_ID   = 'service_l642tri';
   const EMAILJS_TEMPLATE_ID  = 'template_ggtexbv';
@@ -510,7 +489,7 @@
 
 <script>
 /* ======================================================
-   FORMAT HILFSFUNKTIONEN
+   HILFSFUNKTIONEN
 ====================================================== */
 
 const formatEUR = n => n.toLocaleString('de-DE',{style:'currency',currency:'EUR'});
@@ -529,15 +508,17 @@ const clampInt = (v,min=0,max=999)=>{
     <span class="ticker-item">Glas-Tags mit Wunschname – handgefertigt.</span>
     <span class="ticker-item">Deluxe Kakao „Chocolate Bomb“ – solange Vorrat reicht.</span>
     <span class="ticker-item">Instant Kakao „Schneemann“ – saisonale Aktion.</span>
-    <span class="ticker-item">Alle Erlöse bleiben im Projekt – Danke!</span>
+    <span class="ticker-item">Alle Erlöse bleiben im Projekt – Danke für die Unterstützung!</span>
   `;
 })();
 
 /* ======================================================
-   STERNE
+   STERNENHIMMEL
 ====================================================== */
 (function initStars(){
   const layer=document.getElementById('starsLayer');
+  if(!layer) return;
+
   for(let i=0;i<60;i++){
     const s=document.createElement('div');
     s.className='star';
@@ -546,82 +527,102 @@ const clampInt = (v,min=0,max=999)=>{
     layer.appendChild(s);
   }
 })();
+</script>
 
+
+<script>
 /* ======================================================
-   GEWINNSPIEL
+   GEWINNSPIEL – voll funktionsfähige Endversion
 ====================================================== */
+
 (function initGame(){
 
-  const startBtn=document.getElementById('startGameBtn');
-  const newBtn=document.getElementById('newGameBtn');
-  const grid=document.getElementById('gameGrid');
-  const msg=document.getElementById('gameMsg');
-  const triesLeft=document.getElementById('triesLeft');
-  const matchCount=document.getElementById('matchCount');
-  const cooldown=document.getElementById('cooldownPill');
-  const coolSec=document.getElementById('cooldownSec');
+  const startBtn = document.getElementById('startGameBtn');
+  const newBtn   = document.getElementById('newGameBtn');
+  const grid     = document.getElementById('gameGrid');
+  const msg      = document.getElementById('gameMsg');
+  const triesEl  = document.getElementById('triesLeft');
+  const matchEl  = document.getElementById('matchCount');
+  const cooldown = document.getElementById('cooldownPill');
+  const coolSec  = document.getElementById('cooldownSec');
 
-  const COLORS=['#0c8a43','#ffb300','#1565c0'];
+  const COLORS = ['#0c8a43','#ffb300','#1565c0'];
+
   let tiles=[],tries=5,matches=0,running=false,timer=null;
 
-  function build(){
+  function buildTiles(){
     grid.innerHTML='';
     tiles=[];
+
     const pool=[];
-    COLORS.forEach(c=>{for(let i=0;i<3;i++) pool.push(c);});
+    COLORS.forEach(c=>{ for(let i=0;i<3;i++) pool.push(c); });
+
     pool.sort(()=>Math.random()-0.5);
 
     pool.forEach(color=>{
-      const t=document.createElement('div');
-      t.className='tile';
-      t.dataset.color=color;
+      const tile=document.createElement('div');
+      tile.className='tile';
+      tile.dataset.color=color;
+
       const cover=document.createElement('div');
       cover.className='cover';
-      t.appendChild(cover);
-      t.onclick=()=>reveal(t);
-      grid.appendChild(t);
-      tiles.push(t);
+      tile.appendChild(cover);
+
+      tile.onclick=()=>reveal(tile);
+      grid.appendChild(tile);
+      tiles.push(tile);
     });
   }
 
   function reset(){
-    tries=5; matches=0; running=true;
-    triesLeft.textContent=tries;
-    matchCount.textContent=matches;
+    tries=5;
+    matches=0;
+    running=true;
+
+    triesEl.textContent=tries;
+    matchEl.textContent=matches;
+
     msg.textContent='';
     msg.className='';
+
     cooldown.classList.add('hidden');
-    build();
+    if(timer){ clearInterval(timer); timer=null; }
+
+    buildTiles();
   }
 
   function reveal(tile){
     if(!running) return;
+
     const cover=tile.querySelector('.cover');
     if(!cover || cover.style.opacity==='0') return;
+
     cover.style.opacity='0';
     tile.style.background=tile.dataset.color;
 
-    const same=tiles.filter(t=>{
+    const same = tiles.filter(t=>{
       const c=t.dataset.color;
-      const oc=t.querySelector('.cover');
-      return oc && oc.style.opacity==='0' && c===tile.dataset.color;
+      const cov=t.querySelector('.cover');
+      return c===tile.dataset.color && cov.style.opacity==='0';
     }).length;
 
     if(same===3){
       matches++;
-      matchCount.textContent=matches;
+      matchEl.textContent=matches;
       msg.textContent='Drei gleiche Gläser!';
       msg.className='win';
     }
 
     tries--;
-    triesLeft.textContent=tries;
+    triesEl.textContent=tries;
 
-    if(tries<=0){
+    if(tries <= 0){
       running=false;
+
       msg.textContent = matches>0
         ? 'Aktion geschafft – Code im Formular eintragen.'
         : 'Leider kein Treffer.';
+
       msg.className = matches>0 ? 'win' : 'lose';
 
       let left=30;
@@ -648,9 +649,12 @@ const clampInt = (v,min=0,max=999)=>{
   newBtn.onclick=()=>reset();
 
 })();
+</script>
 
+
+<script>
 /* ======================================================
-   SHOP / FORMULAR
+   BESTELLWESEN – Warenkorb + Preise + Email senden
 ====================================================== */
 
 (function initShop(){
@@ -672,21 +676,22 @@ const clampInt = (v,min=0,max=999)=>{
   const grandTotal=document.getElementById('grandTotal');
   const cartPreview=document.getElementById('cartPreview');
 
-  const PACK_PRICES={single:1.50,pack5:4.95,pack10:9.95};
-  const PACK_PIECES={single:1,pack5:5,pack10:10};
+  const PACK_PRICES={ single:1.50, pack5:4.95, pack10:9.95 };
+  const PACK_PIECES={ single:1,    pack5:5,    pack10:10   };
   const P2_PRICE=5.00;
   const P3_PRICE=5.00;
 
   function updateP1(){
     const pack=p1Pack.value;
     const qty=clampInt(p1Qty.value);
+
     p1Qty.value=qty;
 
-    const totalPrice=qty*PACK_PRICES[pack];
     const totalPieces=qty*PACK_PIECES[pack];
+    const totalPrice=qty*PACK_PRICES[pack];
 
     p1Subtotal.value = qty>0 ? formatEUR(totalPrice) : '';
-    p1PiecesHint.textContent="Aktuell: "+totalPieces+" Stück";
+    p1PiecesHint.textContent='Aktuell: '+totalPieces+' Stück';
 
     if(totalPieces>0){
       p1NamesBlock.classList.remove('hidden');
@@ -695,7 +700,7 @@ const clampInt = (v,min=0,max=999)=>{
       p1NamesError.classList.add('hidden');
     }
 
-    return {totalPrice,totalPieces,qty,pack};
+    return {totalPieces,totalPrice,qty,pack};
   }
 
   function updateP2(){
@@ -722,18 +727,15 @@ const clampInt = (v,min=0,max=999)=>{
     const sum=p1.totalPrice+p2.totalPrice+p3.totalPrice;
     grandTotal.textContent=formatEUR(sum);
 
-    const out=[];
-    if(p1.totalPieces>0){
-      out.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
-    }
-    if(p2.qty>0){
-      out.push(`Chocolate Bomb: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
-    }
-    if(p3.qty>0){
-      out.push(`Schneemann: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
-    }
+    const lines=[];
+    if(p1.totalPieces>0)
+      lines.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
+    if(p2.qty>0)
+      lines.push(`Chocolate Bomb: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
+    if(p3.qty>0)
+      lines.push(`Schneemann: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
 
-    cartPreview.innerHTML = out.length? out.join('<br>') : 'Noch keine Artikel.';
+    cartPreview.innerHTML = lines.length ? lines.join("<br>") : "Noch keine Artikel.";
   }
 
   p1Pack.onchange=updateAll;
@@ -745,16 +747,19 @@ const clampInt = (v,min=0,max=999)=>{
 
   updateAll();
 
+  /* ===== FORMULAR ===== */
+
   const form=document.getElementById('orderForm');
   const formErr=document.getElementById('formError');
   const formOk=document.getElementById('formOk');
 
   function countLines(s){
-    return String(s).split(/\n/).map(l=>l.trim()).filter(Boolean).length;
+    return String(s).split(/\n/).map(x=>x.trim()).filter(Boolean).length;
   }
 
   form.onsubmit=function(e){
     e.preventDefault();
+
     formErr.classList.add('hidden');
     formOk.classList.add('hidden');
 
@@ -792,21 +797,24 @@ const clampInt = (v,min=0,max=999)=>{
     }
 
     const summary=[];
-    if(p1.totalPieces>0) summary.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
-    if(p2.qty>0) summary.push(`Chocolate Bomb: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
-    if(p3.qty>0) summary.push(`Schneemann: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
+    if(p1.totalPieces>0)
+      summary.push(`Glas-Tag: ${p1.totalPieces} Stück – ${formatEUR(p1.totalPrice)}`);
+    if(p2.qty>0)
+      summary.push(`Chocolate Bomb: ${p2.qty}× – ${formatEUR(p2.totalPrice)}`);
+    if(p3.qty>0)
+      summary.push(`Schneemann: ${p3.qty}× – ${formatEUR(p3.totalPrice)}`);
 
     const payload={
       name,
       phone,
       email,
       coupon,
-      products: summary.join('<br>'),
-      total: formatEUR(p1.totalPrice+p2.totalPrice+p3.totalPrice),
-      names_list: p1Names.value
+      products:summary.join("<br>"),
+      total:formatEUR(p1.totalPrice+p2.totalPrice+p3.totalPrice),
+      names_list:p1Names.value
     };
 
-    emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,payload)
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, payload)
       .then(()=>{
         formOk.classList.remove('hidden');
         form.reset();
