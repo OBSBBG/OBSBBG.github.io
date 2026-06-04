@@ -2,31 +2,31 @@
   "items": [
     {
       "text": "🍫 Kakao",
-      "value": 4200,
-      "extra": "EUR/t • Fehler"
+      "value": 3015,
+      "extra": "EUR/t • März 2026 • -9,64% vs VM • -56,14% vs 2024-Ø"
     },
     {
       "text": "🍚 Zucker",
-      "value": 680,
-      "extra": "EUR/t • Fehler"
+      "value": 303,
+      "extra": "EUR/t • März 2026 • +4,19% vs VM • -28,67% vs 2024-Ø"
     },
     {
       "text": "🌾 Weizen",
-      "value": 255,
-      "extra": "EUR/t • Fehler"
+      "value": 180,
+      "extra": "EUR/t • März 2026 • +10,94% vs VM • -3,64% vs 2024-Ø"
     },
     {
       "text": "🌽 Mais",
-      "value": 205,
-      "extra": "EUR/t • Fehler"
+      "value": 198,
+      "extra": "EUR/t • März 2026 • +1,27% vs VM • +11,99% vs 2024-Ø"
     },
     {
       "text": "🍚 Reis",
-      "value": 520,
-      "extra": "EUR/t • Fehler"
+      "value": 366,
+      "extra": "EUR/t • März 2026 • +0,13% vs VM • -30,29% vs 2024-Ø"
     },
     {
-      "text": "Quelle: IMF über FRED (Fehler)"
+      "text": "Quelle: IMF über FRED (täglich aktualisiert)"
     }
   ]
 }
